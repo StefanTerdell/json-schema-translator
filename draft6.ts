@@ -1,0 +1,54 @@
+import { JsonSchema } from "./JsonSchema.ts";
+import { JsonSchemaSettings } from "./JsonSchemaSettings.ts";
+
+export const jsonSchemaDraft6Settings = {
+  $defsPath: "definitions",
+  booleanExclusiveMinimumAndMaximum: false,
+  $idPath: "$id",
+  $schema: "https://json-schema.org/draft-06/schema",
+  nonEmptyEnum: false,
+  nonEmptyRequired: false,
+  nonEmptyDependencies: false,
+  addNullableToOptional: false,
+  addNullTypeToOptional: false,
+  addAllOptionalToRequired: false,
+  $comment: false,
+  $anchor: false,
+  booleanSchemas: false,
+  const: true,
+  contains: true,
+  contentMediaTypeAndEncoding: false,
+  contentSchema: false,
+  deprecated: false,
+  $dynamicAnchorAndRef: false,
+  examples: true,
+  format: [
+    "date-time",
+    "email",
+    "hostname",
+    "ipv4",
+    "ipv6",
+    "json-pointer",
+    "uri",
+    "uri-reference",
+    "uri-template",
+    //
+  ] as const,
+  ifThenElse: false,
+  integerType: true,
+  media: true,
+  minAndMaxContains: false,
+  nullType: true,
+  nullable: false,
+  prefixItems: false,
+  propertyNames: true,
+  readAndWriteOnly: false,
+  $recursiveAnchorAndRef: false,
+  dependentRequiredAndSchemas: false,
+  unevaluatedItems: false,
+  unevaluatedProperties: false,
+  $vocabulary: false,
+} satisfies JsonSchemaSettings;
+
+export type JsonSchemaDraft6Settings = typeof jsonSchemaDraft6Settings;
+export type JsonSchemaDraft6 = JsonSchema<JsonSchemaDraft6Settings>;
