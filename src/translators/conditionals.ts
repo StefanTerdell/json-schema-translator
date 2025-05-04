@@ -1,9 +1,13 @@
-import { generateSchema } from "./schema.ts";
+import { translateJsonSchemaInternal } from "../translateJsonSchema.ts";
 import { Mutator } from "./Mutator.ts";
 
-export const translateConditionalKeywords: Mutator = (input, output) => {
+export const translateConditionalKeywords: Mutator = (
+  input,
+  output,
+  options,
+) => {
   if (input.schema.if !== undefined) {
-    output.schema.if = generateSchema(
+    output.schema.if = translateJsonSchemaInternal(
       {
         schema: input.schema.if,
         settings: input.settings,
@@ -14,13 +18,14 @@ export const translateConditionalKeywords: Mutator = (input, output) => {
         forceAllowBooleanSchema: false,
         unhandledKeys: output.unhandledKeys,
       },
+      options,
     );
   }
 
   input.handledKeys.add("if");
 
   if (input.schema.then !== undefined) {
-    output.schema.then = generateSchema(
+    output.schema.then = translateJsonSchemaInternal(
       {
         schema: input.schema.then,
         settings: input.settings,
@@ -31,13 +36,14 @@ export const translateConditionalKeywords: Mutator = (input, output) => {
         forceAllowBooleanSchema: false,
         unhandledKeys: output.unhandledKeys,
       },
+      options,
     );
   }
 
   input.handledKeys.add("then");
 
   if (input.schema.else !== undefined) {
-    output.schema.else = generateSchema(
+    output.schema.else = translateJsonSchemaInternal(
       {
         schema: input.schema.else,
         settings: input.settings,
@@ -48,13 +54,14 @@ export const translateConditionalKeywords: Mutator = (input, output) => {
         forceAllowBooleanSchema: false,
         unhandledKeys: output.unhandledKeys,
       },
+      options,
     );
   }
 
   input.handledKeys.add("else");
 
   if (input.schema.not !== undefined) {
-    output.schema.not = generateSchema(
+    output.schema.not = translateJsonSchemaInternal(
       {
         schema: input.schema.not,
         settings: input.settings,
@@ -65,6 +72,7 @@ export const translateConditionalKeywords: Mutator = (input, output) => {
         forceAllowBooleanSchema: false,
         unhandledKeys: output.unhandledKeys,
       },
+      options,
     );
   }
 

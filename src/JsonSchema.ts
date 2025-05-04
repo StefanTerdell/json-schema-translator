@@ -1,10 +1,10 @@
 import { Json, JsonObject } from "./Json.ts";
-import { JsonSchemaSettings } from "./JsonSchemaSettings.ts";
+import { JsonSchemaSpecification } from "./JsonSchemaSpecification.ts";
 import { LooseStringLiteral, NonEmptyArray } from "./utils.ts";
 
-/** Represents a JsonSchema as defined by the provided JsonSchemaSettings. Depending on the settings and specific keyword this can either be a JsonSchemaObject or a boolean */
+/** Represents a JsonSchema as defined by the provided JsonSchemaSpecification. Depending on the settings and specific keyword this can either be a JsonSchemaObject or a boolean */
 export type JsonSchema<
-  Options extends JsonSchemaSettings,
+  Options extends JsonSchemaSpecification,
   ForceAllowBooleanSchema extends boolean = false,
 > =
   | JsonSchemaObject<Options>
@@ -19,7 +19,7 @@ export type JsonSchemaPath = JsonSchemaPathItem[];
  * 1: Dynamically set the expected types of the keywords defined in the `$idPath` and `$defsPath` options
  * 2: Allow (or forbid) arbitrary values for unspecified keywords based on the `allowJson` option
  */
-export type JsonSchemaObject<T extends JsonSchemaSettings> = {
+export type JsonSchemaObject<T extends JsonSchemaSpecification> = {
   [Key in
     | keyof JsonSchemaKeywordsObject<T>
     | T["$defsPath"]
@@ -36,8 +36,8 @@ export type JsonSchemaObject<T extends JsonSchemaSettings> = {
 // deno-lint-ignore no-explicit-any
 export type JsonSchemaKeyword = keyof JsonSchemaKeywordsObject<any>;
 
-/** Represents a JsonSchema object as defined by the provided JsonSchemaSettings with no arbitrary keys allowed */
-export type JsonSchemaKeywordsObject<T extends JsonSchemaSettings> = {
+/** Represents a JsonSchema object as defined by the provided JsonSchemaSpecification with no arbitrary keys allowed */
+export type JsonSchemaKeywordsObject<T extends JsonSchemaSpecification> = {
   // type
   type?: JsonSchemaType<T> | Array<JsonSchemaType<T>>;
   nullable?: T["nullable"] extends true ? boolean : unknown;
@@ -166,13 +166,13 @@ export type JsonSchemaKeywordsObject<T extends JsonSchemaSettings> = {
 };
 
 /* Represents a single valid value of the "type" keyword in a Json Schema */
-export type JsonSchemaType<Settings extends JsonSchemaSettings> =
+export type JsonSchemaType<Specification extends JsonSchemaSpecification> =
   LooseStringLiteral<
     | "string"
     | "number"
     | "object"
     | "array"
     | "boolean"
-    | (Settings["nullType"] extends true ? "null" : never)
-    | (Settings["integerType"] extends true ? "integer" : never)
+    | (Specification["nullType"] extends true ? "null" : never)
+    | (Specification["integerType"] extends true ? "integer" : never)
   >;

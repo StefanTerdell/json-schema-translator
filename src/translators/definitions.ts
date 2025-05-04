@@ -1,23 +1,27 @@
 import { JsonSchema } from "../JsonSchema.ts";
-import { generateSchema } from "./schema.ts";
+import { translateJsonSchemaInternal } from "../translateJsonSchema.ts";
 import { Mutator } from "./Mutator.ts";
 
-export const translateDefinitionsKeyword: Mutator = (input, output) => {
-  type InputSettings = typeof input.settings;
-  type OutputSettings = typeof output.settings;
+export const translateDefinitionsKeyword: Mutator = (
+  input,
+  output,
+  options,
+) => {
+  type InputSpecification = typeof input.settings;
+  type OutputSpecification = typeof output.settings;
 
   // @ts-expect-error dynamic paths wip
   const inputDefs = input.schema[input.settings.$defsPath] as
-    | Record<string, JsonSchema<InputSettings>>
+    | Record<string, JsonSchema<InputSpecification>>
     | undefined;
 
   if (inputDefs !== undefined) {
     // @ts-expect-error ISSUE: Narrowing breaks down across generics
     output.schema[output.settings.$defsPath] = Object.keys(inputDefs).reduce(
-      (defs: Record<string, JsonSchema<OutputSettings>>, key) => {
+      (defs: Record<string, JsonSchema<OutputSpecification>>, key) => {
         const schema = inputDefs[key];
 
-        defs[key] = generateSchema(
+        defs[key] = translateJsonSchemaInternal(
           {
             schema,
             settings: input.settings,
@@ -28,6 +32,7 @@ export const translateDefinitionsKeyword: Mutator = (input, output) => {
             forceAllowBooleanSchema: false,
             unhandledKeys: output.unhandledKeys,
           },
+          options,
         );
 
         return defs;

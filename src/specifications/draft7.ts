@@ -1,55 +1,63 @@
 import { JsonSchema } from "../JsonSchema.ts";
-import { JsonSchemaSettings } from "../JsonSchemaSettings.ts";
+import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
 
-export const jsonSchemaDraft6Settings = {
+export const jsonSchemaDraft7Specification = {
   $defsPath: "definitions" as const,
   booleanExclusiveMinimumAndMaximum: false,
   $idPath: "$id" as const,
-  $schema: "https://json-schema.org/draft-06/schema" as const,
+  $schema: "https://json-schema.org/draft-07/schema" as const,
   nonEmptyEnum: false,
   nonEmptyRequired: false,
   nonEmptyDependencies: false,
   addNullableToOptional: false,
   addNullTypeToOptional: false,
   addAllOptionalToRequired: false,
-  $comment: false,
+  $comment: true,
   $anchor: false,
   booleanSchemas: false,
   const: true,
   contains: true,
-  contentMediaTypeAndEncoding: false,
+  contentMediaTypeAndEncoding: true,
   contentSchema: false,
   deprecated: false,
   $dynamicAnchorAndRef: false,
   examples: true,
   format: [
+    "date",
     "date-time",
     "email",
     "hostname",
+    "idn-email",
+    "idn-hostname",
     "ipv4",
     "ipv6",
+    "iri",
+    "iri-reference",
     "json-pointer",
+    "regex",
+    "relative-json-pointer",
+    "time",
     "uri",
     "uri-reference",
     "uri-template",
-    //
   ] as const,
-  ifThenElse: false,
+  ifThenElse: true,
   integerType: true,
-  media: true,
+  media: false,
   minAndMaxContains: false,
   nullType: true,
   nullable: false,
   prefixItems: false,
   propertyNames: true,
-  readAndWriteOnly: false,
+  readAndWriteOnly: true,
   $recursiveAnchorAndRef: false,
   dependentRequiredAndSchemas: false,
   unevaluatedItems: false,
   unevaluatedProperties: false,
   $vocabulary: false,
   allowJson: true,
-} satisfies JsonSchemaSettings;
+} satisfies JsonSchemaSpecification;
 
-export type JsonSchemaDraft6Settings = typeof jsonSchemaDraft6Settings;
-export type JsonSchemaDraft6 = JsonSchema<JsonSchemaDraft6Settings>;
+export type JsonSchemaDraft7Specification =
+  typeof jsonSchemaDraft7Specification;
+export type JsonSchemaDraft7 = JsonSchema<JsonSchemaDraft7Specification>;

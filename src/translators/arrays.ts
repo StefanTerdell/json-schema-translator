@@ -1,15 +1,15 @@
 import { JsonSchema } from "../JsonSchema.ts";
-import { generateSchema } from "./schema.ts";
+import { translateJsonSchemaInternal } from "../translateJsonSchema.ts";
 import { Mutator } from "./Mutator.ts";
 
-export const translateArrayKeywords: Mutator = (input, output) => {
+export const translateArrayKeywords: Mutator = (input, output, options) => {
   if (input.settings.prefixItems) {
     const prefixItems = (
       input.schema.prefixItems as
         | JsonSchema<typeof input.settings>[]
         | undefined
     )?.map((schema, index) =>
-      generateSchema(
+      translateJsonSchemaInternal(
         {
           schema,
           settings: input.settings,
@@ -20,12 +20,13 @@ export const translateArrayKeywords: Mutator = (input, output) => {
           forceAllowBooleanSchema: false,
           unhandledKeys: output.unhandledKeys,
         },
+        options,
       ),
     );
 
     const items =
       input.schema.items !== undefined
-        ? generateSchema(
+        ? translateJsonSchemaInternal(
             {
               schema: input.schema.items as JsonSchema<typeof input.settings>,
               settings: input.settings,
@@ -36,6 +37,7 @@ export const translateArrayKeywords: Mutator = (input, output) => {
               forceAllowBooleanSchema: false,
               unhandledKeys: output.unhandledKeys,
             },
+            options,
           )
         : undefined;
 
@@ -64,7 +66,7 @@ export const translateArrayKeywords: Mutator = (input, output) => {
     const [items, additionalItems] = Array.isArray(input.schema.items)
       ? [
           input.schema.items.map((schema, index) =>
-            generateSchema(
+            translateJsonSchemaInternal(
               {
                 schema,
                 settings: input.settings,
@@ -75,10 +77,11 @@ export const translateArrayKeywords: Mutator = (input, output) => {
                 forceAllowBooleanSchema: false,
                 unhandledKeys: output.unhandledKeys,
               },
+              options,
             ),
           ),
           input.schema.additionalItems !== undefined
-            ? generateSchema(
+            ? translateJsonSchemaInternal(
                 {
                   schema: input.schema.additionalItems,
                   settings: input.settings,
@@ -89,12 +92,13 @@ export const translateArrayKeywords: Mutator = (input, output) => {
                   forceAllowBooleanSchema: false,
                   unhandledKeys: output.unhandledKeys,
                 },
+                options,
               )
             : undefined,
         ]
       : [
           input.schema.items !== undefined
-            ? generateSchema(
+            ? translateJsonSchemaInternal(
                 {
                   schema: input.schema.items as JsonSchema<
                     typeof input.settings
@@ -107,10 +111,11 @@ export const translateArrayKeywords: Mutator = (input, output) => {
                   forceAllowBooleanSchema: false,
                   unhandledKeys: output.unhandledKeys,
                 },
+                options,
               )
             : undefined,
           input.schema.additionalItems !== undefined
-            ? generateSchema(
+            ? translateJsonSchemaInternal(
                 {
                   schema: input.schema.additionalItems,
                   settings: input.settings,
@@ -121,6 +126,7 @@ export const translateArrayKeywords: Mutator = (input, output) => {
                   forceAllowBooleanSchema: true,
                   unhandledKeys: output.unhandledKeys,
                 },
+                options,
               )
             : undefined,
         ];
@@ -154,7 +160,7 @@ export const translateArrayKeywords: Mutator = (input, output) => {
       output.settings.unevaluatedItems &&
       input.schema.unevaluatedItems !== undefined
     ) {
-      output.schema.unevaluatedItems = generateSchema(
+      output.schema.unevaluatedItems = translateJsonSchemaInternal(
         {
           // @ts-expect-error ISSUE: Narrowing :p
           schema: input.schema.unevaluatedItems,
@@ -164,6 +170,7 @@ export const translateArrayKeywords: Mutator = (input, output) => {
           settings: output.settings,
           forceAllowBooleanSchema: false,
         },
+        options,
       );
     }
 
@@ -172,7 +179,7 @@ export const translateArrayKeywords: Mutator = (input, output) => {
 
   if (input.settings.contains) {
     if (output.settings.contains && input.schema.contains !== undefined) {
-      output.schema.contains = generateSchema(
+      output.schema.contains = translateJsonSchemaInternal(
         {
           // @ts-expect-error ISSUE: Narrowing :p
           schema: input.schema.contains,
@@ -182,6 +189,7 @@ export const translateArrayKeywords: Mutator = (input, output) => {
           settings: output.settings,
           forceAllowBooleanSchema: false,
         },
+        options,
       );
     }
 

@@ -1,9 +1,13 @@
 import { Mutator } from "./Mutator.ts";
 
-export const translateAnnotationKeywords: Mutator = (input, output) => {
-  translateDefaultAnnotationKeywords(input, output);
-  translateControlledAnnotationKeywords(input, output);
-  translate$schemaKeyword(input, output);
+export const translateAnnotationKeywords: Mutator = (
+  input,
+  output,
+  options,
+) => {
+  translateDefaultAnnotationKeywords(input, output, options);
+  translateControlledAnnotationKeywords(input, output, options);
+  translate$schemaKeyword(input, output, options);
 };
 
 const translateDefaultAnnotationKeywords: Mutator = (input, output) => {

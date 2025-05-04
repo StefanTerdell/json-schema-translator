@@ -1,9 +1,9 @@
 import { JsonSchema } from "../JsonSchema.ts";
 import { NonEmptyArray } from "../utils.ts";
-import { generateSchema } from "./schema.ts";
+import { translateJsonSchemaInternal } from "../translateJsonSchema.ts";
 import { Mutator } from "./Mutator.ts";
 
-export const translateObjectKeywords: Mutator = (input, output) => {
+export const translateObjectKeywords: Mutator = (input, output, options) => {
   if (input.schema.properties) {
     const { properties, required } = Object.keys(
       input.schema.properties,
@@ -15,7 +15,7 @@ export const translateObjectKeywords: Mutator = (input, output) => {
         },
         key,
       ) => {
-        const schema = generateSchema(
+        const schema = translateJsonSchemaInternal(
           {
             settings: input.settings,
             schema: input.schema.properties![key],
@@ -26,6 +26,7 @@ export const translateObjectKeywords: Mutator = (input, output) => {
             forceAllowBooleanSchema: false,
             unhandledKeys: output.unhandledKeys,
           },
+          options,
         );
 
         if (output.settings.addAllOptionalToRequired) {
@@ -74,7 +75,7 @@ export const translateObjectKeywords: Mutator = (input, output) => {
   input.handledKeys.add("properties");
 
   if (input.schema.additionalProperties !== undefined) {
-    output.schema.additionalProperties = generateSchema(
+    output.schema.additionalProperties = translateJsonSchemaInternal(
       {
         settings: input.settings,
         schema: input.schema.additionalProperties,
@@ -85,6 +86,7 @@ export const translateObjectKeywords: Mutator = (input, output) => {
         forceAllowBooleanSchema: true,
         unhandledKeys: output.unhandledKeys,
       },
+      options,
     );
   }
 
@@ -94,7 +96,7 @@ export const translateObjectKeywords: Mutator = (input, output) => {
     output.schema.patternProperties = Object.keys(
       input.schema.patternProperties,
     ).reduce((acc: Record<string, JsonSchema<typeof output.settings>>, key) => {
-      acc[key] = generateSchema(
+      acc[key] = translateJsonSchemaInternal(
         {
           settings: input.settings,
           schema: input.schema.patternProperties![key],
@@ -105,6 +107,7 @@ export const translateObjectKeywords: Mutator = (input, output) => {
           forceAllowBooleanSchema: false,
           unhandledKeys: output.unhandledKeys,
         },
+        options,
       );
 
       return acc;
@@ -118,7 +121,7 @@ export const translateObjectKeywords: Mutator = (input, output) => {
       output.settings.unevaluatedProperties &&
       input.schema.unevaluatedProperties !== undefined
     ) {
-      output.schema.unevaluatedProperties = generateSchema(
+      output.schema.unevaluatedProperties = translateJsonSchemaInternal(
         {
           settings: input.settings,
           // @ts-expect-error ISSUE: Narrowing :p
@@ -130,6 +133,7 @@ export const translateObjectKeywords: Mutator = (input, output) => {
           forceAllowBooleanSchema: false,
           unhandledKeys: output.unhandledKeys,
         },
+        options,
       );
     }
 
@@ -141,7 +145,7 @@ export const translateObjectKeywords: Mutator = (input, output) => {
       output.settings.propertyNames &&
       input.schema.propertyNames !== undefined
     ) {
-      const propertyNames = generateSchema(
+      const propertyNames = translateJsonSchemaInternal(
         {
           settings: input.settings,
           // @ts-expect-error ISSUE: Narrowing :p
@@ -153,6 +157,7 @@ export const translateObjectKeywords: Mutator = (input, output) => {
           forceAllowBooleanSchema: false,
           unhandledKeys: output.unhandledKeys,
         },
+        options,
       );
 
       if (typeof propertyNames === "object" && "type" in propertyNames) {
@@ -204,7 +209,7 @@ export const translateObjectKeywords: Mutator = (input, output) => {
             typeof input.settings
           >;
 
-          acc[key] = generateSchema(
+          acc[key] = translateJsonSchemaInternal(
             {
               settings: input.settings,
               schema,
@@ -215,6 +220,7 @@ export const translateObjectKeywords: Mutator = (input, output) => {
               forceAllowBooleanSchema: false,
               unhandledKeys: output.unhandledKeys,
             },
+            options,
           );
 
           return acc;
@@ -226,7 +232,7 @@ export const translateObjectKeywords: Mutator = (input, output) => {
           const schema = input.schema.dependencies![key];
 
           if (!Array.isArray(schema)) {
-            acc[key] = generateSchema(
+            acc[key] = translateJsonSchemaInternal(
               {
                 settings: input.settings,
                 schema,
@@ -237,6 +243,7 @@ export const translateObjectKeywords: Mutator = (input, output) => {
                 forceAllowBooleanSchema: false,
                 unhandledKeys: output.unhandledKeys,
               },
+              options,
             );
           }
 

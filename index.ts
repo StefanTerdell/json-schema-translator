@@ -2,9 +2,8 @@
 
 export * from "./src/Json.ts";
 export * from "./src/JsonSchema.ts";
-export * from "./src/JsonSchemaSettings.ts";
+export * from "./src/JsonSchemaSpecification.ts";
 export * from "./src/UnhandledKeys.ts";
-export * from "./src/main.ts";
 export * from "./src/transformers/Mutator.ts";
 export * from "./src/transformers/annotations.ts";
 export * from "./src/transformers/arrays.ts";
@@ -16,10 +15,10 @@ export * from "./src/transformers/id.ts";
 export * from "./src/transformers/nullable.ts";
 export * from "./src/transformers/numbers.ts";
 export * from "./src/transformers/objects.ts";
-export * from "./src/transformers/schema.ts";
 export * from "./src/transformers/strings.ts";
 export * from "./src/transformers/structuring.ts";
 export * from "./src/transformers/type.ts";
+export * from "./src/translateJsonSchema.ts";
 export * from "./src/utils.ts";
 export * from "./src/versions/draft2019_09.ts";
 export * from "./src/versions/draft2020_12.ts";

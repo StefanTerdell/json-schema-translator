@@ -1,6 +1,6 @@
 import { LooseStringLiteral } from "./utils.ts";
 
-export type JsonSchemaSettings = {
+export type JsonSchemaSpecification = {
   // shared
   $schema: string | undefined;
   $idPath: LooseStringLiteral<"id" | "$id">;

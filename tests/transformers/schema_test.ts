@@ -1,13 +1,16 @@
 import { assertEquals } from "@std/assert";
 import {
   JsonSchemaDraft2020_12,
-  jsonSchemaDraft2020_12Settings,
-} from "../../src/versions/draft2020_12.ts";
+  jsonSchemaDraft2020_12Specification,
+} from "../../src/specifications/draft2020_12.ts";
 import {
   JsonSchemaDraft4,
-  jsonSchemaDraft4Settings,
-} from "../../src/versions/draft4.ts";
-import { generateSchema } from "../../src/transformers/schema.ts";
+  jsonSchemaDraft4Specification,
+} from "../../src/specifications/draft4.ts";
+import {
+  translateJsonSchemaInternal,
+  defaultTranslateJsonSchemaOptions,
+} from "../../src/translateJsonSchema.ts";
 
 Deno.test("Hello", () => {
   const input: JsonSchemaDraft2020_12 = {
@@ -58,17 +61,18 @@ Deno.test("Hello", () => {
     arbitraryArray: ["arbitraryString", null],
   };
 
-  const result = generateSchema(
+  const result = translateJsonSchemaInternal(
     {
-      settings: jsonSchemaDraft2020_12Settings,
+      settings: jsonSchemaDraft2020_12Specification,
       schema: input,
       path: [],
     },
     {
-      settings: jsonSchemaDraft4Settings,
+      settings: jsonSchemaDraft4Specification,
       forceAllowBooleanSchema: false,
       unhandledKeys: new Map(),
     },
+    defaultTranslateJsonSchemaOptions,
   );
 
   assertEquals(output, result);

@@ -1,7 +1,7 @@
 import { JsonSchema } from "../JsonSchema.ts";
-import { JsonSchemaSettings } from "../JsonSchemaSettings.ts";
+import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
 
-export const jsonSchemaDraft2020_12Settings = {
+export const jsonSchemaDraft2020_12Specification = {
   $defsPath: "$defs" as const,
   $idPath: "$id" as const,
   $schema: "https://json-schema.org/draft/2020-12/schema" as const,
@@ -58,8 +58,9 @@ export const jsonSchemaDraft2020_12Settings = {
   unevaluatedProperties: true,
   $vocabulary: true,
   allowJson: true,
-} satisfies JsonSchemaSettings;
+} satisfies JsonSchemaSpecification;
 
-export type JsonSchemaDraft2020_12Settings =
-  typeof jsonSchemaDraft2020_12Settings;
-export type JsonSchemaDraft2020_12 = JsonSchema<JsonSchemaDraft2020_12Settings>;
+export type JsonSchemaDraft2020_12Specification =
+  typeof jsonSchemaDraft2020_12Specification;
+export type JsonSchemaDraft2020_12 =
+  JsonSchema<JsonSchemaDraft2020_12Specification>;

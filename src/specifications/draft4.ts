@@ -1,7 +1,7 @@
 import { JsonSchema } from "../JsonSchema.ts";
-import { JsonSchemaSettings } from "../JsonSchemaSettings.ts";
+import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
 
-export const jsonSchemaDraft4Settings = {
+export const jsonSchemaDraft4Specification = {
   $defsPath: "definitions" as const,
   booleanExclusiveMinimumAndMaximum: true,
   $idPath: "id" as const,
@@ -46,7 +46,8 @@ export const jsonSchemaDraft4Settings = {
   unevaluatedProperties: false,
   $vocabulary: false,
   allowJson: true,
-} satisfies JsonSchemaSettings;
+} satisfies JsonSchemaSpecification;
 
-export type JsonSchemaDraft4Settings = typeof jsonSchemaDraft4Settings;
-export type JsonSchemaDraft4 = JsonSchema<JsonSchemaDraft4Settings>;
+export type JsonSchemaDraft4Specification =
+  typeof jsonSchemaDraft4Specification;
+export type JsonSchemaDraft4 = JsonSchema<JsonSchemaDraft4Specification>;

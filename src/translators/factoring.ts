@@ -1,10 +1,10 @@
-import { generateSchema } from "./schema.ts";
+import { translateJsonSchemaInternal } from "../translateJsonSchema.ts";
 import { Mutator } from "./Mutator.ts";
 
-export const translateFactoringKeywords: Mutator = (input, output) => {
+export const translateFactoringKeywords: Mutator = (input, output, options) => {
   if (input.schema.anyOf !== undefined) {
     output.schema.anyOf = input.schema.anyOf.map((schema, index) =>
-      generateSchema(
+      translateJsonSchemaInternal(
         {
           schema,
           settings: input.settings,
@@ -15,6 +15,7 @@ export const translateFactoringKeywords: Mutator = (input, output) => {
           forceAllowBooleanSchema: false,
           unhandledKeys: output.unhandledKeys,
         },
+        options,
       ),
     );
   }
@@ -23,7 +24,7 @@ export const translateFactoringKeywords: Mutator = (input, output) => {
 
   if (input.schema.allOf !== undefined) {
     output.schema.allOf = input.schema.allOf.map((schema, index) =>
-      generateSchema(
+      translateJsonSchemaInternal(
         {
           schema,
           settings: input.settings,
@@ -34,6 +35,7 @@ export const translateFactoringKeywords: Mutator = (input, output) => {
           forceAllowBooleanSchema: false,
           unhandledKeys: output.unhandledKeys,
         },
+        options,
       ),
     );
   }
@@ -42,7 +44,7 @@ export const translateFactoringKeywords: Mutator = (input, output) => {
 
   if (input.schema.oneOf !== undefined) {
     output.schema.oneOf = input.schema.oneOf.map((schema, index) =>
-      generateSchema(
+      translateJsonSchemaInternal(
         {
           schema,
           settings: input.settings,
@@ -53,6 +55,7 @@ export const translateFactoringKeywords: Mutator = (input, output) => {
           forceAllowBooleanSchema: false,
           unhandledKeys: output.unhandledKeys,
         },
+        options,
       ),
     );
   }

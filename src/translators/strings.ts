@@ -1,9 +1,9 @@
 import { JsonSchemaKeywordsObject } from "../JsonSchema.ts";
-import { JsonSchemaSettings } from "../JsonSchemaSettings.ts";
-import { generateSchema } from "./schema.ts";
+import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
+import { translateJsonSchemaInternal } from "../translateJsonSchema.ts";
 import { Mutator } from "./Mutator.ts";
 
-export const translateStringKeywords: Mutator = (input, output) => {
+export const translateStringKeywords: Mutator = (input, output, options) => {
   if (input.schema.maxLength !== undefined) {
     output.schema.maxLength = input.schema.maxLength;
   }
@@ -34,7 +34,7 @@ export const translateStringKeywords: Mutator = (input, output) => {
   const media = input.settings.media
     ? (
         input.schema as unknown as JsonSchemaKeywordsObject<
-          JsonSchemaSettings & { media: true }
+          JsonSchemaSpecification & { media: true }
         >
       ).media
     : undefined;
@@ -72,7 +72,7 @@ export const translateStringKeywords: Mutator = (input, output) => {
       output.settings.contentSchema &&
       input.schema.contentSchema !== undefined
     ) {
-      output.schema.contentSchema = generateSchema(
+      output.schema.contentSchema = translateJsonSchemaInternal(
         {
           settings: input.settings,
           schema: input.schema.contentSchema!,
@@ -83,6 +83,7 @@ export const translateStringKeywords: Mutator = (input, output) => {
           forceAllowBooleanSchema: false,
           unhandledKeys: output.unhandledKeys,
         },
+        options,
       );
     }
 

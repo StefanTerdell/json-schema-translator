@@ -1,11 +1,11 @@
 import { JsonSchema } from "../JsonSchema.ts";
-import { JsonSchemaSettings } from "../JsonSchemaSettings.ts";
+import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
 
-export const jsonSchemaDraft7Settings = {
-  $defsPath: "definitions" as const,
+export const jsonSchemaDraft2019_09Specification = {
+  $defsPath: "$defs" as const,
   booleanExclusiveMinimumAndMaximum: false,
   $idPath: "$id" as const,
-  $schema: "https://json-schema.org/draft-07/schema" as const,
+  $schema: "https://json-schema.org/draft/2019-09/schema" as const,
   nonEmptyEnum: false,
   nonEmptyRequired: false,
   nonEmptyDependencies: false,
@@ -13,18 +13,19 @@ export const jsonSchemaDraft7Settings = {
   addNullTypeToOptional: false,
   addAllOptionalToRequired: false,
   $comment: true,
-  $anchor: false,
+  $anchor: true,
   booleanSchemas: false,
   const: true,
   contains: true,
   contentMediaTypeAndEncoding: true,
-  contentSchema: false,
-  deprecated: false,
+  contentSchema: true,
+  deprecated: true,
   $dynamicAnchorAndRef: false,
   examples: true,
   format: [
     "date",
     "date-time",
+    "duration",
     "email",
     "hostname",
     "idn-email",
@@ -40,23 +41,26 @@ export const jsonSchemaDraft7Settings = {
     "uri",
     "uri-reference",
     "uri-template",
+    "uuid",
   ] as const,
   ifThenElse: true,
   integerType: true,
   media: false,
-  minAndMaxContains: false,
+  minAndMaxContains: true,
   nullType: true,
   nullable: false,
   prefixItems: false,
   propertyNames: true,
   readAndWriteOnly: true,
-  $recursiveAnchorAndRef: false,
-  dependentRequiredAndSchemas: false,
-  unevaluatedItems: false,
-  unevaluatedProperties: false,
-  $vocabulary: false,
+  $recursiveAnchorAndRef: true,
+  dependentRequiredAndSchemas: true,
+  unevaluatedItems: true,
+  unevaluatedProperties: true,
+  $vocabulary: true,
   allowJson: true,
-} satisfies JsonSchemaSettings;
+} satisfies JsonSchemaSpecification;
 
-export type JsonSchemaDraft7Settings = typeof jsonSchemaDraft7Settings;
-export type JsonSchemaDraft7 = JsonSchema<JsonSchemaDraft7Settings>;
+export type JsonSchemaDraft2019_09Specification =
+  typeof jsonSchemaDraft2019_09Specification;
+export type JsonSchemaDraft2019_09 =
+  JsonSchema<JsonSchemaDraft2019_09Specification>;

@@ -1,5 +1,5 @@
 import { JsonSchemaKeywordsObject, JsonSchemaType } from "../JsonSchema.ts";
-import { JsonSchemaSettings } from "../JsonSchemaSettings.ts";
+import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
 import { Mutator } from "./Mutator.ts";
 
 export const translateTypeKeyword: Mutator = (input, output) => {
@@ -39,19 +39,19 @@ export const translateTypeKeyword: Mutator = (input, output) => {
 };
 
 const translateType = <
-  InputJsonSchemaSettings extends JsonSchemaSettings,
-  OutputJsonSchemaSettings extends JsonSchemaSettings,
+  InputJsonSchemaSpecification extends JsonSchemaSpecification,
+  OutputJsonSchemaSpecification extends JsonSchemaSpecification,
 >(
   input: {
-    type: JsonSchemaType<InputJsonSchemaSettings>;
-    settings: InputJsonSchemaSettings;
+    type: JsonSchemaType<InputJsonSchemaSpecification>;
+    settings: InputJsonSchemaSpecification;
   },
   output: {
-    settings: OutputJsonSchemaSettings;
-    schema: JsonSchemaKeywordsObject<OutputJsonSchemaSettings>;
+    settings: OutputJsonSchemaSpecification;
+    schema: JsonSchemaKeywordsObject<OutputJsonSchemaSpecification>;
   },
   skipIntegerFallback: boolean,
-): JsonSchemaType<OutputJsonSchemaSettings> | undefined => {
+): JsonSchemaType<OutputJsonSchemaSpecification> | undefined => {
   if (input.settings.nullType && input.type === "null") {
     if (output.settings.nullable) {
       output.schema.nullable = true;
