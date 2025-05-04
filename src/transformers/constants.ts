@@ -1,5 +1,5 @@
 import { Json } from "../Json.ts";
-import { isNonEmptyArray, NonEmptyArray } from "../utility-types.ts";
+import { isNonEmptyArray, NonEmptyArray } from "../utils.ts";
 import { TransformerFunction } from "./TransformFunction.ts";
 
 export const transformConstants: TransformerFunction = (input, output) => {

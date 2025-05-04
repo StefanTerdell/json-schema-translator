@@ -1,5 +1,5 @@
-import { JsonSchema } from "./JsonSchema.ts";
-import { JsonSchemaSettings } from "./JsonSchemaSettings.ts";
+import { JsonSchema } from "../JsonSchema.ts";
+import { JsonSchemaSettings } from "../JsonSchemaSettings.ts";
 
 export const jsonSchemaDraft2019_09Settings = {
   $defsPath: "$defs",

@@ -1,11 +1,11 @@
-import { JsonSchema } from "./JsonSchema.ts";
-import { JsonSchemaSettings } from "./JsonSchemaSettings.ts";
+import { JsonSchema } from "../JsonSchema.ts";
+import { JsonSchemaSettings } from "../JsonSchemaSettings.ts";
 
 export const jsonSchemaDraft2020_12Settings = {
-  $defsPath: "$defs",
+  $defsPath: "$defs" as const,
+  $idPath: "$id" as const,
+  $schema: "https://json-schema.org/draft/2020-12/schema" as const,
   booleanExclusiveMinimumAndMaximum: false,
-  $idPath: "$id",
-  $schema: "https://json-schema.org/draft/2020-12/schema",
   nonEmptyEnum: false,
   nonEmptyRequired: false,
   nonEmptyDependencies: false,

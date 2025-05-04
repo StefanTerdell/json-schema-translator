@@ -1,12 +1,12 @@
-import { JsonSchema } from "./JsonSchema.ts";
-import { JsonSchemaSettings } from "./JsonSchemaSettings.ts";
-import { JsonSchemaSettingsError } from "./JsonSchemaSettingsError.ts";
+import { JsonSchema } from "../JsonSchema.ts";
+import { JsonSchemaSettings } from "../JsonSchemaSettings.ts";
+// import { JsonSchemaSettingsError } from "./JsonSchemaSettingsError.ts";
 
 export const jsonSchemaDraft4Settings = {
-  $defsPath: "definitions",
+  $defsPath: "definitions" as const,
   booleanExclusiveMinimumAndMaximum: true,
-  $idPath: "id",
-  $schema: "https://json-schema.org/draft-04/schema",
+  $idPath: "id" as const,
+  $schema: "https://json-schema.org/draft-04/schema" as const,
   nonEmptyEnum: false,
   nonEmptyRequired: true,
   nonEmptyDependencies: true,
@@ -31,7 +31,7 @@ export const jsonSchemaDraft4Settings = {
     "ipv6",
     "uri",
     //
-  ],
+  ] as const,
   ifThenElse: false,
   integerType: true,
   media: false,
@@ -51,5 +51,5 @@ export const jsonSchemaDraft4Settings = {
 export type JsonSchemaDraft4Settings = typeof jsonSchemaDraft4Settings;
 export type JsonSchemaDraft4 = JsonSchema<JsonSchemaDraft4Settings>;
 
-const _jsonSchemaDraft4SettingsError: JsonSchemaSettingsError<JsonSchemaDraft4Settings> =
-  null;
+// const _jsonSchemaDraft4SettingsError: JsonSchemaSettingsError<JsonSchemaDraft4Settings> =
+//   null;
