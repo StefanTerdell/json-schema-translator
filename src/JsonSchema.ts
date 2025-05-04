@@ -158,7 +158,7 @@ export type JsonSchemaKeywordsObject<T extends JsonSchemaSpecification> = {
   $anchor?: T["$anchor"] extends true ? string : unknown;
   $ref?: string;
   $recursiveAnchor?: T["$recursiveAnchorAndRef"] extends true
-    ? string
+    ? boolean
     : unknown;
   $recursiveRef?: T["$recursiveAnchorAndRef"] extends true ? string : unknown;
   $dynamicAnchor?: T["$dynamicAnchorAndRef"] extends true ? string : unknown;
