@@ -1,4 +1,5 @@
 import {
+  AjvErrorMessages,
   JsonSchema,
   JsonSchemaKeyword,
   JsonSchemaObject,
@@ -149,6 +150,7 @@ export const translateJsonSchemaInternal = <
     translateArrayKeywords(newInput, newOutput, options);
     translateObjectKeywords(newInput, newOutput, options);
 
+    copyErrorMessages(newInput, newOutput, options);
     copyJson(newInput, newOutput, options);
 
     return output.settings.booleanSchemas || output.forceAllowBooleanSchema
@@ -160,6 +162,42 @@ export const translateJsonSchemaInternal = <
             false
           : newOutput.schema
       : newOutput.schema;
+  }
+};
+
+const copyErrorMessages: Mutator = (input, output, options) => {
+  if (input.settings.errorMessages === "ajv") {
+    if (output.settings.errorMessages === "ajv") {
+      const copyFn: ((json: AjvErrorMessages) => AjvErrorMessages) | undefined =
+        typeof options.copyJson === "function"
+          ? options.copyJson
+          : options.copyJson === "shallow"
+            ? (json) => json
+            : options.copyJson === "stringifyAndParse"
+              ? (json) => JSON.parse(JSON.stringify(json))
+              : undefined;
+
+      if (!copyFn) {
+        throw new Error(`Unknown copyJson option: ${options.copyJson}`);
+      }
+
+      const validate = (obj: object): obj is AjvErrorMessages =>
+        Object.values(obj).every(
+          (value) =>
+            typeof value === "string" ||
+            (typeof value === "object" && value && validate(value)),
+        );
+
+      if (
+        typeof input.schema.errorMessage === "object" &&
+        input.schema.errorMessage &&
+        validate(input.schema.errorMessage)
+      ) {
+        output.schema.errorMessage = copyFn(input.schema.errorMessage);
+
+        input.handledKeys.add("errorMessage");
+      }
+    }
   }
 };
 

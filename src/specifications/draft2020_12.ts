@@ -58,6 +58,7 @@ export const jsonSchemaDraft2020_12Specification = {
   unevaluatedProperties: true,
   $vocabulary: true,
   allowJson: true,
+  errorMessages: false,
 } satisfies JsonSchemaSpecification;
 
 export type JsonSchemaDraft2020_12Specification =

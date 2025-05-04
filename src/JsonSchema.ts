@@ -163,6 +163,15 @@ export type JsonSchemaKeywordsObject<T extends JsonSchemaSpecification> = {
   $recursiveRef?: T["$recursiveAnchorAndRef"] extends true ? string : unknown;
   $dynamicAnchor?: T["$dynamicAnchorAndRef"] extends true ? string : unknown;
   $dynamicRef?: T["$dynamicAnchorAndRef"] extends true ? string : unknown;
+
+  // de-facto standard extensions
+  errorMessage?: T["errorMessages"] extends "ajv" ? AjvErrorMessages : unknown;
+};
+
+export type AjvErrorMessages = {
+  [Key in LooseStringLiteral<JsonSchemaKeyword | "_">]:
+    | AjvErrorMessages
+    | string;
 };
 
 /* Represents a single valid value of the "type" keyword in a Json Schema */

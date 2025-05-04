@@ -46,6 +46,7 @@ export const jsonSchemaDraft4Specification = {
   unevaluatedProperties: false,
   $vocabulary: false,
   allowJson: true,
+  errorMessages: false,
 } satisfies JsonSchemaSpecification;
 
 export type JsonSchemaDraft4Specification =

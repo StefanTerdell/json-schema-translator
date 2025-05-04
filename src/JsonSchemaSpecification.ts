@@ -10,6 +10,9 @@ export type JsonSchemaSpecification = {
   nullable: boolean;
   allowJson: boolean;
 
+  // de-facto standard extensions
+  errorMessages: "ajv" | false;
+
   // annotations
   $comment: boolean;
   deprecated: boolean;
