@@ -2,10 +2,10 @@ import { JsonSchema } from "../JsonSchema.ts";
 import { JsonSchemaSettings } from "../JsonSchemaSettings.ts";
 
 export const jsonSchemaDraft2019_09Settings = {
-  $defsPath: "$defs",
+  $defsPath: "$defs" as const,
   booleanExclusiveMinimumAndMaximum: false,
-  $idPath: "$id",
-  $schema: "https://json-schema.org/draft/2019-09/schema",
+  $idPath: "$id" as const,
+  $schema: "https://json-schema.org/draft/2019-09/schema" as const,
   nonEmptyEnum: false,
   nonEmptyRequired: false,
   nonEmptyDependencies: false,
@@ -57,6 +57,7 @@ export const jsonSchemaDraft2019_09Settings = {
   unevaluatedItems: true,
   unevaluatedProperties: true,
   $vocabulary: true,
+  allowJson: true,
 } satisfies JsonSchemaSettings;
 
 export type JsonSchemaDraft2019_09Settings =

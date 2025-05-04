@@ -1,6 +1,5 @@
 import { JsonSchema } from "../JsonSchema.ts";
 import { JsonSchemaSettings } from "../JsonSchemaSettings.ts";
-// import { JsonSchemaSettingsError } from "./JsonSchemaSettingsError.ts";
 
 export const jsonSchemaDraft4Settings = {
   $defsPath: "definitions" as const,
@@ -46,10 +45,8 @@ export const jsonSchemaDraft4Settings = {
   unevaluatedItems: false,
   unevaluatedProperties: false,
   $vocabulary: false,
+  allowJson: true,
 } satisfies JsonSchemaSettings;
 
 export type JsonSchemaDraft4Settings = typeof jsonSchemaDraft4Settings;
 export type JsonSchemaDraft4 = JsonSchema<JsonSchemaDraft4Settings>;
-
-// const _jsonSchemaDraft4SettingsError: JsonSchemaSettingsError<JsonSchemaDraft4Settings> =
-//   null;

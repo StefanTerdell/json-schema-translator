@@ -1,16 +1,34 @@
 import { JsonSchemaKeywordsObject } from "../JsonSchema.ts";
 import { JsonSchemaSettings } from "../JsonSchemaSettings.ts";
-import { translateSchema } from "./schema.ts";
-import { TransformerFunction } from "./TransformFunction.ts";
+import { generateSchema } from "./schema.ts";
+import { Mutator } from "./Mutator.ts";
 
-export const transformStrings: TransformerFunction = (input, output) => {
-  output.schema.maxLength = input.schema.maxLength;
-  output.schema.minLength = input.schema.minLength;
-  output.schema.pattern = input.schema.pattern;
+export const translateStringKeywords: Mutator = (input, output) => {
+  if (input.schema.maxLength !== undefined) {
+    output.schema.maxLength = input.schema.maxLength;
+  }
 
-  if (output.settings.format) {
-    // TODO: Check array for matches? If no match, warn or error out? If so, should 'type' get the same treatment?
-    output.schema.format = input.schema.format;
+  input.handledKeys.add("maxLength");
+
+  if (input.schema.minLength !== undefined) {
+    output.schema.minLength = input.schema.minLength;
+  }
+
+  input.handledKeys.add("minLength");
+
+  if (input.schema.pattern !== undefined) {
+    output.schema.pattern = input.schema.pattern;
+  }
+
+  input.handledKeys.add("pattern");
+
+  if (input.settings.format) {
+    if (output.settings.format && input.schema.format !== undefined) {
+      // TODO: Check array for matches? If no match, warn or error out? If so, should 'type' get the same treatment?
+      output.schema.format = input.schema.format;
+    }
+
+    input.handledKeys.add("format");
   }
 
   const media = input.settings.media
@@ -40,20 +58,34 @@ export const transformStrings: TransformerFunction = (input, output) => {
     output.schema.contentMediaType = contentMediaType;
   }
 
-  if (
-    input.settings.contentSchema &&
-    output.settings.contentSchema &&
-    input.schema.contentSchema !== undefined
-  ) {
-    output.schema.contentSchema = translateSchema(
-      {
-        settings: input.settings,
-        schema: input.schema.contentSchema!,
-      },
-      {
-        settings: output.settings,
-        forceAllowBooleanSchema: false,
-      },
-    );
+  if (input.settings.media) {
+    input.handledKeys.add("media");
+  }
+
+  if (input.settings.contentMediaTypeAndEncoding) {
+    input.handledKeys.add("contentEncoding");
+    input.handledKeys.add("contentMediaType");
+  }
+
+  if (input.settings.contentSchema) {
+    if (
+      output.settings.contentSchema &&
+      input.schema.contentSchema !== undefined
+    ) {
+      output.schema.contentSchema = generateSchema(
+        {
+          settings: input.settings,
+          schema: input.schema.contentSchema!,
+          path: [...input.path, "contentSchema"],
+        },
+        {
+          settings: output.settings,
+          forceAllowBooleanSchema: false,
+          unhandledKeys: output.unhandledKeys,
+        },
+      );
+    }
+
+    input.handledKeys.add("contentSchema");
   }
 };

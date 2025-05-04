@@ -1,12 +1,16 @@
 import { Json } from "../Json.ts";
 import { isNonEmptyArray, NonEmptyArray } from "../utils.ts";
-import { TransformerFunction } from "./TransformFunction.ts";
+import { Mutator } from "./Mutator.ts";
 
-export const transformConstants: TransformerFunction = (input, output) => {
+export const translateConstantKeywords: Mutator = (input, output) => {
   const values: Json[] = input.schema.enum ?? [];
 
-  if (input.settings.const && input.schema.const !== undefined) {
-    values.push(input.schema.const);
+  if (input.settings.const) {
+    if (input.schema.const !== undefined) {
+      values.push(input.schema.const);
+    }
+
+    input.handledKeys.add("const");
   }
 
   if (isNonEmptyArray(values)) {
@@ -23,4 +27,6 @@ export const transformConstants: TransformerFunction = (input, output) => {
     // @ts-expect-error ISSUE: Narrowing breaks across generics
     output.schema.enum = [];
   }
+
+  input.handledKeys.add("enum");
 };

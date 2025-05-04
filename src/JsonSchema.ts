@@ -1,8 +1,8 @@
-import { Json } from "./Json.ts";
+import { Json, JsonObject } from "./Json.ts";
 import { JsonSchemaSettings } from "./JsonSchemaSettings.ts";
 import { LooseStringLiteral, NonEmptyArray } from "./utils.ts";
 
-/* Represents a JsonSchema as defined by the provided JsonSchemaSettings. Depending on the settings and specific keyword this can either be a JsonSchemaObject or a boolean */
+/** Represents a JsonSchema as defined by the provided JsonSchemaSettings. Depending on the settings and specific keyword this can either be a JsonSchemaObject or a boolean */
 export type JsonSchema<
   Options extends JsonSchemaSettings,
   ForceAllowBooleanSchema extends boolean = false,
@@ -11,32 +11,32 @@ export type JsonSchema<
   | (Options["booleanSchemas"] extends true ? boolean : never)
   | (ForceAllowBooleanSchema extends true ? boolean : never);
 
-/* A less strict version of JsonSchemaKeywordsObject allowing for arbitrary values and keywords not protected by the specification */
+export type JsonSchemaPathItem = LooseStringLiteral<JsonSchemaKeyword> | number;
+
+export type JsonSchemaPath = JsonSchemaPathItem[];
+
+/** This type serves two purposes:
+ * 1: Dynamically set the expected types of the keywords defined in the `$idPath` and `$defsPath` options
+ * 2: Allow (or forbid) arbitrary values for unspecified keywords based on the `allowJson` option
+ */
 export type JsonSchemaObject<T extends JsonSchemaSettings> = {
-  [Key in string]?: Key extends keyof JsonSchemaKeywordsObject<T>
+  [Key in
+    | keyof JsonSchemaKeywordsObject<T>
+    | T["$defsPath"]
+    | T["$idPath"]]?: Key extends keyof JsonSchemaKeywordsObject<T>
     ? JsonSchemaKeywordsObject<T>[Key]
     : Key extends T["$defsPath"]
-      ? { [Key in string]?: JsonSchema<T> }
+      ? { [Key in string]: JsonSchema<T> }
       : Key extends T["$idPath"]
         ? string
-        : Json;
-};
-
-// JsonSchemaKeywordsObject<T> & {
-//   [Key in Exclude<T["$defsPath"], JsonSchemaKeywords>]?: {
-//     [Key in string]?: JsonSchema<T>;
-//   };
-// } & {
-//   [Key in Exclude<T["$idPath"], JsonSchemaKeywords>]?: string;
-// } & {
-//   [Key in string]?: Json;
-// };
+        : never;
+} & (T["allowJson"] extends true ? JsonObject : unknown);
 
 /* All keywords defined in JsonSchemaKeywordsObject */
 // deno-lint-ignore no-explicit-any
-export type JsonSchemaKeywords = keyof JsonSchemaKeywordsObject<any>;
+export type JsonSchemaKeyword = keyof JsonSchemaKeywordsObject<any>;
 
-/* Represents a JsonSchema object as defined by the provided JsonSchemaSettings with no arbitrary keys allowed */
+/** Represents a JsonSchema object as defined by the provided JsonSchemaSettings with no arbitrary keys allowed */
 export type JsonSchemaKeywordsObject<T extends JsonSchemaSettings> = {
   // type
   type?: JsonSchemaType<T> | Array<JsonSchemaType<T>>;
@@ -137,7 +137,9 @@ export type JsonSchemaKeywordsObject<T extends JsonSchemaSettings> = {
   not?: JsonSchema<T>;
 
   // annotations
-  $schema?: T["$schema"];
+  $schema?: T["$schema"] extends string
+    ? LooseStringLiteral<T["$schema"]>
+    : unknown;
   $vocabulary?: T["$vocabulary"] extends true ? string : unknown;
   title?: string;
   description?: string;

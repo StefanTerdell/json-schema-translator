@@ -1,21 +1,28 @@
-import { JsonSchema, JsonSchemaObject } from "../JsonSchema.ts";
+import {
+  JsonSchema,
+  JsonSchemaKeyword,
+  JsonSchemaObject,
+  JsonSchemaPath,
+} from "../JsonSchema.ts";
 import { JsonSchemaSettings } from "../JsonSchemaSettings.ts";
-import { transformAnnotations } from "./annotations.ts";
-import { transformNullable } from "./nullable.ts";
-import { transformConstants } from "./constants.ts";
-import { transformType } from "./type.ts";
-import { transformConditionals } from "./transformConditionals.ts";
-import { transformFactoring } from "./factoring.ts";
-import { transformStructuring } from "./structuring.ts";
-import { transformId } from "./id.ts";
-import { transformDefinitions } from "./definitions.ts";
-import { transformStrings } from "./strings.ts";
-import { isAnySchema, isNeverSchema } from "../utils.ts";
-import { transformNumbers } from "./numbers.ts";
-import { transformArrays } from "./arrays.ts";
-import { transformObjects } from "./objects.ts";
+import { translateAnnotationKeywords } from "./annotations.ts";
+import { translateNullableKeyword } from "./nullable.ts";
+import { translateConstantKeywords } from "./constants.ts";
+import { translateTypeKeyword } from "./type.ts";
+import { translateConditionalKeywords } from "./conditionals.ts";
+import { translateFactoringKeywords } from "./factoring.ts";
+import { translateStructuringKeywords } from "./structuring.ts";
+import { translateIdKeyword } from "./id.ts";
+import { translateDefinitionsKeyword } from "./definitions.ts";
+import { translateStringKeywords } from "./strings.ts";
+import { isAnySchema, isNeverSchema, LooseStringLiteral } from "../utils.ts";
+import { translateNumberKeywords } from "./numbers.ts";
+import { translateArrayKeywords } from "./arrays.ts";
+import { translateObjectKeywords } from "./objects.ts";
+import { Mutator } from "./Mutator.ts";
+import { UnhandledKeysMap } from "../UnhandledKeys.ts";
 
-export const translateSchema = <
+export const generateSchema = <
   InputJsonSchemaSettings extends JsonSchemaSettings,
   OutputJsonSchemaSettings extends JsonSchemaSettings,
   ForceAllowBooleanSchema extends boolean,
@@ -23,10 +30,12 @@ export const translateSchema = <
   input: {
     settings: InputJsonSchemaSettings;
     schema: JsonSchema<InputJsonSchemaSettings, ForceAllowBooleanSchema>;
+    path: JsonSchemaPath;
   },
   output: {
     settings: OutputJsonSchemaSettings;
     forceAllowBooleanSchema: ForceAllowBooleanSchema;
+    unhandledKeys: UnhandledKeysMap;
   },
 ): JsonSchema<OutputJsonSchemaSettings, ForceAllowBooleanSchema> => {
   if (typeof input.schema === "boolean") {
@@ -40,27 +49,32 @@ export const translateSchema = <
     const newOutput = {
       schema: {},
       settings: output.settings,
+      unhandledKeys: output.unhandledKeys,
     };
 
     const newInput = {
       schema: input.schema as JsonSchemaObject<InputJsonSchemaSettings>,
       settings: input.settings,
+      handledKeys: new Set<LooseStringLiteral<JsonSchemaKeyword>>(),
+      path: input.path,
     };
 
-    transformId(newInput, newOutput);
-    transformDefinitions(newInput, newOutput);
+    translateIdKeyword(newInput, newOutput);
+    translateDefinitionsKeyword(newInput, newOutput);
 
-    transformType(newInput, newOutput);
-    transformNullable(newInput, newOutput);
-    transformFactoring(newInput, newOutput);
-    transformConditionals(newInput, newOutput);
-    transformAnnotations(newInput, newOutput);
-    transformConstants(newInput, newOutput);
-    transformStructuring(newInput, newOutput);
-    transformStrings(newInput, newOutput);
-    transformNumbers(newInput, newOutput);
-    transformArrays(newInput, newOutput);
-    transformObjects(newInput, newOutput);
+    translateTypeKeyword(newInput, newOutput);
+    translateNullableKeyword(newInput, newOutput);
+    translateFactoringKeywords(newInput, newOutput);
+    translateConditionalKeywords(newInput, newOutput);
+    translateAnnotationKeywords(newInput, newOutput);
+    translateConstantKeywords(newInput, newOutput);
+    translateStructuringKeywords(newInput, newOutput);
+    translateStringKeywords(newInput, newOutput);
+    translateNumberKeywords(newInput, newOutput);
+    translateArrayKeywords(newInput, newOutput);
+    translateObjectKeywords(newInput, newOutput);
+
+    copyJson(newInput, newOutput);
 
     return output.settings.booleanSchemas || output.forceAllowBooleanSchema
       ? isAnySchema(newOutput.schema)
@@ -69,5 +83,26 @@ export const translateSchema = <
           ? false
           : newOutput.schema
       : newOutput.schema;
+  }
+};
+
+const copyJson: Mutator = (input, output) => {
+  if (input.settings.allowJson) {
+    for (const key of Object.keys(input.schema).filter(
+      (key) => !input.handledKeys.has(key),
+    )) {
+      if (output.settings.allowJson) {
+        if (!(key in output.schema)) {
+          // @ts-expect-error CBA
+          output.schema[key] = input.schema[key];
+        } else {
+          output.unhandledKeys.set([...input.path, key], "conflict");
+        }
+      } else {
+        output.unhandledKeys.set([...input.path, key], "disallowed");
+      }
+
+      input.handledKeys.add(key);
+    }
   }
 };

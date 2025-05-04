@@ -2,10 +2,10 @@ import { JsonSchema } from "../JsonSchema.ts";
 import { JsonSchemaSettings } from "../JsonSchemaSettings.ts";
 
 export const jsonSchemaDraft6Settings = {
-  $defsPath: "definitions",
+  $defsPath: "definitions" as const,
   booleanExclusiveMinimumAndMaximum: false,
-  $idPath: "$id",
-  $schema: "https://json-schema.org/draft-06/schema",
+  $idPath: "$id" as const,
+  $schema: "https://json-schema.org/draft-06/schema" as const,
   nonEmptyEnum: false,
   nonEmptyRequired: false,
   nonEmptyDependencies: false,
@@ -48,6 +48,7 @@ export const jsonSchemaDraft6Settings = {
   unevaluatedItems: false,
   unevaluatedProperties: false,
   $vocabulary: false,
+  allowJson: true,
 } satisfies JsonSchemaSettings;
 
 export type JsonSchemaDraft6Settings = typeof jsonSchemaDraft6Settings;

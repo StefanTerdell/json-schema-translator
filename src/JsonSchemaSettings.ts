@@ -8,6 +8,7 @@ export type JsonSchemaSettings = {
   integerType: boolean;
   nullType: boolean;
   nullable: boolean;
+  allowJson: boolean;
 
   // annotations
   $comment: boolean;

@@ -1,9 +1,9 @@
 import { JsonSchema } from "../JsonSchema.ts";
 import { NonEmptyArray } from "../utils.ts";
-import { translateSchema } from "./schema.ts";
-import { TransformerFunction } from "./TransformFunction.ts";
+import { generateSchema } from "./schema.ts";
+import { Mutator } from "./Mutator.ts";
 
-export const transformObjects: TransformerFunction = (input, output) => {
+export const translateObjectKeywords: Mutator = (input, output) => {
   if (input.schema.properties) {
     const { properties, required } = Object.keys(
       input.schema.properties,
@@ -15,14 +15,16 @@ export const transformObjects: TransformerFunction = (input, output) => {
         },
         key,
       ) => {
-        const schema = translateSchema(
+        const schema = generateSchema(
           {
             settings: input.settings,
             schema: input.schema.properties![key],
+            path: [...input.path, "properties", key],
           },
           {
             settings: output.settings,
             forceAllowBooleanSchema: false,
+            unhandledKeys: output.unhandledKeys,
           },
         );
 
@@ -65,33 +67,43 @@ export const transformObjects: TransformerFunction = (input, output) => {
         output.schema.required = required as NonEmptyArray<string>;
       }
     }
+
+    input.handledKeys.add("required");
   }
 
+  input.handledKeys.add("properties");
+
   if (input.schema.additionalProperties !== undefined) {
-    output.schema.additionalProperties = translateSchema(
+    output.schema.additionalProperties = generateSchema(
       {
         settings: input.settings,
         schema: input.schema.additionalProperties,
+        path: [...input.path, "additionalProperties"],
       },
       {
         settings: output.settings,
         forceAllowBooleanSchema: true,
+        unhandledKeys: output.unhandledKeys,
       },
     );
   }
+
+  input.handledKeys.add("additionalProperties");
 
   if (input.schema.patternProperties !== undefined) {
     output.schema.patternProperties = Object.keys(
       input.schema.patternProperties,
     ).reduce((acc: Record<string, JsonSchema<typeof output.settings>>, key) => {
-      acc[key] = translateSchema(
+      acc[key] = generateSchema(
         {
           settings: input.settings,
           schema: input.schema.patternProperties![key],
+          path: [...input.path, "patternProperties", key],
         },
         {
           settings: output.settings,
           forceAllowBooleanSchema: false,
+          unhandledKeys: output.unhandledKeys,
         },
       );
 
@@ -99,51 +111,72 @@ export const transformObjects: TransformerFunction = (input, output) => {
     }, {});
   }
 
-  if (
-    input.settings.unevaluatedProperties &&
-    output.settings.unevaluatedProperties &&
-    input.schema.unevaluatedProperties !== undefined
-  ) {
-    output.schema.unevaluatedProperties = translateSchema(
-      {
-        settings: input.settings,
-        // @ts-expect-error ISSUE: Narrowing :p
-        schema: input.schema.unevaluatedProperties,
-      },
-      {
-        settings: output.settings,
-        forceAllowBooleanSchema: false,
-      },
-    );
-  }
+  input.handledKeys.add("patternProperties");
 
-  if (
-    input.settings.propertyNames &&
-    output.settings.propertyNames &&
-    input.schema.propertyNames !== undefined
-  ) {
-    const propertyNames = translateSchema(
-      {
-        settings: input.settings,
-        // @ts-expect-error ISSUE: Narrowing :p
-        schema: input.schema.propertyNames,
-      },
-      {
-        settings: output.settings,
-        forceAllowBooleanSchema: false,
-      },
-    );
-
-    if (typeof propertyNames === "object" && "type" in propertyNames) {
-      delete propertyNames.type;
+  if (input.settings.unevaluatedProperties) {
+    if (
+      output.settings.unevaluatedProperties &&
+      input.schema.unevaluatedProperties !== undefined
+    ) {
+      output.schema.unevaluatedProperties = generateSchema(
+        {
+          settings: input.settings,
+          // @ts-expect-error ISSUE: Narrowing :p
+          schema: input.schema.unevaluatedProperties,
+          path: [...input.path, "unevaluatedProperties"],
+        },
+        {
+          settings: output.settings,
+          forceAllowBooleanSchema: false,
+          unhandledKeys: output.unhandledKeys,
+        },
+      );
     }
 
-    // @ts-expect-error ISSUE: Messy type not allowing "type" kw
-    output.settings.propertyNames = propertyNames;
+    input.handledKeys.add("unevaluatedProperties");
   }
 
-  output.schema.maxProperties = input.schema.maxProperties;
-  output.schema.minProperties = input.schema.minProperties;
+  if (input.settings.propertyNames) {
+    if (
+      output.settings.propertyNames &&
+      input.schema.propertyNames !== undefined
+    ) {
+      const propertyNames = generateSchema(
+        {
+          settings: input.settings,
+          // @ts-expect-error ISSUE: Narrowing :p
+          schema: input.schema.propertyNames,
+          path: [...input.path, "propertyNames"],
+        },
+        {
+          settings: output.settings,
+          forceAllowBooleanSchema: false,
+          unhandledKeys: output.unhandledKeys,
+        },
+      );
+
+      if (typeof propertyNames === "object" && "type" in propertyNames) {
+        delete propertyNames.type;
+      }
+
+      // @ts-expect-error ISSUE: Messy type not allowing "type" kw
+      output.settings.propertyNames = propertyNames;
+    }
+
+    input.handledKeys.add("propertyNames");
+  }
+
+  if (input.schema.maxProperties !== undefined) {
+    output.schema.maxProperties = input.schema.maxProperties;
+  }
+
+  input.handledKeys.add("maxProperties");
+
+  if (input.schema.minProperties !== undefined) {
+    output.schema.minProperties = input.schema.minProperties;
+  }
+
+  input.handledKeys.add("minProperties");
 
   const dependentRequired = input.settings.dependentRequiredAndSchemas
     ? (input.schema.dependentRequired ?? {})
@@ -171,14 +204,16 @@ export const transformObjects: TransformerFunction = (input, output) => {
             typeof input.settings
           >;
 
-          acc[key] = translateSchema(
+          acc[key] = generateSchema(
             {
               settings: input.settings,
               schema,
+              path: [...input.path, "dependentSchemas", Number(key)],
             },
             {
               settings: output.settings,
               forceAllowBooleanSchema: false,
+              unhandledKeys: output.unhandledKeys,
             },
           );
 
@@ -191,14 +226,16 @@ export const transformObjects: TransformerFunction = (input, output) => {
           const schema = input.schema.dependencies![key];
 
           if (!Array.isArray(schema)) {
-            acc[key] = translateSchema(
+            acc[key] = generateSchema(
               {
                 settings: input.settings,
                 schema,
+                path: [...input.path, "dependencies", Number(key)],
               },
               {
                 settings: output.settings,
                 forceAllowBooleanSchema: false,
+                unhandledKeys: output.unhandledKeys,
               },
             );
           }
@@ -207,6 +244,13 @@ export const transformObjects: TransformerFunction = (input, output) => {
         },
         {},
       );
+
+  if (input.settings.dependentRequiredAndSchemas) {
+    input.handledKeys.add("dependentRequired");
+    input.handledKeys.add("dependentSchemas");
+  } else {
+    input.handledKeys.add("dependencies");
+  }
 
   if (output.settings.dependentRequiredAndSchemas) {
     if (Object.keys(dependentRequired).length) {

@@ -1,15 +1,15 @@
 import { JsonSchemaKeywordsObject, JsonSchemaType } from "../JsonSchema.ts";
 import { JsonSchemaSettings } from "../JsonSchemaSettings.ts";
-import { TransformerFunction } from "./TransformFunction.ts";
+import { Mutator } from "./Mutator.ts";
 
-export const transformType: TransformerFunction = (input, output) => {
+export const translateTypeKeyword: Mutator = (input, output) => {
   if (input.schema.type !== undefined) {
     if (Array.isArray(input.schema.type)) {
       const skipIntegerFallback = input.schema.type.includes("number");
 
       output.schema.type = input.schema.type
         .map((type) =>
-          transformSingleType(
+          translateType(
             {
               type,
               settings: input.settings,
@@ -20,7 +20,7 @@ export const transformType: TransformerFunction = (input, output) => {
         )
         .filter((type) => type !== undefined);
     } else {
-      output.schema.type = transformSingleType(
+      const type = translateType(
         {
           type: input.schema.type,
           settings: input.settings,
@@ -28,11 +28,17 @@ export const transformType: TransformerFunction = (input, output) => {
         output,
         false,
       );
+
+      if (type !== undefined) {
+        output.schema.type = type;
+      }
     }
   }
+
+  input.handledKeys.add("type");
 };
 
-const transformSingleType = <
+const translateType = <
   InputJsonSchemaSettings extends JsonSchemaSettings,
   OutputJsonSchemaSettings extends JsonSchemaSettings,
 >(
