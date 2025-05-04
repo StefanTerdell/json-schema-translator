@@ -2,15 +2,15 @@ import { assertEquals } from "@std/assert";
 import {
   JsonSchemaDraft2020_12,
   jsonSchemaDraft2020_12Specification,
-} from "../../src/specifications/draft2020_12.ts";
+} from "../src/specifications/draft2020_12.ts";
 import {
   JsonSchemaDraft4,
   jsonSchemaDraft4Specification,
-} from "../../src/specifications/draft4.ts";
+} from "../src/specifications/draft4.ts";
 import {
   translateJsonSchemaInternal,
   defaultTranslateJsonSchemaOptions,
-} from "../../src/translateJsonSchema.ts";
+} from "../src/translateJsonSchema.ts";
 
 Deno.test("Hello", () => {
   const input: JsonSchemaDraft2020_12 = {
