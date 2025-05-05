@@ -1,5 +1,5 @@
 import { copy } from "./copy.ts";
-import { Mutator } from "./translators/Mutator.ts";
+import { type Mutator } from "./translators/Mutator.ts";
 
 export const copyJson: Mutator = (ctx) => {
   if (ctx.input.settings.allowJson) {

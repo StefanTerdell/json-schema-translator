@@ -1,4 +1,4 @@
-import { Mutator } from "./Mutator.ts";
+import { type Mutator } from "./Mutator.ts";
 
 export const translateAnnotationKeywords: Mutator = (ctx) => {
   translateDefaultAnnotationKeywords(ctx);

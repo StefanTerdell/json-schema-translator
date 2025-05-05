@@ -1,7 +1,7 @@
-import { JsonSchemaPath } from "./JsonSchema.ts";
-import { JsonSchemaSpecification } from "./JsonSchemaSpecification.ts";
-import { TranslateJsonSchemaOptions } from "./translateJsonSchema.ts";
-import { UnhandledKeysMap } from "./UnhandledKeys.ts";
+import { type JsonSchema, type JsonSchemaPath } from "./JsonSchema.ts";
+import { type JsonSchemaSpecification } from "./JsonSchemaSpecification.ts";
+import { type TranslateJsonSchemaOptions } from "./translateJsonSchema.ts";
+import { type UnhandledKeysMap } from "./UnhandledKeys.ts";
 
 /** @internal */
 export type TranslateJsonSchemaContext<
@@ -16,4 +16,8 @@ export type TranslateJsonSchemaContext<
   output: {
     settings: OutputJsonSchemaSpecification;
   };
+  seen: Map<
+    JsonSchema<InputJsonSchemaSpecification>,
+    JsonSchema<OutputJsonSchemaSpecification>
+  >;
 };

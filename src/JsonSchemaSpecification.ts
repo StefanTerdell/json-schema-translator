@@ -1,4 +1,4 @@
-import { LooseStringLiteral } from "./utils.ts";
+import { type LooseStringLiteral } from "./utils.ts";
 
 export type JsonSchemaSpecification = {
   // shared

@@ -1,4 +1,4 @@
-import { Json } from "./Json.ts";
+import { type Json } from "./Json.ts";
 import { type JsonSchema } from "./JsonSchema.ts";
 import { type JsonSchemaSpecification } from "./JsonSchemaSpecification.ts";
 import { type UnhandledKeysMap } from "./UnhandledKeys.ts";
@@ -47,6 +47,7 @@ export function translateJsonSchema<
     forceAllowBooleanSchema: false,
     unhandledKeys: unhandledKeys,
     copyJson: options.copyJson,
+    seen: new Map(),
   });
 
   if (unhandledKeys.size) {

@@ -1,6 +1,6 @@
 import { copy } from "./copy.ts";
-import { AjvErrorMessages } from "./JsonSchema.ts";
-import { Mutator } from "./translators/Mutator.ts";
+import { type AjvErrorMessages } from "./JsonSchema.ts";
+import { type Mutator } from "./translators/Mutator.ts";
 
 export const copyErrorMessage: Mutator = (ctx) => {
   if (ctx.input.settings.errorMessages === "ajv") {

@@ -1,6 +1,6 @@
-import { JsonSchema } from "../JsonSchema.ts";
+import { type JsonSchema } from "../JsonSchema.ts";
 import { translateJsonSchemaInternal } from "../translateJsonSchemaInternal.ts";
-import { Mutator } from "./Mutator.ts";
+import { type Mutator } from "./Mutator.ts";
 
 export const translateArrayKeywords: Mutator = (ctx) => {
   translateBasicArrayKeywords(ctx);

@@ -1,5 +1,5 @@
-import { JsonObject } from "../Json.ts";
-import { Mutator } from "./Mutator.ts";
+import { type JsonObject } from "../Json.ts";
+import { type Mutator } from "./Mutator.ts";
 
 export const translateIdKeyword: Mutator = (ctx) => {
   const id = (ctx.input.schema as JsonObject)[ctx.input.settings.$idPath];

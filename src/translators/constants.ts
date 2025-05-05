@@ -1,6 +1,6 @@
-import { Json } from "../Json.ts";
-import { isNonEmptyArray, NonEmptyArray } from "../utils.ts";
-import { Mutator } from "./Mutator.ts";
+import { type Json } from "../Json.ts";
+import { isNonEmptyArray, type NonEmptyArray } from "../utils.ts";
+import { type Mutator } from "./Mutator.ts";
 
 export const translateConstantKeywords: Mutator = ({
   input,

@@ -1,7 +1,7 @@
-import { JsonObject } from "../Json.ts";
-import { JsonSchema } from "../JsonSchema.ts";
+import { type JsonObject } from "../Json.ts";
+import { type JsonSchema } from "../JsonSchema.ts";
 import { translateJsonSchemaInternal } from "../translateJsonSchemaInternal.ts";
-import { Mutator } from "./Mutator.ts";
+import { type Mutator } from "./Mutator.ts";
 
 export const translateDefinitionsKeyword: Mutator = (ctx) => {
   type OutputSpecification = typeof ctx.output.settings;

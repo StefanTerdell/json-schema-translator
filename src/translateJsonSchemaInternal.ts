@@ -1,5 +1,5 @@
-import { JsonSchema, JsonSchemaKeywordsObject } from "./JsonSchema.ts";
-import { JsonSchemaSpecification } from "./JsonSchemaSpecification.ts";
+import { type JsonSchema } from "./JsonSchema.ts";
+import { type JsonSchemaSpecification } from "./JsonSchemaSpecification.ts";
 import { copyErrorMessage } from "./copyErrorMessage.ts";
 import { copyJson } from "./copyJson.ts";
 import { translateAnnotationKeywords } from "./translators/annotations.ts";
@@ -9,15 +9,15 @@ import { translateConstantKeywords } from "./translators/constants.ts";
 import { translateDefinitionsKeyword } from "./translators/definitions.ts";
 import { translateFactoringKeywords } from "./translators/factoring.ts";
 import { translateIdKeyword } from "./translators/id.ts";
-import { MutatorContext } from "./translators/Mutator.ts";
+import { type MutatorContext } from "./translators/Mutator.ts";
 import { translateNullableKeyword } from "./translators/nullable.ts";
 import { translateNumberKeywords } from "./translators/numbers.ts";
 import { translateObjectKeywords } from "./translators/objects.ts";
 import { translateStringKeywords } from "./translators/strings.ts";
 import { translateStructuringKeywords } from "./translators/structuring.ts";
 import { translateTypeKeyword } from "./translators/type.ts";
-import { isAnySchema, isNeverSchema } from "./utils.ts";
-import { TranslateJsonSchemaContext } from "./TranslateJsonSchemaContext.ts";
+import { type TranslateJsonSchemaContext } from "./TranslateJsonSchemaContext.ts";
+import { collapseIntoBooleanSchema } from "./collapseIntoBooleanSchema.ts";
 
 /** @internal */
 export type TranslateJsonSchemaInternalContext<
@@ -47,6 +47,12 @@ export const translateJsonSchemaInternal = <
     ForceAllowBooleanSchema
   >,
 ): JsonSchema<OutputJsonSchemaSpecification, ForceAllowBooleanSchema> => {
+  const alreadyTranslated = ctx.seen.get(ctx.input.schema);
+
+  if (alreadyTranslated) {
+    return alreadyTranslated;
+  }
+
   const mctx: MutatorContext<
     InputJsonSchemaSpecification,
     OutputJsonSchemaSpecification
@@ -85,55 +91,12 @@ export const translateJsonSchemaInternal = <
   copyErrorMessage(mctx);
   copyJson(mctx);
 
-  return collapsePrimitiveSchema(mctx, ctx.forceAllowBooleanSchema);
-};
-const collapsePrimitiveSchema = <
-  Specification extends JsonSchemaSpecification,
-  ForceAllowBooleanSchemas extends boolean,
->(
-  ctx: {
-    output: {
-      schema: JsonSchemaKeywordsObject<Specification>;
-      settings: Specification;
-    };
-  },
-  forceAllowBooleanSchemas: ForceAllowBooleanSchemas,
-): JsonSchema<Specification, ForceAllowBooleanSchemas> => {
-  if (ctx.output.settings.booleanSchemas) {
-    if (isAnySchema(ctx.output.schema)) {
-      const schema: JsonSchema<
-        Specification & { booleanSchemas: true },
-        ForceAllowBooleanSchemas
-      > = true;
+  const outputSchema = collapseIntoBooleanSchema(
+    mctx.output,
+    ctx.forceAllowBooleanSchema,
+  );
 
-      return schema;
-    }
+  ctx.seen.set(ctx.input.schema, outputSchema);
 
-    if (isNeverSchema(ctx.output.schema)) {
-      const schema: JsonSchema<
-        Specification & { booleanSchemas: true },
-        ForceAllowBooleanSchemas
-      > = false;
-
-      return schema;
-    }
-  }
-
-  if (forceAllowBooleanSchemas) {
-    if (isAnySchema(ctx.output.schema)) {
-      const schema: JsonSchema<Specification, ForceAllowBooleanSchemas & true> =
-        true;
-
-      return schema;
-    }
-
-    if (isNeverSchema(ctx.output.schema)) {
-      const schema: JsonSchema<Specification, ForceAllowBooleanSchemas & true> =
-        false;
-
-      return schema;
-    }
-  }
-
-  return ctx.output.schema;
+  return outputSchema;
 };

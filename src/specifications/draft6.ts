@@ -1,5 +1,5 @@
-import { JsonSchema } from "../JsonSchema.ts";
-import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
+import { type JsonSchema } from "../JsonSchema.ts";
+import { type JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
 
 export const jsonSchemaDraft6Specification = {
   $defsPath: "definitions" as const,

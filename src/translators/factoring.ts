@@ -1,5 +1,5 @@
 import { translateJsonSchemaInternal } from "../translateJsonSchemaInternal.ts";
-import { Mutator } from "./Mutator.ts";
+import { type Mutator } from "./Mutator.ts";
 
 export const translateFactoringKeywords: Mutator = (ctx) => {
   if (ctx.input.schema.anyOf !== undefined) {

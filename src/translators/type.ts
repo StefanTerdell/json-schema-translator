@@ -1,9 +1,9 @@
 import {
-  JsonSchemaStaticKeywordsObject,
-  JsonSchemaType,
+  type JsonSchemaStaticKeywordsObject,
+  type JsonSchemaType,
 } from "../JsonSchema.ts";
-import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
-import { Mutator } from "./Mutator.ts";
+import { type JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
+import { type Mutator } from "./Mutator.ts";
 
 export const translateTypeKeyword: Mutator = ({
   input,

@@ -1,4 +1,4 @@
-import { Mutator } from "./Mutator.ts";
+import { type Mutator } from "./Mutator.ts";
 
 export const translateNullableKeyword: Mutator = ({
   input,
