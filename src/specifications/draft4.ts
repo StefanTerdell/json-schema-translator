@@ -5,7 +5,7 @@ export const jsonSchemaDraft4Specification = {
   $defsPath: "definitions" as const,
   booleanExclusiveMinimumAndMaximum: true,
   $idPath: "id" as const,
-  $schema: "https://json-schema.org/draft-04/schema" as const,
+  $schema: "http://json-schema.org/draft-04/schema#" as const,
   nonEmptyEnum: true,
   nonEmptyRequired: true,
   nonEmptyDependencies: true,

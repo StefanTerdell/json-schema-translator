@@ -33,6 +33,7 @@ Deno.test("id should be copied from and to the specified path", () => {
     },
     unhandledKeys: new Map(),
     copyJson: "stringifyAndParse",
+    seen: new Map(),
   });
 
   assertEquals(outputSchema, { bleh: "hello" });

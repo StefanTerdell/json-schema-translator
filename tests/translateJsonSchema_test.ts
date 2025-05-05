@@ -8,7 +8,6 @@ import {
   jsonSchemaDraft4Specification,
 } from "../src/specifications/draft4.ts";
 import { translateJsonSchemaInternal } from "../src/translateJsonSchemaInternal.ts";
-import { defaultTranslateJsonSchemaOptions } from "../src/translateJsonSchema.ts";
 
 Deno.test("Hello", () => {
   const input: JsonSchemaDraft2020_12 = {
@@ -36,7 +35,7 @@ Deno.test("Hello", () => {
   };
 
   const output: JsonSchemaDraft4 = {
-    $schema: "https://json-schema.org/draft-04/schema",
+    $schema: "http://json-schema.org/draft-04/schema#",
     type: "object",
     required: ["nullableString", "requiredString"],
     properties: {
@@ -71,6 +70,7 @@ Deno.test("Hello", () => {
     path: [],
     forceAllowBooleanSchema: false,
     unhandledKeys: new Map(),
+    seen: new Map(),
   });
 
   assertEquals(output, result);
