@@ -2,7 +2,11 @@ import { Json } from "../Json.ts";
 import { isNonEmptyArray, NonEmptyArray } from "../utils.ts";
 import { Mutator } from "./Mutator.ts";
 
-export const translateConstantKeywords: Mutator = (input, output) => {
+export const translateConstantKeywords: Mutator = ({
+  input,
+  output,
+  handledKeys,
+}) => {
   const values: Json[] = input.schema.enum ?? [];
 
   if (input.settings.const) {
@@ -10,7 +14,7 @@ export const translateConstantKeywords: Mutator = (input, output) => {
       values.push(input.schema.const);
     }
 
-    input.handledKeys.add("const");
+    handledKeys.add("const");
   }
 
   if (isNonEmptyArray(values)) {
@@ -28,5 +32,5 @@ export const translateConstantKeywords: Mutator = (input, output) => {
     output.schema.enum = [];
   }
 
-  input.handledKeys.add("enum");
+  handledKeys.add("enum");
 };

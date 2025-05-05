@@ -1,11 +1,15 @@
 import { Mutator } from "./Mutator.ts";
 
-export const translateNumberKeywords: Mutator = (input, output) => {
+export const translateNumberKeywords: Mutator = ({
+  input,
+  output,
+  handledKeys,
+}) => {
   if (input.schema.multipleOf !== undefined) {
     output.schema.multipleOf = input.schema.multipleOf;
   }
 
-  input.handledKeys.add("multipleOf");
+  handledKeys.add("multipleOf");
 
   if (input.settings.booleanExclusiveMinimumAndMaximum) {
     if (output.settings.booleanExclusiveMinimumAndMaximum) {
@@ -81,8 +85,8 @@ export const translateNumberKeywords: Mutator = (input, output) => {
     }
   }
 
-  input.handledKeys.add("minimum");
-  input.handledKeys.add("exclusiveMinimum");
-  input.handledKeys.add("maximum");
-  input.handledKeys.add("exclusiveMaximum");
+  handledKeys.add("minimum");
+  handledKeys.add("exclusiveMinimum");
+  handledKeys.add("maximum");
+  handledKeys.add("exclusiveMaximum");
 };

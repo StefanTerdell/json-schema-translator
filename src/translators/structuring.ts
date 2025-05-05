@@ -1,18 +1,22 @@
 import { Mutator } from "./Mutator.ts";
 
-export const translateStructuringKeywords: Mutator = (input, output) => {
+export const translateStructuringKeywords: Mutator = ({
+  input,
+  output,
+  handledKeys,
+}) => {
   if (input.schema.$ref !== undefined) {
     output.schema.$ref = input.schema.$ref;
   }
 
-  input.handledKeys.add("$ref");
+  handledKeys.add("$ref");
 
   if (input.settings.$anchor) {
     if (output.settings.$anchor && input.schema.$anchor !== undefined) {
       output.schema.$anchor = input.schema.$anchor;
     }
 
-    input.handledKeys.add("$anchor");
+    handledKeys.add("$anchor");
   }
 
   if (input.settings.$recursiveAnchorAndRef) {
@@ -26,8 +30,8 @@ export const translateStructuringKeywords: Mutator = (input, output) => {
       }
     }
 
-    input.handledKeys.add("$recursiveAnchor");
-    input.handledKeys.add("$recursiveRef");
+    handledKeys.add("$recursiveAnchor");
+    handledKeys.add("$recursiveRef");
   }
 
   if (input.settings.$dynamicAnchorAndRef) {
@@ -41,7 +45,7 @@ export const translateStructuringKeywords: Mutator = (input, output) => {
       }
     }
 
-    input.handledKeys.add("$dynamicAnchor");
-    input.handledKeys.add("$dynamicRef");
+    handledKeys.add("$dynamicAnchor");
+    handledKeys.add("$dynamicRef");
   }
 };

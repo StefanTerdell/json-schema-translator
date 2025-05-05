@@ -1,42 +1,46 @@
 import { Mutator } from "./Mutator.ts";
 
-export const translateAnnotationKeywords: Mutator = (
-  input,
-  output,
-  options,
-) => {
-  translateDefaultAnnotationKeywords(input, output, options);
-  translateControlledAnnotationKeywords(input, output, options);
-  translate$schemaKeyword(input, output, options);
+export const translateAnnotationKeywords: Mutator = (ctx) => {
+  translateDefaultAnnotationKeywords(ctx);
+  translateControlledAnnotationKeywords(ctx);
+  translate$schemaKeyword(ctx);
 };
 
-const translateDefaultAnnotationKeywords: Mutator = (input, output) => {
+const translateDefaultAnnotationKeywords: Mutator = ({
+  input,
+  output,
+  handledKeys,
+}) => {
   if (input.schema.title !== undefined) {
     output.schema.title = input.schema.title;
   }
 
-  input.handledKeys.add("title");
+  handledKeys.add("title");
 
   if (input.schema.description !== undefined) {
     output.schema.description = input.schema.description;
   }
 
-  input.handledKeys.add("description");
+  handledKeys.add("description");
 
   if (input.schema.default !== undefined) {
     output.schema.default = input.schema.default;
   }
 
-  input.handledKeys.add("default");
+  handledKeys.add("default");
 };
 
-const translateControlledAnnotationKeywords: Mutator = (input, output) => {
+const translateControlledAnnotationKeywords: Mutator = ({
+  input,
+  output,
+  handledKeys,
+}) => {
   if (input.settings.$comment) {
     if (output.settings.$comment && input.schema.$comment !== undefined) {
       output.schema.$comment = input.schema.$comment;
     }
 
-    input.handledKeys.add("$comment");
+    handledKeys.add("$comment");
   }
 
   if (input.settings.deprecated) {
@@ -44,7 +48,7 @@ const translateControlledAnnotationKeywords: Mutator = (input, output) => {
       output.schema.deprecated = input.schema.deprecated;
     }
 
-    input.handledKeys.add("deprecated");
+    handledKeys.add("deprecated");
   }
 
   if (input.settings.examples) {
@@ -52,7 +56,7 @@ const translateControlledAnnotationKeywords: Mutator = (input, output) => {
       output.schema.examples = input.schema.examples;
     }
 
-    input.handledKeys.add("examples");
+    handledKeys.add("examples");
   }
 
   if (input.settings.$vocabulary) {
@@ -60,7 +64,7 @@ const translateControlledAnnotationKeywords: Mutator = (input, output) => {
       output.schema.$vocabulary = input.schema.$vocabulary;
     }
 
-    input.handledKeys.add("$vocabulary");
+    handledKeys.add("$vocabulary");
   }
 
   if (input.settings.readAndWriteOnly) {
@@ -71,7 +75,7 @@ const translateControlledAnnotationKeywords: Mutator = (input, output) => {
       output.schema.readOnly = input.schema.readOnly;
     }
 
-    input.handledKeys.add("readOnly");
+    handledKeys.add("readOnly");
   }
 
   if (input.settings.readAndWriteOnly) {
@@ -82,11 +86,11 @@ const translateControlledAnnotationKeywords: Mutator = (input, output) => {
       output.schema.writeOnly = input.schema.writeOnly;
     }
 
-    input.handledKeys.add("writeOnly");
+    handledKeys.add("writeOnly");
   }
 };
 
-const translate$schemaKeyword: Mutator = (input, output) => {
+const translate$schemaKeyword: Mutator = ({ input, output, handledKeys }) => {
   if (input.settings.$schema !== undefined) {
     if (
       output.settings.$schema !== undefined &&
@@ -95,6 +99,6 @@ const translate$schemaKeyword: Mutator = (input, output) => {
       output.schema.$schema = output.settings.$schema;
     }
 
-    input.handledKeys.add("$schema");
+    handledKeys.add("$schema");
   }
 };

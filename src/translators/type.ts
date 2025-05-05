@@ -1,8 +1,15 @@
-import { JsonSchemaKeywordsObject, JsonSchemaType } from "../JsonSchema.ts";
+import {
+  JsonSchemaStaticKeywordsObject,
+  JsonSchemaType,
+} from "../JsonSchema.ts";
 import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
 import { Mutator } from "./Mutator.ts";
 
-export const translateTypeKeyword: Mutator = (input, output) => {
+export const translateTypeKeyword: Mutator = ({
+  input,
+  output,
+  handledKeys,
+}) => {
   if (input.schema.type !== undefined) {
     if (Array.isArray(input.schema.type)) {
       const skipIntegerFallback = input.schema.type.includes("number");
@@ -35,7 +42,7 @@ export const translateTypeKeyword: Mutator = (input, output) => {
     }
   }
 
-  input.handledKeys.add("type");
+  handledKeys.add("type");
 };
 
 const translateType = <
@@ -48,7 +55,7 @@ const translateType = <
   },
   output: {
     settings: OutputJsonSchemaSpecification;
-    schema: JsonSchemaKeywordsObject<OutputJsonSchemaSpecification>;
+    schema: JsonSchemaStaticKeywordsObject<OutputJsonSchemaSpecification>;
   },
   skipIntegerFallback: boolean,
 ): JsonSchemaType<OutputJsonSchemaSpecification> | undefined => {

@@ -1,6 +1,10 @@
 import { Mutator } from "./Mutator.ts";
 
-export const translateNullableKeyword: Mutator = (input, output) => {
+export const translateNullableKeyword: Mutator = ({
+  input,
+  output,
+  handledKeys,
+}) => {
   if (input.settings.nullable) {
     if (input.schema.nullable === true) {
       if (output.settings.nullable) {
@@ -18,6 +22,6 @@ export const translateNullableKeyword: Mutator = (input, output) => {
       }
     }
 
-    input.handledKeys.add("nullable");
+    handledKeys.add("nullable");
   }
 };

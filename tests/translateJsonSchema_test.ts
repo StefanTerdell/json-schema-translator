@@ -7,10 +7,8 @@ import {
   JsonSchemaDraft4,
   jsonSchemaDraft4Specification,
 } from "../src/specifications/draft4.ts";
-import {
-  translateJsonSchemaInternal,
-  defaultTranslateJsonSchemaOptions,
-} from "../src/translateJsonSchema.ts";
+import { translateJsonSchemaInternal } from "../src/translateJsonSchemaInternal.ts";
+import { defaultTranslateJsonSchemaOptions } from "../src/translateJsonSchema.ts";
 
 Deno.test("Hello", () => {
   const input: JsonSchemaDraft2020_12 = {
@@ -61,19 +59,19 @@ Deno.test("Hello", () => {
     arbitraryArray: ["arbitraryString", null],
   };
 
-  const result = translateJsonSchemaInternal(
-    {
+  const result = translateJsonSchemaInternal({
+    input: {
       settings: jsonSchemaDraft2020_12Specification,
       schema: input,
-      path: [],
     },
-    {
+    output: {
       settings: jsonSchemaDraft4Specification,
-      forceAllowBooleanSchema: false,
-      unhandledKeys: new Map(),
     },
-    defaultTranslateJsonSchemaOptions,
-  );
+    copyJson: "stringifyAndParse",
+    path: [],
+    forceAllowBooleanSchema: false,
+    unhandledKeys: new Map(),
+  });
 
   assertEquals(output, result);
 });

@@ -1,26 +1,31 @@
-import { JsonSchemaKeywordsObject } from "../JsonSchema.ts";
+import { JsonSchemaStaticKeywordsObject } from "../JsonSchema.ts";
 import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
-import { translateJsonSchemaInternal } from "../translateJsonSchema.ts";
+import { translateJsonSchemaInternal } from "../translateJsonSchemaInternal.ts";
 import { Mutator } from "./Mutator.ts";
 
-export const translateStringKeywords: Mutator = (input, output, options) => {
+export const translateStringKeywords: Mutator = (ctx) => {
+  translateBasicKeywords(ctx);
+  translateContentKeywords(ctx);
+};
+
+const translateBasicKeywords: Mutator = ({ input, output, handledKeys }) => {
   if (input.schema.maxLength !== undefined) {
     output.schema.maxLength = input.schema.maxLength;
   }
 
-  input.handledKeys.add("maxLength");
+  handledKeys.add("maxLength");
 
   if (input.schema.minLength !== undefined) {
     output.schema.minLength = input.schema.minLength;
   }
 
-  input.handledKeys.add("minLength");
+  handledKeys.add("minLength");
 
   if (input.schema.pattern !== undefined) {
     output.schema.pattern = input.schema.pattern;
   }
 
-  input.handledKeys.add("pattern");
+  handledKeys.add("pattern");
 
   if (input.settings.format) {
     if (output.settings.format && input.schema.format !== undefined) {
@@ -28,65 +33,63 @@ export const translateStringKeywords: Mutator = (input, output, options) => {
       output.schema.format = input.schema.format;
     }
 
-    input.handledKeys.add("format");
+    handledKeys.add("format");
   }
+};
 
-  const media = input.settings.media
+const translateContentKeywords: Mutator = (ctx) => {
+  const media = ctx.input.settings.media
     ? (
-        input.schema as unknown as JsonSchemaKeywordsObject<
+        ctx.input.schema as unknown as JsonSchemaStaticKeywordsObject<
           JsonSchemaSpecification & { media: true }
         >
       ).media
     : undefined;
 
-  const contentEncoding = input.settings.contentMediaTypeAndEncoding
-    ? input.schema.contentEncoding
+  const contentEncoding = ctx.input.settings.contentMediaTypeAndEncoding
+    ? ctx.input.schema.contentEncoding
     : media?.binaryEncoding;
 
-  const contentMediaType = input.settings.contentMediaTypeAndEncoding
-    ? input.schema.contentMediaType
+  const contentMediaType = ctx.input.settings.contentMediaTypeAndEncoding
+    ? ctx.input.schema.contentMediaType
     : media?.type;
 
-  if (output.settings.media && (contentEncoding || contentMediaType)) {
+  if (ctx.output.settings.media && (contentEncoding || contentMediaType)) {
     // @ts-expect-error ISSUE: Narrowing breaks across generics
-    output.schema.media = {
+    ctx.output.schema.media = {
       binaryEncoding: contentEncoding,
       type: contentMediaType,
     };
-  } else if (output.settings.contentMediaTypeAndEncoding) {
-    output.schema.contentEncoding = contentEncoding;
-    output.schema.contentMediaType = contentMediaType;
+  } else if (ctx.output.settings.contentMediaTypeAndEncoding) {
+    ctx.output.schema.contentEncoding = contentEncoding;
+    ctx.output.schema.contentMediaType = contentMediaType;
   }
 
-  if (input.settings.media) {
-    input.handledKeys.add("media");
+  if (ctx.input.settings.media) {
+    ctx.handledKeys.add("media");
   }
 
-  if (input.settings.contentMediaTypeAndEncoding) {
-    input.handledKeys.add("contentEncoding");
-    input.handledKeys.add("contentMediaType");
+  if (ctx.input.settings.contentMediaTypeAndEncoding) {
+    ctx.handledKeys.add("contentEncoding");
+    ctx.handledKeys.add("contentMediaType");
   }
 
-  if (input.settings.contentSchema) {
+  if (ctx.input.settings.contentSchema) {
     if (
-      output.settings.contentSchema &&
-      input.schema.contentSchema !== undefined
+      ctx.output.settings.contentSchema &&
+      ctx.input.schema.contentSchema !== undefined
     ) {
-      output.schema.contentSchema = translateJsonSchemaInternal(
-        {
-          settings: input.settings,
-          schema: input.schema.contentSchema!,
-          path: [...input.path, "contentSchema"],
+      ctx.output.schema.contentSchema = translateJsonSchemaInternal({
+        ...ctx,
+        input: {
+          ...ctx.input,
+          schema: ctx.input.schema.contentSchema!,
         },
-        {
-          settings: output.settings,
-          forceAllowBooleanSchema: false,
-          unhandledKeys: output.unhandledKeys,
-        },
-        options,
-      );
+        path: [...ctx.path, "contentSchema"],
+        forceAllowBooleanSchema: false,
+      });
     }
 
-    input.handledKeys.add("contentSchema");
+    ctx.handledKeys.add("contentSchema");
   }
 };

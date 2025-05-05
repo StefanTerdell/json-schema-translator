@@ -1,27 +1,33 @@
 import {
-  JsonSchemaKeyword,
   JsonSchemaKeywordsObject,
-  JsonSchemaPath,
+  JsonSchemaStaticKeywordsObject,
 } from "../JsonSchema.ts";
 import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
-import { TranslateJsonSchemaOptions } from "../translateJsonSchema.ts";
-import { UnhandledKeysMap } from "../UnhandledKeys.ts";
-import { LooseStringLiteral } from "../utils.ts";
+import { TranslateJsonSchemaContext } from "../TranslateJsonSchemaContext.ts";
+import { HandledKeysSet } from "../UnhandledKeys.ts";
+
+export type MutatorContext<
+  InputJsonSchemaSpecification extends JsonSchemaSpecification,
+  OutputJsonSchemaSpecification extends JsonSchemaSpecification,
+> = TranslateJsonSchemaContext<
+  InputJsonSchemaSpecification,
+  OutputJsonSchemaSpecification
+> & {
+  handledKeys: HandledKeysSet;
+  input: {
+    schema: JsonSchemaStaticKeywordsObject<InputJsonSchemaSpecification>;
+  };
+  output: {
+    schema: JsonSchemaKeywordsObject<OutputJsonSchemaSpecification>;
+  };
+};
 
 export type Mutator = <
   InputJsonSchemaSpecification extends JsonSchemaSpecification,
   OutputJsonSchemaSpecification extends JsonSchemaSpecification,
 >(
-  input: {
-    settings: InputJsonSchemaSpecification;
-    schema: JsonSchemaKeywordsObject<InputJsonSchemaSpecification>;
-    handledKeys: Set<LooseStringLiteral<JsonSchemaKeyword>>;
-    path: JsonSchemaPath;
-  },
-  output: {
-    settings: OutputJsonSchemaSpecification;
-    schema: JsonSchemaKeywordsObject<OutputJsonSchemaSpecification>;
-    unhandledKeys: UnhandledKeysMap;
-  },
-  options: TranslateJsonSchemaOptions,
+  ctx: MutatorContext<
+    InputJsonSchemaSpecification,
+    OutputJsonSchemaSpecification
+  >,
 ) => void;

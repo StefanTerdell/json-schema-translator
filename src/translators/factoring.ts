@@ -1,64 +1,52 @@
-import { translateJsonSchemaInternal } from "../translateJsonSchema.ts";
+import { translateJsonSchemaInternal } from "../translateJsonSchemaInternal.ts";
 import { Mutator } from "./Mutator.ts";
 
-export const translateFactoringKeywords: Mutator = (input, output, options) => {
-  if (input.schema.anyOf !== undefined) {
-    output.schema.anyOf = input.schema.anyOf.map((schema, index) =>
-      translateJsonSchemaInternal(
-        {
+export const translateFactoringKeywords: Mutator = (ctx) => {
+  if (ctx.input.schema.anyOf !== undefined) {
+    ctx.output.schema.anyOf = ctx.input.schema.anyOf.map((schema, index) =>
+      translateJsonSchemaInternal({
+        ...ctx,
+        input: {
+          ...ctx.input,
           schema,
-          settings: input.settings,
-          path: [...input.path, "anyOf", index],
         },
-        {
-          settings: output.settings,
-          forceAllowBooleanSchema: false,
-          unhandledKeys: output.unhandledKeys,
-        },
-        options,
-      ),
+        path: [...ctx.path, "anyOf", index],
+        forceAllowBooleanSchema: false,
+      }),
     );
   }
 
-  input.handledKeys.add("anyOf");
+  ctx.handledKeys.add("anyOf");
 
-  if (input.schema.allOf !== undefined) {
-    output.schema.allOf = input.schema.allOf.map((schema, index) =>
-      translateJsonSchemaInternal(
-        {
+  if (ctx.input.schema.allOf !== undefined) {
+    ctx.output.schema.allOf = ctx.input.schema.allOf.map((schema, index) =>
+      translateJsonSchemaInternal({
+        ...ctx,
+        input: {
+          ...ctx.input,
           schema,
-          settings: input.settings,
-          path: [...input.path, "allOf", index],
         },
-        {
-          settings: output.settings,
-          forceAllowBooleanSchema: false,
-          unhandledKeys: output.unhandledKeys,
-        },
-        options,
-      ),
+        path: [...ctx.path, "allOf", index],
+        forceAllowBooleanSchema: false,
+      }),
     );
   }
 
-  input.handledKeys.add("allOf");
+  ctx.handledKeys.add("allOf");
 
-  if (input.schema.oneOf !== undefined) {
-    output.schema.oneOf = input.schema.oneOf.map((schema, index) =>
-      translateJsonSchemaInternal(
-        {
+  if (ctx.input.schema.oneOf !== undefined) {
+    ctx.output.schema.oneOf = ctx.input.schema.oneOf.map((schema, index) =>
+      translateJsonSchemaInternal({
+        ...ctx,
+        input: {
+          ...ctx.input,
           schema,
-          settings: input.settings,
-          path: [...input.path, "oneOf", index],
         },
-        {
-          settings: output.settings,
-          forceAllowBooleanSchema: false,
-          unhandledKeys: output.unhandledKeys,
-        },
-        options,
-      ),
+        path: [...ctx.path, "oneOf", index],
+        forceAllowBooleanSchema: false,
+      }),
     );
   }
 
-  input.handledKeys.add("oneOf");
+  ctx.handledKeys.add("oneOf");
 };

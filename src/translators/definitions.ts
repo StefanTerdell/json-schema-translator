@@ -1,45 +1,36 @@
+import { JsonObject } from "../Json.ts";
 import { JsonSchema } from "../JsonSchema.ts";
-import { translateJsonSchemaInternal } from "../translateJsonSchema.ts";
+import { translateJsonSchemaInternal } from "../translateJsonSchemaInternal.ts";
 import { Mutator } from "./Mutator.ts";
 
-export const translateDefinitionsKeyword: Mutator = (
-  input,
-  output,
-  options,
-) => {
-  type InputSpecification = typeof input.settings;
-  type OutputSpecification = typeof output.settings;
+export const translateDefinitionsKeyword: Mutator = (ctx) => {
+  type OutputSpecification = typeof ctx.output.settings;
+  type InputSpecification = typeof ctx.input.settings;
 
-  // @ts-expect-error dynamic paths wip
-  const inputDefs = input.schema[input.settings.$defsPath] as
-    | Record<string, JsonSchema<InputSpecification>>
-    | undefined;
+  const inputDefs = (ctx.input.schema as JsonObject)[
+    ctx.input.settings.$defsPath
+  ] as Record<string, JsonSchema<InputSpecification>> | undefined;
 
   if (inputDefs !== undefined) {
-    // @ts-expect-error ISSUE: Narrowing breaks down across generics
-    output.schema[output.settings.$defsPath] = Object.keys(inputDefs).reduce(
-      (defs: Record<string, JsonSchema<OutputSpecification>>, key) => {
-        const schema = inputDefs[key];
-
-        defs[key] = translateJsonSchemaInternal(
-          {
-            schema,
-            settings: input.settings,
-            path: [...input.path, input.settings.$defsPath, key],
+    const outputDefs = Object.keys(inputDefs).reduce(
+      (outputDefs: Record<string, JsonSchema<OutputSpecification>>, key) => {
+        outputDefs[key] = translateJsonSchemaInternal({
+          ...ctx,
+          input: {
+            ...ctx.input,
+            schema: inputDefs[key],
           },
-          {
-            settings: output.settings,
-            forceAllowBooleanSchema: false,
-            unhandledKeys: output.unhandledKeys,
-          },
-          options,
-        );
+          forceAllowBooleanSchema: false,
+        });
 
-        return defs;
+        return outputDefs;
       },
       {},
     );
+
+    // @ts-expect-error ISSUE: Narrowing breaks down across generics
+    ctx.output.schema[ctx.output.settings.$defsPath] = outputDefs;
   }
 
-  input.handledKeys.add(input.settings.$defsPath);
+  ctx.handledKeys.add(ctx.input.settings.$defsPath);
 };

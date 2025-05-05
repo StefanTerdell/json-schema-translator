@@ -1,80 +1,60 @@
-import { translateJsonSchemaInternal } from "../translateJsonSchema.ts";
+import { translateJsonSchemaInternal } from "../translateJsonSchemaInternal.ts";
 import { Mutator } from "./Mutator.ts";
 
-export const translateConditionalKeywords: Mutator = (
-  input,
-  output,
-  options,
-) => {
-  if (input.schema.if !== undefined) {
-    output.schema.if = translateJsonSchemaInternal(
-      {
-        schema: input.schema.if,
-        settings: input.settings,
-        path: [...input.path, "if"],
+export const translateConditionalKeywords: Mutator = (ctx) => {
+  if (ctx.input.schema.if !== undefined) {
+    ctx.output.schema.if = translateJsonSchemaInternal({
+      ...ctx,
+      input: {
+        ...ctx.input,
+        schema: ctx.input.schema.if,
       },
-      {
-        settings: output.settings,
-        forceAllowBooleanSchema: false,
-        unhandledKeys: output.unhandledKeys,
-      },
-      options,
-    );
+      path: [...ctx.path, "if"],
+      forceAllowBooleanSchema: false,
+    });
   }
 
-  input.handledKeys.add("if");
+  ctx.handledKeys.add("if");
 
-  if (input.schema.then !== undefined) {
-    output.schema.then = translateJsonSchemaInternal(
-      {
-        schema: input.schema.then,
-        settings: input.settings,
-        path: [...input.path, "then"],
+  if (ctx.input.schema.then !== undefined) {
+    ctx.output.schema.then = translateJsonSchemaInternal({
+      ...ctx,
+      input: {
+        ...ctx.input,
+        schema: ctx.input.schema.then,
       },
-      {
-        settings: output.settings,
-        forceAllowBooleanSchema: false,
-        unhandledKeys: output.unhandledKeys,
-      },
-      options,
-    );
+      path: [...ctx.path, "then"],
+      forceAllowBooleanSchema: false,
+    });
   }
 
-  input.handledKeys.add("then");
+  ctx.handledKeys.add("then");
 
-  if (input.schema.else !== undefined) {
-    output.schema.else = translateJsonSchemaInternal(
-      {
-        schema: input.schema.else,
-        settings: input.settings,
-        path: [...input.path, "else"],
+  if (ctx.input.schema.else !== undefined) {
+    ctx.output.schema.else = translateJsonSchemaInternal({
+      ...ctx,
+      input: {
+        ...ctx.input,
+        schema: ctx.input.schema.else,
       },
-      {
-        settings: output.settings,
-        forceAllowBooleanSchema: false,
-        unhandledKeys: output.unhandledKeys,
-      },
-      options,
-    );
+      path: [...ctx.path, "else"],
+      forceAllowBooleanSchema: false,
+    });
   }
 
-  input.handledKeys.add("else");
+  ctx.handledKeys.add("else");
 
-  if (input.schema.not !== undefined) {
-    output.schema.not = translateJsonSchemaInternal(
-      {
-        schema: input.schema.not,
-        settings: input.settings,
-        path: [...input.path, "not"],
+  if (ctx.input.schema.not !== undefined) {
+    ctx.output.schema.not = translateJsonSchemaInternal({
+      ...ctx,
+      input: {
+        ...ctx.input,
+        schema: ctx.input.schema.not,
       },
-      {
-        settings: output.settings,
-        forceAllowBooleanSchema: false,
-        unhandledKeys: output.unhandledKeys,
-      },
-      options,
-    );
+      path: [...ctx.path, "not"],
+      forceAllowBooleanSchema: false,
+    });
   }
 
-  input.handledKeys.add("not");
+  ctx.handledKeys.add("not");
 };
