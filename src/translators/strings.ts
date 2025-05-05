@@ -9,23 +9,28 @@ export const translateStringKeywords: Mutator = (ctx) => {
 };
 
 const translateBasicKeywords: Mutator = ({ input, output, handledKeys }) => {
-  if (input.schema.maxLength !== undefined) {
-    output.schema.maxLength = input.schema.maxLength;
+  if (input.settings.minAndMaxLength) {
+    if (output.settings.minAndMaxLength) {
+      if (input.schema.maxLength !== undefined) {
+        output.schema.maxLength = input.schema.maxLength;
+      }
+
+      if (input.schema.minLength !== undefined) {
+        output.schema.minLength = input.schema.minLength;
+      }
+    }
+
+    handledKeys.add("maxLength");
+    handledKeys.add("minLength");
   }
 
-  handledKeys.add("maxLength");
+  if (input.settings.pattern) {
+    if (output.settings.pattern && input.schema.pattern !== undefined) {
+      output.schema.pattern = input.schema.pattern;
+    }
 
-  if (input.schema.minLength !== undefined) {
-    output.schema.minLength = input.schema.minLength;
+    handledKeys.add("pattern");
   }
-
-  handledKeys.add("minLength");
-
-  if (input.schema.pattern !== undefined) {
-    output.schema.pattern = input.schema.pattern;
-  }
-
-  handledKeys.add("pattern");
 
   if (input.settings.format) {
     if (output.settings.format && input.schema.format !== undefined) {

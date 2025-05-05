@@ -12,37 +12,46 @@ const translateBasicArrayKeywords: Mutator = ({
   output,
   handledKeys,
 }) => {
-  if (input.settings.minAndMaxContains && output.settings.minAndMaxContains) {
-    if (input.schema.maxContains !== undefined) {
-      output.schema.maxContains = input.schema.maxContains;
+  if (input.settings.minAndMaxContains) {
+    if (output.settings.minAndMaxContains) {
+      if (input.schema.maxContains !== undefined) {
+        output.schema.maxContains = input.schema.maxContains;
+      }
+
+      if (input.schema.minContains !== undefined) {
+        output.schema.minContains = input.schema.minContains;
+      }
     }
 
     handledKeys.add("maxContains");
-
-    if (input.schema.minContains !== undefined) {
-      output.schema.minContains = input.schema.minContains;
-    }
-
     handledKeys.add("minContains");
   }
 
-  if (output.schema.minItems !== undefined) {
-    output.schema.minItems = input.schema.minItems;
+  if (input.settings.minAndMaxItems) {
+    if (output.settings.minAndMaxItems) {
+      if (output.schema.minItems !== undefined) {
+        output.schema.minItems = input.schema.minItems;
+      }
+
+      if (output.schema.maxItems !== undefined) {
+        output.schema.maxItems = input.schema.maxItems;
+      }
+    }
+
+    handledKeys.add("minItems");
+    handledKeys.add("maxItems");
   }
 
-  handledKeys.add("minItems");
+  if (input.settings.uniqueItems) {
+    if (
+      output.settings.uniqueItems &&
+      output.schema.uniqueItems !== undefined
+    ) {
+      output.schema.uniqueItems = input.schema.uniqueItems;
+    }
 
-  if (output.schema.maxItems !== undefined) {
-    output.schema.maxItems = input.schema.maxItems;
+    handledKeys.add("uniqueItems");
   }
-
-  handledKeys.add("maxItems");
-
-  if (output.schema.uniqueItems !== undefined) {
-    output.schema.uniqueItems = input.schema.uniqueItems;
-  }
-
-  handledKeys.add("uniqueItems");
 };
 
 const translateItemKeywords: Mutator = (ctx) => {

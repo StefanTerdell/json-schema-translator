@@ -63,9 +63,9 @@ export type JsonSchemaStaticKeywordsObject<
   nullable?: If<Spec["nullable"], boolean>;
 
   // strings:
-  minLength?: number;
-  maxLength?: number;
-  pattern?: string;
+  minLength?: If<Spec["minAndMaxLength"], number>;
+  maxLength?: If<Spec["minAndMaxLength"], number>;
+  pattern?: If<Spec["pattern"], string>;
   format?: Spec["format"] extends true
     ? string
     : Spec["format"] extends (infer F extends string)[]
@@ -88,45 +88,53 @@ export type JsonSchemaStaticKeywordsObject<
   >;
 
   // numbers:
-  multipleOf?: number;
-  minimum?: number;
-  exclusiveMinimum?: If<
-    Spec["booleanExclusiveMinimumAndMaximum"],
-    boolean,
-    number
-  >;
-  exclusiveMaximum?: If<
-    Spec["booleanExclusiveMinimumAndMaximum"],
-    boolean,
-    number
-  >;
-  maximum?: number;
+  multipleOf?: If<Spec["multipleOf"], number>;
+  minimum?: If<Spec["minimumAndMaximum"], number>;
+  maximum?: If<Spec["minimumAndMaximum"], number>;
+  exclusiveMinimum?: Spec["exclusiveMinimumAndMaximum"] extends true
+    ? number
+    : Spec["exclusiveMinimumAndMaximum"] extends "boolean"
+      ? boolean
+      : unknown;
+  exclusiveMaximum?: Spec["exclusiveMinimumAndMaximum"] extends true
+    ? number
+    : Spec["exclusiveMinimumAndMaximum"] extends "boolean"
+      ? boolean
+      : unknown;
 
   // objects:
   required?: If<Spec["nonEmptyRequired"], NonEmptyArray<string>, string[]>;
   properties?: Record<string, JsonSchema<Spec>>;
-  additionalProperties?: JsonSchema<Spec, true>;
+  additionalProperties?: If<
+    Spec["additionalProperties"],
+    Spec["forceAdditionalProperties"] extends undefined
+      ? JsonSchema<Spec, true>
+      : Spec["forceAdditionalProperties"]
+  >;
   patternProperties?: Record<string, JsonSchema<Spec>>;
   unevaluatedProperties?: If<Spec["unevaluatedProperties"], JsonSchema<Spec>>;
   propertyNames?: If<
     Spec["propertyNames"],
     Omit<JsonSchemaObject<Spec>, "type"> | boolean
   >;
-  maxProperties?: number;
-  minProperties?: number;
+  maxProperties?: If<Spec["minAndMaxProperties"], number>;
+  minProperties?: If<Spec["minAndMaxProperties"], number>;
 
   // object conditionals
-  dependencies?: Record<
-    string,
-    | If<Spec["nonEmptyDependencies"], NonEmptyArray<string>, string[]>
-    | JsonSchema<Spec>
+  dependencies?: If<
+    Spec["dependencies"],
+    Record<
+      string,
+      | If<Spec["nonEmptyDependencies"], NonEmptyArray<string>, string[]>
+      | JsonSchema<Spec>
+    >
   >;
   dependentRequired?: If<
-    Spec["dependentRequiredAndSchemas"],
+    All<[Spec["dependentRequiredAndSchemas"], Spec["dependencies"]]>,
     Record<string, Array<string>>
   >;
   dependentSchemas?: If<
-    Spec["dependentRequiredAndSchemas"],
+    All<[Spec["dependentRequiredAndSchemas"], Spec["dependencies"]]>,
     Record<string, JsonSchema<Spec>>
   >;
 

@@ -75,7 +75,9 @@ const translateType = <
     if (output.settings.integerType) {
       return "integer";
     } else if (!skipIntegerFallback) {
-      output.schema.multipleOf = 1;
+      if (output.settings.multipleOf) {
+        output.schema.multipleOf = 1;
+      }
       return "number";
     } else {
       return undefined;

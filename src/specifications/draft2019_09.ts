@@ -3,7 +3,7 @@ import { type JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
 
 export const jsonSchemaDraft2019_09Specification = {
   $defsPath: "$defs" as const,
-  booleanExclusiveMinimumAndMaximum: false,
+  exclusiveMinimumAndMaximum: true,
   $idPath: "$id" as const,
   $schema: "https://json-schema.org/draft/2019-09/schema" as const,
   nonEmptyEnum: false,
@@ -11,7 +11,9 @@ export const jsonSchemaDraft2019_09Specification = {
   nonEmptyDependencies: false,
   addNullableToOptional: false,
   addNullTypeToOptional: false,
-  addAllOptionalToRequired: false,
+  makeNullTypeOptional: false,
+  makeNullableOptional: false,
+  allPropertiesRequired: false,
   $comment: true,
   $anchor: true,
   booleanSchemas: false,
@@ -59,6 +61,17 @@ export const jsonSchemaDraft2019_09Specification = {
   $vocabulary: true,
   allowJson: true,
   errorMessages: false,
+  minAndMaxItems: true,
+  uniqueItems: true,
+  minimumAndMaximum: true,
+  multipleOf: true,
+  minAndMaxLength: true,
+  pattern: true,
+  patternProperties: true,
+  minAndMaxProperties: true,
+  additionalProperties: true,
+  forceAdditionalProperties: undefined,
+  dependencies: true,
 } satisfies JsonSchemaSpecification;
 
 export type JsonSchemaDraft2019_09Specification =

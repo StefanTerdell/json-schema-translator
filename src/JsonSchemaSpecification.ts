@@ -25,9 +25,13 @@ export type JsonSchemaSpecification = {
   minAndMaxContains: boolean;
   prefixItems: boolean;
   unevaluatedItems: boolean;
+  minAndMaxItems: boolean;
+  uniqueItems: boolean;
 
   // number
-  booleanExclusiveMinimumAndMaximum: boolean;
+  exclusiveMinimumAndMaximum: boolean | "boolean";
+  minimumAndMaximum: boolean;
+  multipleOf: boolean;
 
   // content
   contentMediaTypeAndEncoding: boolean;
@@ -46,6 +50,8 @@ export type JsonSchemaSpecification = {
 
   // string
   format: boolean | string[];
+  minAndMaxLength: boolean;
+  pattern: boolean;
 
   // conditional
   ifThenElse: boolean;
@@ -56,9 +62,16 @@ export type JsonSchemaSpecification = {
 
   addNullTypeToOptional: boolean;
   addNullableToOptional: boolean;
-  addAllOptionalToRequired: boolean;
+  makeNullTypeOptional: boolean;
+  makeNullableOptional: boolean;
+  allPropertiesRequired: boolean;
 
+  dependencies: boolean;
   dependentRequiredAndSchemas: boolean;
   unevaluatedProperties: boolean;
+  patternProperties: boolean;
   propertyNames: boolean;
+  minAndMaxProperties: boolean;
+  additionalProperties: boolean;
+  forceAdditionalProperties: undefined | boolean;
 };
