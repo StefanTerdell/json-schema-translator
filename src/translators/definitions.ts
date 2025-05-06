@@ -7,30 +7,35 @@ export const translateDefinitionsKeyword: Mutator = (ctx) => {
   type OutputSpecification = typeof ctx.output.settings;
   type InputSpecification = typeof ctx.input.settings;
 
-  const inputDefs = (ctx.input.schema as JsonObject)[
-    ctx.input.settings.$defsPath
-  ] as Record<string, JsonSchema<InputSpecification>> | undefined;
+  if (typeof ctx.input.settings.$defs === "string") {
+    const inputDefs = (ctx.input.schema as JsonObject)[
+      ctx.input.settings.$defs
+    ] as Record<string, JsonSchema<InputSpecification>> | undefined;
 
-  if (inputDefs !== undefined) {
-    const outputDefs = Object.keys(inputDefs).reduce(
-      (outputDefs: Record<string, JsonSchema<OutputSpecification>>, key) => {
-        outputDefs[key] = translateJsonSchemaInternal({
-          ...ctx,
-          input: {
-            ...ctx.input,
-            schema: inputDefs[key],
-          },
-          forceAllowBooleanSchema: false,
-        });
+    if (
+      inputDefs !== undefined &&
+      typeof ctx.output.settings.$defs === "string"
+    ) {
+      const outputDefs = Object.keys(inputDefs).reduce(
+        (outputDefs: Record<string, JsonSchema<OutputSpecification>>, key) => {
+          outputDefs[key] = translateJsonSchemaInternal({
+            ...ctx,
+            input: {
+              ...ctx.input,
+              schema: inputDefs[key],
+            },
+            forceAllowBooleanSchema: false,
+          });
 
-        return outputDefs;
-      },
-      {},
-    );
+          return outputDefs;
+        },
+        {},
+      );
 
-    // @ts-expect-error ISSUE: Narrowing breaks down across generics
-    ctx.output.schema[ctx.output.settings.$defsPath] = outputDefs;
+      // @ts-expect-error ISSUE: Narrowing breaks down across generics
+      ctx.output.schema[ctx.output.settings.$defs] = outputDefs;
+    }
+
+    ctx.handledKeys.add(ctx.input.settings.$defs);
   }
-
-  ctx.handledKeys.add(ctx.input.settings.$defsPath);
 };

@@ -2,64 +2,102 @@ import { type JsonSchema } from "../JsonSchema.ts";
 import { type JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
 
 export const jsonSchemaDraft4Specification = {
-  $defsPath: "definitions" as const,
-  exclusiveMinimumAndMaximum: "boolean",
-  $idPath: "id" as const,
-  $schema: "http://json-schema.org/draft-04/schema#" as const,
-  nonEmptyEnum: true,
-  nonEmptyRequired: true,
-  nonEmptyDependencies: true,
-  addNullableToOptional: false,
-  addNullTypeToOptional: false,
-  makeNullTypeOptional: false,
-  makeNullableOptional: false,
-  allPropertiesRequired: false,
-  $comment: false,
-  $anchor: false,
-  booleanSchemas: false,
-  const: false,
-  contains: false,
-  contentMediaTypeAndEncoding: false,
-  contentSchema: false,
-  deprecated: false,
-  $dynamicAnchorAndRef: false,
-  examples: false,
-  format: [
-    "date-time",
-    "email",
-    "hostname",
-    "ipv4",
-    "ipv6",
-    "uri",
-    //
-  ] as const,
-  ifThenElse: false,
-  integerType: true,
-  media: false,
-  minAndMaxContains: false,
-  nullType: true,
+  // Shared
   nullable: false,
-  prefixItems: false,
-  propertyNames: false,
-  readAndWriteOnly: false,
-  $recursiveAnchorAndRef: false,
-  dependentRequiredAndSchemas: false,
-  unevaluatedItems: false,
-  unevaluatedProperties: false,
+  arbitraryJson: true,
+  booleanSchemas: false,
+
+  // Annotations
+  $schema: "http://json-schema.org/draft-04/schema#" as const,
+  $comment: false,
+  deprecated: false,
+  examples: false,
   $vocabulary: false,
-  allowJson: true,
-  errorMessages: false,
-  minAndMaxItems: true,
+  readOnly: false,
+  writeOnly: false,
+
+  // Extensions
+  errorMessage: false,
+  propertyOrdering: false,
+
+  // Types
+  integer: true,
+  null: true,
+  strictTypes: false,
+
+  // Arrays
+  prefixItems: false,
+  additionalItems: true,
+  maxItems: true,
+  minItems: true,
+  unevaluatedItems: false,
   uniqueItems: true,
-  minimumAndMaximum: true,
+  contains: false,
+  minContains: false,
+  maxContains: false,
+
+  // Format
+  format: ["date-time", "email", "hostname", "ipv4", "ipv6", "uri"] as const,
+  strictFormats: true,
+
+  // Numbers
   multipleOf: true,
-  minAndMaxLength: true,
+  minimum: true,
+  exclusiveMinimum: "boolean",
+  maximum: true,
+  exclusiveMaximum: "boolean",
+
+  // Strings
+  minLength: true,
+  maxLength: true,
   pattern: true,
+  media: false,
+  contentMediaType: false,
+  contentEncoding: false,
+  contentSchema: false,
+
+  // Constants
+  const: false,
+  enum: true,
+  nonEmptyEnum: true,
+
+  // Structuring
+  $id: "id" as const,
+  $defs: "definitions" as const,
+  $anchor: false,
+  $dynamicRef: false,
+  $dynamicAnchor: false,
+  $recursiveRef: false,
+  $recursiveAnchor: false,
+
+  // Conditionals
+  if: false,
+  then: false,
+  else: false,
+
+  // Factoring
+  anyOf: true,
+  oneOf: true,
+  allOf: true,
+
+  // Objects and properties
+  unevaluatedProperties: false,
   patternProperties: true,
-  minAndMaxProperties: true,
+  propertyNames: false,
+  minProperties: true,
+  maxProperties: true,
+  nonEmptyRequired: true,
+  allPropertiesRequired: false,
   additionalProperties: true,
   forceAdditionalProperties: undefined,
   dependencies: true,
+  dependentRequired: false,
+  dependentSchemas: false,
+  nonEmptyDependencies: true,
+  addNullTypeToOptionalProperties: false,
+  treatPropertiesWithNullTypeAsOptional: false,
+  setOptionalPropertiesToNullable: false,
+  treatNullablePropertiesAsOptional: false,
 } satisfies JsonSchemaSpecification;
 
 export type JsonSchemaDraft4Specification =

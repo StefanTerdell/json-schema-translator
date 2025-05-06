@@ -2,28 +2,41 @@ import { type JsonSchema } from "../JsonSchema.ts";
 import { type JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
 
 export const jsonSchemaDraft6Specification = {
-  $defsPath: "definitions" as const,
-  exclusiveMinimumAndMaximum: true,
-  $idPath: "$id" as const,
-  $schema: "http://json-schema.org/draft-06/schema#" as const,
-  nonEmptyEnum: false,
-  nonEmptyRequired: false,
-  nonEmptyDependencies: false,
-  addNullableToOptional: false,
-  addNullTypeToOptional: false,
-  makeNullTypeOptional: false,
-  makeNullableOptional: false,
-  allPropertiesRequired: false,
-  $comment: false,
-  $anchor: false,
+  // Shared
+  nullable: false,
+  arbitraryJson: true,
   booleanSchemas: false,
-  const: true,
-  contains: true,
-  contentMediaTypeAndEncoding: false,
-  contentSchema: false,
+
+  // Annotations
+  $schema: "http://json-schema.org/draft-06/schema#" as const,
+  $comment: false,
   deprecated: false,
-  $dynamicAnchorAndRef: false,
   examples: true,
+  $vocabulary: false,
+  readOnly: false,
+  writeOnly: false,
+
+  // Extensions
+  errorMessage: false,
+  propertyOrdering: false,
+
+  // Types
+  integer: true,
+  null: true,
+  strictTypes: false,
+
+  // Arrays
+  prefixItems: false,
+  additionalItems: true,
+  maxItems: true,
+  minItems: true,
+  unevaluatedItems: false,
+  uniqueItems: true,
+  contains: true,
+  minContains: false,
+  maxContains: false,
+
+  // Format
   format: [
     "date-time",
     "email",
@@ -34,35 +47,67 @@ export const jsonSchemaDraft6Specification = {
     "uri",
     "uri-reference",
     "uri-template",
-    //
   ] as const,
-  ifThenElse: false,
-  integerType: true,
-  media: true,
-  minAndMaxContains: false,
-  nullType: true,
-  nullable: false,
-  prefixItems: false,
-  propertyNames: true,
-  readAndWriteOnly: false,
-  $recursiveAnchorAndRef: false,
-  dependentRequiredAndSchemas: false,
-  unevaluatedItems: false,
-  unevaluatedProperties: false,
-  $vocabulary: false,
-  allowJson: true,
-  errorMessages: false,
-  minAndMaxItems: true,
-  uniqueItems: true,
-  minimumAndMaximum: true,
+  strictFormats: true,
+
+  // Numbers
   multipleOf: true,
-  minAndMaxLength: true,
+  minimum: true,
+  exclusiveMinimum: true,
+  maximum: true,
+  exclusiveMaximum: true,
+
+  // Strings
+  minLength: true,
+  maxLength: true,
   pattern: true,
+  media: true,
+  contentMediaType: false,
+  contentEncoding: false,
+  contentSchema: false,
+
+  // Constants
+  const: true,
+  enum: true,
+  nonEmptyEnum: false,
+
+  // Structuring
+  $id: "$id" as const,
+  $defs: "definitions" as const,
+  $anchor: false,
+  $dynamicRef: false,
+  $dynamicAnchor: false,
+  $recursiveRef: false,
+  $recursiveAnchor: false,
+
+  // Conditionals
+  if: false,
+  then: false,
+  else: false,
+
+  // Factoring
+  anyOf: true,
+  oneOf: true,
+  allOf: true,
+
+  // Objects and properties
+  unevaluatedProperties: false,
   patternProperties: true,
-  minAndMaxProperties: true,
+  propertyNames: true,
+  minProperties: true,
+  maxProperties: true,
+  nonEmptyRequired: true,
+  allPropertiesRequired: false,
   additionalProperties: true,
   forceAdditionalProperties: undefined,
   dependencies: true,
+  dependentRequired: false,
+  dependentSchemas: false,
+  nonEmptyDependencies: false,
+  addNullTypeToOptionalProperties: false,
+  treatPropertiesWithNullTypeAsOptional: false,
+  setOptionalPropertiesToNullable: false,
+  treatNullablePropertiesAsOptional: false,
 } satisfies JsonSchemaSpecification;
 
 export type JsonSchemaDraft6Specification =

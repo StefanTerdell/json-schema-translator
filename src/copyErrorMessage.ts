@@ -3,8 +3,8 @@ import { type AjvErrorMessages } from "./JsonSchema.ts";
 import { type Mutator } from "./translators/Mutator.ts";
 
 export const copyErrorMessage: Mutator = (ctx) => {
-  if (ctx.input.settings.errorMessages === "ajv") {
-    if (ctx.output.settings.errorMessages === "ajv") {
+  if (ctx.input.settings.errorMessage === "ajv") {
+    if (ctx.output.settings.errorMessage === "ajv") {
       const isAjvErrorMessage = (obj: object): obj is AjvErrorMessages =>
         Object.values(obj).every(
           (value) =>

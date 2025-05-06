@@ -12,41 +12,48 @@ const translateBasicArrayKeywords: Mutator = ({
   output,
   handledKeys,
 }) => {
-  if (input.settings.minAndMaxContains) {
-    if (output.settings.minAndMaxContains) {
-      if (input.schema.maxContains !== undefined) {
+  if (input.settings.contains) {
+    if (input.settings.minContains) {
+      if (
+        output.settings.minContains &&
+        input.schema.minContains !== undefined
+      ) {
+        output.schema.minContains = input.schema.minContains;
+      }
+
+      handledKeys.add("minContains");
+    }
+
+    if (input.settings.maxContains) {
+      if (
+        output.settings.maxContains &&
+        input.schema.maxContains !== undefined
+      ) {
         output.schema.maxContains = input.schema.maxContains;
       }
 
-      if (input.schema.minContains !== undefined) {
-        output.schema.minContains = input.schema.minContains;
-      }
+      handledKeys.add("maxContains");
     }
-
-    handledKeys.add("maxContains");
-    handledKeys.add("minContains");
   }
 
-  if (input.settings.minAndMaxItems) {
-    if (output.settings.minAndMaxItems) {
-      if (output.schema.minItems !== undefined) {
-        output.schema.minItems = input.schema.minItems;
-      }
-
-      if (output.schema.maxItems !== undefined) {
-        output.schema.maxItems = input.schema.maxItems;
-      }
+  if (input.settings.minItems) {
+    if (output.settings.minItems && input.schema.minItems !== undefined) {
+      output.schema.minItems = input.schema.minItems;
     }
 
     handledKeys.add("minItems");
+  }
+
+  if (input.settings.maxItems) {
+    if (output.settings.maxItems && input.schema.maxItems !== undefined) {
+      output.schema.maxItems = input.schema.maxItems;
+    }
+
     handledKeys.add("maxItems");
   }
 
   if (input.settings.uniqueItems) {
-    if (
-      output.settings.uniqueItems &&
-      output.schema.uniqueItems !== undefined
-    ) {
+    if (output.settings.uniqueItems && input.schema.uniqueItems !== undefined) {
       output.schema.uniqueItems = input.schema.uniqueItems;
     }
 
@@ -97,7 +104,7 @@ const translateItemKeywords: Mutator = (ctx) => {
       }
     } else {
       if (prefixItems != undefined) {
-        // @ts-expect-error ISSUE: Narrowing :p
+        // @ts-expect-error narrowing
         ctx.output.schema.items = prefixItems;
       }
 
@@ -122,11 +129,13 @@ const translateItemKeywords: Mutator = (ctx) => {
               forceAllowBooleanSchema: false,
             }),
           ),
+          ctx.input.settings.additionalItems &&
           ctx.input.schema.additionalItems !== undefined
             ? translateJsonSchemaInternal({
                 ...ctx,
                 input: {
                   ...ctx.input,
+                  // @ts-expect-error narrowing
                   schema: ctx.input.schema.additionalItems,
                 },
                 path: [...ctx.path, "additionalItems"],
@@ -148,11 +157,13 @@ const translateItemKeywords: Mutator = (ctx) => {
                 forceAllowBooleanSchema: false,
               })
             : undefined,
+          ctx.input.settings.additionalItems &&
           ctx.input.schema.additionalItems !== undefined
             ? translateJsonSchemaInternal({
                 ...ctx,
                 input: {
                   ...ctx.input,
+                  // @ts-expect-error narrowing
                   schema: ctx.input.schema.additionalItems,
                 },
                 path: [...ctx.path, "additionalItems"],
@@ -167,12 +178,12 @@ const translateItemKeywords: Mutator = (ctx) => {
       }
 
       if (additionalItems != undefined) {
-        // @ts-expect-error ISSUE: Narrowing :p
+        // @ts-expect-error narrowing
         ctx.output.schema.items = additionalItems;
       }
     } else {
       if (items != undefined) {
-        // @ts-expect-error ISSUE: Narrowing :p
+        // @ts-expect-error narrowing
         ctx.output.schema.items = items;
       }
 

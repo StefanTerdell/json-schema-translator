@@ -6,12 +6,12 @@ import { translateIdKeyword } from "../../src/translators/id.ts";
 Deno.test("id should be copied from and to the specified path", () => {
   const inputSettings = {
     ...jsonSchemaDraft4Specification,
-    $idPath: "blah" as const,
+    $id: "blah" as const,
   } satisfies JsonSchemaSpecification;
 
   const outputSettings = {
     ...jsonSchemaDraft4Specification,
-    $idPath: "bleh" as const,
+    $id: "bleh" as const,
   } satisfies JsonSchemaSpecification;
 
   const inputSchema: JsonSchema<typeof inputSettings> = {

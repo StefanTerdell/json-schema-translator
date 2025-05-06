@@ -2,56 +2,102 @@ import { type JsonSchema } from "../JsonSchema.ts";
 import { type JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
 
 export const openAiStructuredOutputSchemaSpecification = {
-  $defsPath: "$defs" as const,
-  exclusiveMinimumAndMaximum: false,
-  $idPath: "$id" as const,
-  $schema: undefined,
-  nonEmptyEnum: false,
-  nonEmptyRequired: false,
-  nonEmptyDependencies: false,
-  addNullableToOptional: false,
-  addNullTypeToOptional: true,
-  makeNullTypeOptional: false,
-  makeNullableOptional: false,
-  allPropertiesRequired: true,
-  $comment: true,
-  $anchor: false,
-  booleanSchemas: false,
-  const: false,
-  contains: false,
-  contentMediaTypeAndEncoding: false,
-  contentSchema: false,
-  deprecated: false,
-  $dynamicAnchorAndRef: false,
-  examples: true,
-  format: false,
-  ifThenElse: false,
-  integerType: false,
-  media: false,
-  minAndMaxContains: false,
-  nullType: true,
+  // Shared
   nullable: false,
-  prefixItems: false,
-  propertyNames: false,
-  readAndWriteOnly: false,
-  $recursiveAnchorAndRef: false,
-  dependentRequiredAndSchemas: false,
-  unevaluatedItems: false,
-  unevaluatedProperties: false,
+  arbitraryJson: false,
+  booleanSchemas: false,
+
+  // Annotations
+  $schema: false,
+  $comment: false,
+  deprecated: false,
+  examples: true,
   $vocabulary: false,
-  allowJson: false,
-  errorMessages: false,
-  minAndMaxItems: false,
+  readOnly: false,
+  writeOnly: false,
+
+  // Extensions
+  errorMessage: false,
+  propertyOrdering: false,
+
+  // Types
+  integer: true,
+  null: true,
+  strictTypes: true,
+
+  // Arrays
+  prefixItems: false,
+  additionalItems: true,
+  maxItems: false,
+  minItems: false,
+  unevaluatedItems: false,
   uniqueItems: false,
-  minimumAndMaximum: false,
+  contains: false,
+  minContains: false,
+  maxContains: false,
+
+  // Format
+  format: false,
+  strictFormats: false,
+
+  // Numbers
   multipleOf: false,
-  minAndMaxLength: false,
+  minimum: false,
+  exclusiveMinimum: false,
+  maximum: false,
+  exclusiveMaximum: false,
+
+  // Strings
+  minLength: false,
+  maxLength: false,
   pattern: false,
+  media: false,
+  contentMediaType: false,
+  contentEncoding: false,
+  contentSchema: false,
+
+  // Constants
+  const: false,
+  enum: true,
+  nonEmptyEnum: false,
+
+  // Structuring
+  $id: "$id" as const,
+  $defs: "$defs" as const,
+  $anchor: false,
+  $dynamicRef: false,
+  $dynamicAnchor: false,
+  $recursiveRef: false,
+  $recursiveAnchor: false,
+
+  // Conditionals
+  if: false,
+  then: false,
+  else: false,
+
+  // Factoring
+  anyOf: true,
+  oneOf: false,
+  allOf: false,
+
+  // Objects and properties
+  unevaluatedProperties: false,
   patternProperties: false,
-  minAndMaxProperties: false,
+  propertyNames: false,
+  minProperties: false,
+  maxProperties: false,
+  nonEmptyRequired: false,
+  allPropertiesRequired: true,
   additionalProperties: true,
   forceAdditionalProperties: false,
   dependencies: false,
+  dependentRequired: false,
+  dependentSchemas: false,
+  nonEmptyDependencies: false,
+  addNullTypeToOptionalProperties: true,
+  treatPropertiesWithNullTypeAsOptional: false,
+  setOptionalPropertiesToNullable: false,
+  treatNullablePropertiesAsOptional: false,
 } satisfies JsonSchemaSpecification;
 
 export type OpenAiStructuredOutputSchemaSpecification =

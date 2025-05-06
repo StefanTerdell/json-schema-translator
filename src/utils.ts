@@ -9,22 +9,22 @@ export function isNonEmptyArray<T>(arr: T[]): arr is NonEmptyArray<T> {
 
 export type EmptyObject = Record<PropertyKey, never>;
 
-export type IsLiteral<T extends string> = "" extends T
-  ? "X" extends T
-    ? false
+export type IsLiteralString<T> = T extends string
+  ? "" extends T
+    ? "X" extends T
+      ? false
+      : true
     : true
-  : true;
+  : false;
 
-export type LiteralOrNever<T extends string> =
-  IsLiteral<T> extends true ? T : never;
+export type LiteralStringOrNever<T> =
+  IsLiteralString<T> extends true ? T : never;
 
 export type All<T extends boolean[]> = T extends true[] ? true : false;
 
-export type If<
-  Condition extends boolean,
-  Then,
-  Else = unknown,
-> = Condition extends true ? Then : Else;
+export type If<Condition, Then, Else = unknown> = Condition extends true
+  ? Then
+  : Else;
 
 /** Returns true if the passed value represents a JSON Schema that:
  * 1. Permits any value

@@ -2,11 +2,11 @@ import { copy } from "./copy.ts";
 import { type Mutator } from "./translators/Mutator.ts";
 
 export const copyJson: Mutator = (ctx) => {
-  if (ctx.input.settings.allowJson) {
+  if (ctx.input.settings.arbitraryJson) {
     for (const key of Object.keys(ctx.input.schema).filter(
       (key) => !ctx.handledKeys.has(key),
     )) {
-      if (ctx.output.settings.allowJson) {
+      if (ctx.output.settings.arbitraryJson) {
         if (!(key in ctx.output.schema)) {
           // @ts-expect-error CBA
           ctx.output.schema[key] = copy(ctx, ctx.input.schema[key]);

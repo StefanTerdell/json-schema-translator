@@ -9,19 +9,24 @@ export const translateStringKeywords: Mutator = (ctx) => {
 };
 
 const translateBasicKeywords: Mutator = ({ input, output, handledKeys }) => {
-  if (input.settings.minAndMaxLength) {
-    if (output.settings.minAndMaxLength) {
-      if (input.schema.maxLength !== undefined) {
-        output.schema.maxLength = input.schema.maxLength;
-      }
-
+  if (input.settings.minLength) {
+    if (output.settings.minLength) {
       if (input.schema.minLength !== undefined) {
         output.schema.minLength = input.schema.minLength;
       }
     }
 
-    handledKeys.add("maxLength");
     handledKeys.add("minLength");
+  }
+
+  if (input.settings.maxLength) {
+    if (output.settings.maxLength) {
+      if (input.schema.maxLength !== undefined) {
+        output.schema.maxLength = input.schema.maxLength;
+      }
+    }
+
+    handledKeys.add("maxLength");
   }
 
   if (input.settings.pattern) {
@@ -34,8 +39,16 @@ const translateBasicKeywords: Mutator = ({ input, output, handledKeys }) => {
 
   if (input.settings.format) {
     if (output.settings.format && input.schema.format !== undefined) {
-      // TODO: Check array for matches? If no match, warn or error out? If so, should 'type' get the same treatment?
-      output.schema.format = input.schema.format;
+      if (
+        !input.settings.strictFormats ||
+        !Array.isArray(input.settings.format) ||
+        (input.settings.format.includes(input.schema.format as string) &&
+          (!output.settings.strictFormats ||
+            !Array.isArray(output.settings.format) ||
+            output.settings.format.includes(output.schema.format as string)))
+      ) {
+        output.schema.format = input.schema.format;
+      }
     }
 
     handledKeys.add("format");
@@ -51,11 +64,11 @@ const translateContentKeywords: Mutator = (ctx) => {
       ).media
     : undefined;
 
-  const contentEncoding = ctx.input.settings.contentMediaTypeAndEncoding
+  const contentEncoding = ctx.input.settings.contentEncoding
     ? ctx.input.schema.contentEncoding
     : media?.binaryEncoding;
 
-  const contentMediaType = ctx.input.settings.contentMediaTypeAndEncoding
+  const contentMediaType = ctx.input.settings.contentMediaType
     ? ctx.input.schema.contentMediaType
     : media?.type;
 
@@ -65,17 +78,25 @@ const translateContentKeywords: Mutator = (ctx) => {
       binaryEncoding: contentEncoding,
       type: contentMediaType,
     };
-  } else if (ctx.output.settings.contentMediaTypeAndEncoding) {
-    ctx.output.schema.contentEncoding = contentEncoding;
-    ctx.output.schema.contentMediaType = contentMediaType;
+  } else {
+    if (ctx.output.settings.contentEncoding) {
+      ctx.output.schema.contentEncoding = contentEncoding;
+    }
+
+    if (ctx.output.settings.contentMediaType) {
+      ctx.output.schema.contentMediaType = contentMediaType;
+    }
   }
 
   if (ctx.input.settings.media) {
     ctx.handledKeys.add("media");
   }
 
-  if (ctx.input.settings.contentMediaTypeAndEncoding) {
+  if (ctx.input.settings.contentEncoding) {
     ctx.handledKeys.add("contentEncoding");
+  }
+
+  if (ctx.input.settings.contentMediaType) {
     ctx.handledKeys.add("contentMediaType");
   }
 
@@ -88,7 +109,8 @@ const translateContentKeywords: Mutator = (ctx) => {
         ...ctx,
         input: {
           ...ctx.input,
-          schema: ctx.input.schema.contentSchema!,
+          // @ts-expect-error narrowing
+          schema: ctx.input.schema.contentSchema,
         },
         path: [...ctx.path, "contentSchema"],
         forceAllowBooleanSchema: false,

@@ -59,21 +59,25 @@ const translateType = <
   },
   skipIntegerFallback: boolean,
 ): JsonSchemaType<OutputJsonSchemaSpecification> | undefined => {
-  if (input.settings.nullType && input.type === "null") {
+  if (input.settings.null && input.type === "null") {
     if (output.settings.nullable) {
       output.schema.nullable = true;
     }
 
-    if (output.settings.nullType) {
-      return "null";
+    if (output.settings.null) {
+      return "null" as JsonSchemaType<
+        OutputJsonSchemaSpecification & { null: true }
+      >;
     } else {
       return undefined;
     }
   }
 
-  if (input.settings.integerType && input.type === "integer") {
-    if (output.settings.integerType) {
-      return "integer";
+  if (input.settings.integer && input.type === "integer") {
+    if (output.settings.integer) {
+      return "integer" as JsonSchemaType<
+        OutputJsonSchemaSpecification & { integer: true }
+      >;
     } else if (!skipIntegerFallback) {
       if (output.settings.multipleOf) {
         output.schema.multipleOf = 1;
@@ -84,5 +88,5 @@ const translateType = <
     }
   }
 
-  return input.type;
+  return input.type as unknown as JsonSchemaType<OutputJsonSchemaSpecification>;
 };

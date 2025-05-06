@@ -39,7 +39,7 @@ Deno.test(
               properties: {
                 x: {
                   type: "string",
-                  format: "derp",
+                  format: "date",
                   pattern: "herp",
                   minLength: 2,
                   maxLength: 3,
@@ -65,7 +65,7 @@ Deno.test(
         required: ["foo", "bar", "array", "record"],
         properties: {
           foo: {
-            type: "number",
+            type: "integer",
           },
           bar: {
             type: ["string", "null"],

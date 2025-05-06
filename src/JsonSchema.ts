@@ -1,10 +1,11 @@
 import { type Json, type JsonObject } from "./Json.ts";
 import { type JsonSchemaSpecification } from "./JsonSchemaSpecification.ts";
 import {
+  EmptyObject,
+  IsLiteralString,
   type All,
   type If,
-  type IsLiteral,
-  type LiteralOrNever,
+  type LiteralStringOrNever,
   type LooseStringLiteral,
   type NonEmptyArray,
 } from "./utils.ts";
@@ -23,36 +24,85 @@ export type JsonSchemaPathItem = LooseStringLiteral<JsonSchemaKeyword> | number;
 export type JsonSchemaPath = JsonSchemaPathItem[];
 
 /** This type serves two purposes:
- * 1: Dynamically set the expected types of the keywords defined in the `$idPath` and `$defsPath` options
- * 2: Allow (or forbid) arbitrary values for unspecified keywords based on the `allowJson` option
+ * 1: Dynamically set the expected types of the keywords defined in the `$id` and `$defs` options
+ * 2: Allow (or forbid) arbitrary values for unspecified keywords based on the `arbitraryJson` option
  */
 export type JsonSchemaObject<Spec extends JsonSchemaSpecification> =
   JsonSchemaKeywordsObject<Spec> &
-    (Spec["allowJson"] extends true ? JsonObject : unknown);
+    (Spec["arbitraryJson"] extends true ? JsonObject : unknown);
 
 /* All keywords defined from a in a JsonSchemaKeywordsObject based on a given JsonSchemaSpecification */
 export type JsonSchemaKeyword<
   Spec extends JsonSchemaSpecification = JsonSchemaSpecification,
 > =
-  | LiteralOrNever<Spec["$idPath"]>
-  | LiteralOrNever<Spec["$defsPath"]>
+  | LiteralStringOrNever<Spec["$id"]>
+  | LiteralStringOrNever<Spec["$defs"]>
   | keyof JsonSchemaStaticKeywordsObject<Spec>;
 
 export type JsonSchemaKeywordsObject<Spec extends JsonSchemaSpecification> = If<
-  All<[IsLiteral<Spec["$idPath"]>, IsLiteral<Spec["$defsPath"]>]>,
+  All<[IsLiteralString<Spec["$id"]>, IsLiteralString<Spec["$defs"]>]>,
   JsonSchemaDynamicKeywordsObject<Spec> & JsonSchemaStaticKeywordsObject<Spec>,
   JsonSchemaStaticKeywordsObject<Spec>
 >;
 
+// export type JsonSchemaDynamicKeywordsObject<
+//   Spec extends JsonSchemaSpecification,
+// > = [
+//   LiteralStringOrNever<Spec["$id"]>,
+//   LiteralStringOrNever<Spec["$defs"]>,
+// ] extends [infer Id extends string, infer Defs extends string]
+//   ? {
+//       [Key in Defs]?: { [Key in string]: JsonSchema<Spec> };
+//     } & {
+//       [Key in Id]?: string;
+//     }
+//   : { [Key in string]?: unknown };
+
 export type JsonSchemaDynamicKeywordsObject<
   Spec extends JsonSchemaSpecification,
-> = {
-  [Key in Spec["$defsPath"] | Spec["$idPath"]]?: Key extends Spec["$defsPath"]
-    ? { [Key in string]: JsonSchema<Spec> }
-    : Key extends Spec["$idPath"]
-      ? string
-      : never;
-};
+> = Spec["$id"] extends string
+  ? Spec["$defs"] extends string
+    ? {
+        [Key in Spec["$defs"] | Spec["$id"]]?: Key extends Spec["$defs"]
+          ? { [Key in string]: JsonSchema<Spec> }
+          : Key extends Spec["$id"]
+            ? string
+            : unknown;
+      }
+    : {
+        [Key in Spec["$id"]]?: string;
+      }
+  : Spec["$defs"] extends string
+    ? {
+        [Key in Spec["$defs"]]?: { [Key in string]: JsonSchema<Spec> };
+      }
+    : EmptyObject;
+
+//   LiteralStringOrNever<Spec["$defs"]>,
+// ] extends [infer Id extends string, infer Defs extends string]
+//   ? {
+//       [Key in Defs | Id]?: Key extends Defs
+//         ? { [Key in string]: JsonSchema<Spec> }
+//         : Key extends Id
+//           ? string
+//           : unknown;
+//     }
+//   : { [Key in string]?: unknown };
+
+// export type JsonSchemaDynamicKeywordsObject<
+//   Spec extends JsonSchemaSpecification,
+// > = [
+//   LiteralStringOrNever<Spec["$id"]>,
+//   LiteralStringOrNever<Spec["$defs"]>,
+// ] extends [infer Id extends string, infer Defs extends string]
+//   ? {
+//       [Key in Defs | Id]?: Key extends Defs
+//         ? { [Key in string]: JsonSchema<Spec> }
+//         : Key extends Id
+//           ? string
+//           : unknown;
+//     }
+//   : { [Key in string]?: unknown };
 
 /** Represents a JsonSchema object as defined by the provided JsonSchemaSpecification with no arbitrary keys allowed */
 export type JsonSchemaStaticKeywordsObject<
@@ -63,21 +113,23 @@ export type JsonSchemaStaticKeywordsObject<
   nullable?: If<Spec["nullable"], boolean>;
 
   // strings:
-  minLength?: If<Spec["minAndMaxLength"], number>;
-  maxLength?: If<Spec["minAndMaxLength"], number>;
+  minLength?: If<Spec["minLength"], number>;
+  maxLength?: If<Spec["maxLength"], number>;
   pattern?: If<Spec["pattern"], string>;
   format?: Spec["format"] extends true
     ? string
     : Spec["format"] extends (infer F extends string)[]
-      ? LooseStringLiteral<F>
+      ? Spec["strictFormats"] extends true
+        ? F
+        : LooseStringLiteral<F>
       : unknown;
 
   // string content
   contentEncoding?: If<
-    Spec["contentMediaTypeAndEncoding"],
+    Spec["contentEncoding"],
     LooseStringLiteral<"quoted-printable" | "base16" | "base32" | "base64">
   >;
-  contentMediaType?: If<Spec["contentMediaTypeAndEncoding"], string>;
+  contentMediaType?: If<Spec["contentMediaType"], string>;
   contentSchema?: If<Spec["contentSchema"], JsonSchema<Spec>>;
   media?: If<
     Spec["media"],
@@ -89,18 +141,24 @@ export type JsonSchemaStaticKeywordsObject<
 
   // numbers:
   multipleOf?: If<Spec["multipleOf"], number>;
-  minimum?: If<Spec["minimumAndMaximum"], number>;
-  maximum?: If<Spec["minimumAndMaximum"], number>;
-  exclusiveMinimum?: Spec["exclusiveMinimumAndMaximum"] extends true
-    ? number
-    : Spec["exclusiveMinimumAndMaximum"] extends "boolean"
-      ? boolean
-      : unknown;
-  exclusiveMaximum?: Spec["exclusiveMinimumAndMaximum"] extends true
-    ? number
-    : Spec["exclusiveMinimumAndMaximum"] extends "boolean"
-      ? boolean
-      : unknown;
+  minimum?: If<Spec["minimum"], number>;
+  exclusiveMinimum?: If<
+    Spec["minimum"],
+    If<
+      Spec["exclusiveMinimum"],
+      number,
+      If<Spec["exclusiveMinimum"] extends "boolean" ? true : false, boolean>
+    >
+  >;
+  maximum?: If<Spec["maximum"], number>;
+  exclusiveMaximum?: If<
+    Spec["maximum"],
+    If<
+      Spec["exclusiveMaximum"],
+      number,
+      If<Spec["exclusiveMaximum"] extends "boolean" ? true : false, boolean>
+    >
+  >;
 
   // objects:
   required?: If<Spec["nonEmptyRequired"], NonEmptyArray<string>, string[]>;
@@ -117,8 +175,8 @@ export type JsonSchemaStaticKeywordsObject<
     Spec["propertyNames"],
     Omit<JsonSchemaObject<Spec>, "type"> | boolean
   >;
-  maxProperties?: If<Spec["minAndMaxProperties"], number>;
-  minProperties?: If<Spec["minAndMaxProperties"], number>;
+  maxProperties?: If<Spec["maxProperties"], number>;
+  minProperties?: If<Spec["minProperties"], number>;
 
   // object conditionals
   dependencies?: If<
@@ -130,11 +188,11 @@ export type JsonSchemaStaticKeywordsObject<
     >
   >;
   dependentRequired?: If<
-    All<[Spec["dependentRequiredAndSchemas"], Spec["dependencies"]]>,
+    Spec["dependentRequired"],
     Record<string, Array<string>>
   >;
   dependentSchemas?: If<
-    All<[Spec["dependentRequiredAndSchemas"], Spec["dependencies"]]>,
+    Spec["dependentSchemas"],
     Record<string, JsonSchema<Spec>>
   >;
 
@@ -145,11 +203,11 @@ export type JsonSchemaStaticKeywordsObject<
     JsonSchema<Spec> | Array<JsonSchema<Spec>>
   >;
   prefixItems?: If<Spec["prefixItems"], Array<JsonSchema<Spec>>>;
-  additionalItems?: JsonSchema<Spec, true>;
+  additionalItems?: If<Spec["additionalItems"], JsonSchema<Spec, true>>;
   unevaluatedItems?: If<Spec["unevaluatedItems"], JsonSchema<Spec>>;
   contains?: If<Spec["contains"], JsonSchema<Spec>>;
-  minContains?: If<Spec["minAndMaxContains"], number>;
-  maxContains?: If<Spec["minAndMaxContains"], number>;
+  minContains?: If<All<[Spec["contains"], Spec["minContains"]]>, number>;
+  maxContains?: If<All<[Spec["contains"], Spec["maxContains"]]>, number>;
   minItems?: number;
   maxItems?: number;
   uniqueItems?: boolean;
@@ -175,8 +233,8 @@ export type JsonSchemaStaticKeywordsObject<
   default?: Json;
   examples?: If<Spec["examples"], Array<Json>>;
   deprecated?: If<Spec["deprecated"], boolean>;
-  readOnly?: If<Spec["readAndWriteOnly"], boolean>;
-  writeOnly?: If<Spec["readAndWriteOnly"], boolean>;
+  readOnly?: If<Spec["readOnly"], boolean>;
+  writeOnly?: If<Spec["writeOnly"], boolean>;
   $comment?: If<Spec["$comment"], string>;
 
   // constants
@@ -186,15 +244,22 @@ export type JsonSchemaStaticKeywordsObject<
   // structuring
   $anchor?: If<Spec["$anchor"], string>;
   $ref?: string;
-  $recursiveAnchor?: If<Spec["$recursiveAnchorAndRef"], boolean>;
-  $recursiveRef?: If<Spec["$recursiveAnchorAndRef"], string>;
-  $dynamicAnchor?: If<Spec["$dynamicAnchorAndRef"], string>;
-  $dynamicRef?: If<Spec["$dynamicAnchorAndRef"], string>;
+  $recursiveRef?: If<Spec["$recursiveRef"], string>;
+  $recursiveAnchor?: If<
+    All<[Spec["$recursiveRef"], Spec["$recursiveAnchor"]]>,
+    string
+  >;
+  $dynamicRef?: If<Spec["$dynamicRef"], string>;
+  $dynamicAnchor?: If<
+    All<[Spec["$dynamicRef"], Spec["$dynamicAnchor"]]>,
+    string
+  >;
 
   // de-facto standard extensions
-  errorMessage?: Spec["errorMessages"] extends "ajv"
+  errorMessage?: Spec["errorMessage"] extends "ajv"
     ? AjvErrorMessages
     : unknown;
+  propertyOrdering?: If<Spec["propertyOrdering"], string[]>;
 };
 
 export type AjvErrorMessages = {
@@ -203,14 +268,19 @@ export type AjvErrorMessages = {
     | string;
 };
 
-/* Represents a single valid value of the "type" keyword in a Json Schema */
-export type JsonSchemaType<Spec extends JsonSchemaSpecification> =
-  LooseStringLiteral<
-    | "string"
-    | "number"
-    | "object"
-    | "array"
-    | "boolean"
-    | If<Spec["nullType"], "null", never>
-    | If<Spec["integerType"], "integer", never>
-  >;
+/* Represents a single value of the `type` keyword in a Json Schema, optionally strict based on the `strictTypes` option */
+export type JsonSchemaType<Spec extends JsonSchemaSpecification> = If<
+  Spec["strictTypes"],
+  JsonSchemaValidType<Spec>,
+  LooseStringLiteral<JsonSchemaValidType<Spec>>
+>;
+
+/* Represents a single validated value of the `type` keyword in a Json Schema */
+export type JsonSchemaValidType<Spec extends JsonSchemaSpecification> =
+  | "string"
+  | "number"
+  | "object"
+  | "array"
+  | "boolean"
+  | If<Spec["null"], "null", never>
+  | If<Spec["integer"], "integer", never>;

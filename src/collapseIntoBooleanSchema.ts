@@ -14,7 +14,7 @@ export const collapseIntoBooleanSchema = <
     settings: Specification;
   },
   forceAllowBooleanSchemas: ForceAllowBooleanSchemas,
-): JsonSchema<Specification, ForceAllowBooleanSchemas> => {
+): JsonSchema<Specification> => {
   if (output.settings.booleanSchemas) {
     if (isAnySchema(output.schema)) {
       const schema: JsonSchema<
@@ -51,5 +51,5 @@ export const collapseIntoBooleanSchema = <
     }
   }
 
-  return output.schema;
+  return output.schema as JsonSchema<Specification>;
 };

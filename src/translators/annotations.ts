@@ -67,22 +67,16 @@ const translateControlledAnnotationKeywords: Mutator = ({
     handledKeys.add("$vocabulary");
   }
 
-  if (input.settings.readAndWriteOnly) {
-    if (
-      output.settings.readAndWriteOnly &&
-      input.schema.readOnly !== undefined
-    ) {
+  if (input.settings.readOnly) {
+    if (output.settings.readOnly && input.schema.readOnly !== undefined) {
       output.schema.readOnly = input.schema.readOnly;
     }
 
     handledKeys.add("readOnly");
   }
 
-  if (input.settings.readAndWriteOnly) {
-    if (
-      output.settings.readAndWriteOnly &&
-      input.schema.writeOnly !== undefined
-    ) {
+  if (input.settings.writeOnly) {
+    if (output.settings.writeOnly && input.schema.writeOnly !== undefined) {
       output.schema.writeOnly = input.schema.writeOnly;
     }
 

@@ -14,19 +14,36 @@ const translateBasicObjectKeywords: Mutator = ({
   output,
   handledKeys,
 }) => {
-  if (input.settings.minAndMaxProperties) {
-    if (output.settings.minAndMaxProperties) {
-      if (input.schema.maxProperties !== undefined) {
-        output.schema.maxProperties = input.schema.maxProperties;
-      }
+  if (input.settings.minProperties) {
+    if (
+      output.settings.minProperties &&
+      input.schema.minProperties !== undefined
+    ) {
+      output.schema.minProperties = input.schema.minProperties;
+    }
 
-      if (input.schema.minProperties !== undefined) {
-        output.schema.minProperties = input.schema.minProperties;
-      }
+    handledKeys.add("minProperties");
+  }
+
+  if (input.settings.maxProperties) {
+    if (
+      output.settings.maxProperties &&
+      input.schema.maxProperties !== undefined
+    ) {
+      output.schema.maxProperties = input.schema.maxProperties;
     }
 
     handledKeys.add("maxProperties");
-    handledKeys.add("minProperties");
+  }
+
+  if (output.settings.propertyOrdering) {
+    if (input.settings.propertyOrdering && input.schema.propertyOrdering) {
+      output.schema.propertyOrdering = input.schema.propertyOrdering;
+    } else if (input.schema.properties) {
+      output.schema.propertyOrdering = Object.keys(input.schema.properties);
+    }
+
+    handledKeys.add("propertyOrdering");
   }
 };
 
@@ -58,19 +75,19 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
 
         if (
           !explicitlyRequired &&
-          ctx.output.settings.nullType &&
-          ctx.output.settings.addNullTypeToOptional &&
+          ctx.output.settings.null &&
+          ctx.output.settings.addNullTypeToOptionalProperties &&
           (typeof schema !== "object" ||
             schema.type !== "null" ||
             (Array.isArray(schema.type) && !schema.type.includes("null")))
         ) {
           if (typeof schema === "object") {
             if (Array.isArray(schema.type)) {
-              schema.type.push("null");
+              schema.type.push("null" as (typeof schema.type)[number]);
             } else if (schema.type) {
-              schema.type = [schema.type, "null"];
+              schema.type = [schema.type, "null" as typeof schema.type];
             } else {
-              schema.type = "null";
+              schema.type = "null" as typeof schema.type;
             }
 
             if (schema.enum && !schema.enum.includes(null)) {
@@ -92,7 +109,7 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
         if (
           !explicitlyRequired &&
           ctx.output.settings.nullable &&
-          ctx.output.settings.addNullableToOptional
+          ctx.output.settings.setOptionalPropertiesToNullable
         ) {
           if (typeof schema === "object") {
             schema.nullable = true;
@@ -104,16 +121,17 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
         } else {
           const isOptionalByNullable =
             ctx.output.settings.nullable &&
-            ctx.output.settings.makeNullableOptional &&
+            ctx.output.settings.treatNullablePropertiesAsOptional &&
             typeof schema === "object" &&
             schema.nullable === true;
 
           const isOptionalByNullType =
-            ctx.output.settings.nullType &&
-            ctx.output.settings.makeNullTypeOptional &&
+            ctx.output.settings.null &&
+            ctx.output.settings.treatPropertiesWithNullTypeAsOptional &&
             typeof schema === "object" &&
             (schema.type === "null" ||
-              (Array.isArray(schema.type) && schema.type.includes("null")));
+              (Array.isArray(schema.type) &&
+                schema.type.includes("null" as (typeof schema.type)[number])));
 
           if (
             explicitlyRequired &&
@@ -250,102 +268,111 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
 };
 
 const translateObjectDependencyKeywords: Mutator = (ctx) => {
-  if (ctx.input.settings.dependencies) {
-    if (ctx.output.settings.dependencies) {
-      const dependentRequired = ctx.input.settings.dependentRequiredAndSchemas
-        ? (ctx.input.schema.dependentRequired ?? {})
-        : Object.keys(ctx.input.schema.dependencies ?? {}).reduce(
-            (acc: Record<string, NonEmptyArray<string>>, key) => {
-              // @ts-expect-error Narrowing :p
-              const required = ctx.input.schema.dependencies?.[key];
+  const dependentRequired = ctx.input.settings.dependentRequired
+    ? (ctx.input.schema.dependentRequired ?? {})
+    : Object.keys(
+        (ctx.input.settings.dependencies && ctx.input.schema.dependencies) ||
+          {},
+      ).reduce((acc: Record<string, NonEmptyArray<string>>, key) => {
+        // @ts-expect-error Narrowing :p
+        const required = ctx.input.schema.dependencies?.[key];
 
-              if (
-                Array.isArray(required) &&
-                (required.length || !ctx.output.settings.nonEmptyDependencies)
-              ) {
-                acc[key] = required as NonEmptyArray<string>;
-              }
-
-              return acc;
-            },
-            {},
-          );
-
-      const dependentSchemas = ctx.input.settings.dependentRequiredAndSchemas
-        ? Object.keys(ctx.input.schema.dependentSchemas ?? {}).reduce(
-            (
-              acc: Record<string, JsonSchema<typeof ctx.output.settings>>,
-              key,
-            ) => {
-              // @ts-expect-error: god damnit
-              const schema = ctx.input.schema.dependentSchemas[
-                key
-              ] as JsonSchema<typeof ctx.input.settings>;
-
-              acc[key] = translateJsonSchemaInternal({
-                ...ctx,
-                input: {
-                  ...ctx.input,
-                  schema,
-                },
-                path: [...ctx.path, "dependentSchemas", Number(key)],
-                forceAllowBooleanSchema: false,
-              });
-
-              return acc;
-            },
-            {},
-          )
-        : Object.keys(ctx.input.schema.dependencies ?? {}).reduce(
-            (
-              acc: Record<string, JsonSchema<typeof ctx.output.settings>>,
-              key,
-            ) => {
-              // @ts-expect-error Narrowing :p
-              const schema = ctx.input.schema.dependencies[key];
-
-              if (!Array.isArray(schema)) {
-                acc[key] = translateJsonSchemaInternal({
-                  ...ctx,
-                  input: {
-                    ...ctx.input,
-                    schema,
-                  },
-                  path: [...ctx.path, "dependencies", Number(key)],
-                  forceAllowBooleanSchema: false,
-                });
-              }
-
-              return acc;
-            },
-            {},
-          );
-
-      if (ctx.input.settings.dependentRequiredAndSchemas) {
-        ctx.handledKeys.add("dependentRequired");
-        ctx.handledKeys.add("dependentSchemas");
-      }
-
-      if (ctx.output.settings.dependentRequiredAndSchemas) {
-        if (Object.keys(dependentRequired).length) {
-          ctx.output.schema.dependentRequired = dependentRequired;
+        if (
+          Array.isArray(required) &&
+          (required.length || !ctx.output.settings.nonEmptyDependencies)
+        ) {
+          acc[key] = required as NonEmptyArray<string>;
         }
 
-        if (Object.keys(dependentSchemas).length) {
-          ctx.output.schema.dependentSchemas = dependentSchemas;
-        }
-      } else {
-        const dependencies = {
+        return acc;
+      }, {});
+
+  const dependentSchemas = ctx.input.settings.dependentSchemas
+    ? Object.keys(ctx.input.schema.dependentSchemas ?? {}).reduce(
+        (acc: Record<string, JsonSchema<typeof ctx.output.settings>>, key) => {
+          // @ts-expect-error: god damnit
+          const schema = ctx.input.schema.dependentSchemas[key] as JsonSchema<
+            typeof ctx.input.settings
+          >;
+
+          acc[key] = translateJsonSchemaInternal({
+            ...ctx,
+            input: {
+              ...ctx.input,
+              schema,
+            },
+            path: [...ctx.path, "dependentSchemas", Number(key)],
+            forceAllowBooleanSchema: false,
+          });
+
+          return acc;
+        },
+        {},
+      )
+    : Object.keys(
+        (ctx.input.settings.dependencies && ctx.input.schema.dependencies) ||
+          {},
+      ).reduce(
+        (acc: Record<string, JsonSchema<typeof ctx.output.settings>>, key) => {
+          // @ts-expect-error Narrowing :p
+          const schema = ctx.input.schema.dependencies[key];
+
+          if (!Array.isArray(schema)) {
+            acc[key] = translateJsonSchemaInternal({
+              ...ctx,
+              input: {
+                ...ctx.input,
+                schema,
+              },
+              path: [...ctx.path, "dependencies", Number(key)],
+              forceAllowBooleanSchema: false,
+            });
+          }
+
+          return acc;
+        },
+        {},
+      );
+
+  if (Object.keys(dependentRequired).length) {
+    if (ctx.output.settings.dependentRequired) {
+      ctx.output.schema.dependentRequired = dependentRequired;
+    } else if (ctx.output.settings.dependencies) {
+      if (typeof ctx.output.schema.dependencies === "object") {
+        ctx.output.schema.dependencies = {
+          ...ctx.output.schema.dependencies,
           ...dependentRequired,
-          ...dependentSchemas,
         };
-
-        if (Object.keys(dependencies).length) {
-          ctx.output.schema.dependencies = dependencies;
-        }
+      } else {
+        ctx.output.schema.dependencies = dependentRequired;
       }
     }
+  }
 
+  if (Object.keys(dependentSchemas).length) {
+    if (ctx.output.settings.dependentSchemas) {
+      ctx.output.schema.dependentSchemas = dependentSchemas;
+    } else if (ctx.output.settings.dependencies) {
+      if (typeof ctx.output.schema.dependencies === "object") {
+        ctx.output.schema.dependencies = {
+          ...ctx.output.schema.dependencies,
+          ...dependentSchemas,
+        };
+      } else {
+        ctx.output.schema.dependencies = dependentSchemas;
+      }
+    }
+  }
+
+  if (ctx.input.settings.dependentRequired) {
+    ctx.handledKeys.add("dependentRequired");
+  } else if (ctx.input.settings.dependencies) {
+    ctx.handledKeys.add("dependencies");
+  }
+
+  if (ctx.input.settings.dependentSchemas) {
+    ctx.handledKeys.add("dependentSchemas");
+  } else if (ctx.input.settings.dependencies) {
     ctx.handledKeys.add("dependencies");
   }
 };
