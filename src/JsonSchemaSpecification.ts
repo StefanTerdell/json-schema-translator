@@ -28,8 +28,10 @@ export type JsonSchemaSpecification = {
   // Extensions
   /** Optionally set which format to accept error-messages in */
   errorMessage?: "ajv" | false;
-  /** Optionally enable the `propertyOrdering` keyword. Will be copied if enabled in both schema specifiactions and inferred from `properties` if enabled only in output */
+  /** Optionally enable the `propertyOrdering` keyword. Will be copied if enabled in both schema specifiactions and based on the keys of `properties` if enabled only in output */
   propertyOrdering?: boolean;
+  /** Optionally enable the `markdownDescription` keyword. Will be copied if enabled in both schema scpecifications or moved into 'description' if enabled only in the input and if the input schema does not have a `description` */
+  markdownDescription?: boolean;
 
   // Types
   /** Disable/enable the `integer` option of the `type` keyword enum */

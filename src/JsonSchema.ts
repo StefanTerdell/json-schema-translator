@@ -260,6 +260,7 @@ export type JsonSchemaStaticKeywordsObject<
     ? AjvErrorMessages
     : unknown;
   propertyOrdering?: If<Spec["propertyOrdering"], string[]>;
+  markdownDescription?: string;
 };
 
 export type AjvErrorMessages = {

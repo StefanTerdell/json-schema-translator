@@ -19,6 +19,7 @@ export const jsonSchemaDraft6Specification = {
   // Extensions
   errorMessage: false,
   propertyOrdering: false,
+  markdownDescription: false,
 
   // Types
   integer: true,

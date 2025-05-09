@@ -23,6 +23,16 @@ const translateDefaultAnnotationKeywords: Mutator = ({
 
   handledKeys.add("description");
 
+  if (input.schema.markdownDescription !== undefined) {
+    if (output.settings.markdownDescription) {
+      output.schema.markdownDescription = input.schema.markdownDescription;
+    } else if (output.schema.description === undefined) {
+      output.schema.description = input.schema.markdownDescription;
+    }
+
+    handledKeys.add("markdownDescription");
+  }
+
   if (input.schema.default !== undefined) {
     output.schema.default = input.schema.default;
   }

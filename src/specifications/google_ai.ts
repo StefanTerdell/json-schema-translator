@@ -19,6 +19,7 @@ export const googleAiJsonSchemaSpecification = {
   // Extensions
   errorMessage: false,
   propertyOrdering: true,
+  markdownDescription: false,
 
   // Types
   integer: true,
