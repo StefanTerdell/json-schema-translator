@@ -12,12 +12,12 @@ export function isNonEmptyArray<T>(arr: T[]): arr is NonEmptyArray<T> {
 
 export type EmptyObject = Record<PropertyKey, never>;
 
-// export type Replace<
-//   T extends object,
-//   O extends { [Key in keyof T]?: unknown },
-// > = {
-//   [Key in keyof T]: Key extends keyof O ? O[Key] : T[Key];
-// };
+export type Replace<
+  T extends object,
+  O extends { [Key in keyof T]?: unknown },
+> = {
+  [Key in keyof T]: Key extends keyof O ? O[Key] : T[Key];
+};
 
 /** Returns true if the passed value is JSON Schema object that either has:
  * - `"type": "null"`
