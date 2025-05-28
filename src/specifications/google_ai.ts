@@ -103,5 +103,5 @@ export const googleAiJsonSchemaSpecification = {
 
 export type GoogleAiJsonSchemaSpecification =
   typeof googleAiJsonSchemaSpecification;
-export type OpenAiStructuredOutputSchema =
+export type GoogleAiJsonSchema =
   JsonSchema<GoogleAiJsonSchemaSpecification>;
