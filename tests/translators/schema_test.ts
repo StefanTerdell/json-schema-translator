@@ -2,12 +2,12 @@ import { assertEquals } from "@std/assert";
 import {
   JsonSchemaDraft2020_12,
   jsonSchemaDraft2020_12Specification,
-} from "../src/specifications/draft2020_12.ts";
+} from "../../src/specifications/draft2020_12.ts";
 import {
   JsonSchemaDraft4,
   jsonSchemaDraft4Specification,
-} from "../src/specifications/draft4.ts";
-import { translateJsonSchemaInternal } from "../src/translateJsonSchemaInternal.ts";
+} from "../../src/specifications/draft4.ts";
+import { translateSchema } from "../../src/translators/schema.ts";
 
 Deno.test("Hello", () => {
   const input: JsonSchemaDraft2020_12 = {
@@ -58,7 +58,7 @@ Deno.test("Hello", () => {
     arbitraryArray: ["arbitraryString", null],
   };
 
-  const result = translateJsonSchemaInternal({
+  const result = translateSchema({
     input: {
       settings: jsonSchemaDraft2020_12Specification,
       schema: input,

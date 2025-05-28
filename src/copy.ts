@@ -1,20 +1,20 @@
-import {
-  type CopyFn,
-  type TranslateJsonSchemaOptions,
-} from "./translateJsonSchema.ts";
+import { Json } from "./Json.ts";
 
-export const copy = <T,>(ctx: TranslateJsonSchemaOptions, value: T): T => {
+export type CopyFn = <T = Json>(value: T) => T;
+export type CopyOption = "shallow" | "stringifyAndParse" | CopyFn;
+
+export const copy = <T,>(option: CopyOption, value: T): T => {
   const copyFn: CopyFn | undefined =
-    typeof ctx.copyJson === "function"
-      ? ctx.copyJson
-      : ctx.copyJson === "shallow"
+    typeof option === "function"
+      ? option
+      : option === "shallow"
         ? (json) => json
-        : ctx.copyJson === "stringifyAndParse"
+        : option === "stringifyAndParse"
           ? (json) => JSON.parse(JSON.stringify(json))
           : undefined;
 
   if (!copyFn) {
-    throw new Error(`Unknown copyJson option: ${ctx.copyJson}`);
+    throw new Error(`Unknown copy type: ${option}`);
   }
 
   return copyFn(value);

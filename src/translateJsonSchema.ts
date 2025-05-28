@@ -1,41 +1,163 @@
-import { type Json } from "./Json.ts";
+import { type BundledJsonSchemaTypes } from "./BundledJsonSchemaTypes.ts";
 import { type JsonSchema } from "./JsonSchema.ts";
 import { type JsonSchemaSpecification } from "./JsonSchemaSpecification.ts";
-import { type UnhandledKeysMap } from "./UnhandledKeys.ts";
-import { translateJsonSchemaInternal } from "./translateJsonSchemaInternal.ts";
+import {
+  type AdditionalJsonSchemaSpecifications,
+  defaultJsonSchemaTranslationOptionsBase,
+  type JsonSchemaTranslationOptions,
+} from "./JsonSchemaTranslationOptions.ts";
+import {
+  resolveSpecification,
+  type ResolveSpecification,
+} from "./resolveSpecification.ts";
+import { translateSchema } from "./translators/schema.ts";
+import {
+  getUnhandledKeysMap,
+  handleUnhandledKeysMap,
+} from "./UnhandledKeys.ts";
 
-export type CopyFn = <T = Json>(value: T) => T;
-
-export type TranslateJsonSchemaOptions = {
-  unhandledKeys:
-    | "ignore"
-    | "warn"
-    | "throw"
-    | UnhandledKeysMap
-    | ((unhandledKeys: UnhandledKeysMap) => void);
-  copyJson: "shallow" | "stringifyAndParse" | CopyFn;
-};
-
-export const defaultTranslateJsonSchemaOptions: TranslateJsonSchemaOptions = {
-  unhandledKeys: "ignore",
-  copyJson: (json) => JSON.parse(JSON.stringify(json)),
-};
-
+// S, S
 export function translateJsonSchema<
-  InputJsonSchemaSpecification extends JsonSchemaSpecification,
-  OutputJsonSchemaSpecification extends JsonSchemaSpecification,
+  InputSpecification extends JsonSchemaSpecification,
+  OutputSpecification extends JsonSchemaSpecification,
 >(
-  inputSchema: JsonSchema<InputJsonSchemaSpecification>,
-  inputSpecification: InputJsonSchemaSpecification,
-  outputSpecification: OutputJsonSchemaSpecification,
-  options: TranslateJsonSchemaOptions = defaultTranslateJsonSchemaOptions,
-): JsonSchema<OutputJsonSchemaSpecification> {
-  const unhandledKeys: UnhandledKeysMap =
-    typeof options.unhandledKeys === "object"
-      ? options.unhandledKeys
-      : new Map();
+  schema: JsonSchema<InputSpecification>,
+  inputSpecification: InputSpecification,
+  outputSpecification: OutputSpecification,
+  options?: JsonSchemaTranslationOptions,
+): JsonSchema<OutputSpecification>;
+// S, B
+export function translateJsonSchema<
+  InputSpecification extends JsonSchemaSpecification,
+  OutputSpecificationName extends keyof BundledJsonSchemaTypes,
+>(
+  schema: JsonSchema<InputSpecification>,
+  inputSpecification: InputSpecification,
+  outputSpecificationName: OutputSpecificationName,
+  options?: JsonSchemaTranslationOptions,
+): BundledJsonSchemaTypes[OutputSpecificationName];
+// S, A
+export function translateJsonSchema<
+  AdditionalSpecifications extends AdditionalJsonSchemaSpecifications,
+  InputSpecification extends JsonSchemaSpecification,
+  OutputSpecificationName extends keyof AdditionalSpecifications,
+>(
+  schema: JsonSchema<InputSpecification>,
+  inputSpecification: InputSpecification,
+  outputSpecificationName: OutputSpecificationName,
+  options: JsonSchemaTranslationOptions<AdditionalSpecifications>,
+): JsonSchema<AdditionalSpecifications[OutputSpecificationName]>;
 
-  const outputSchema = translateJsonSchemaInternal({
+// B, S
+export function translateJsonSchema<
+  InputSpecificationName extends keyof BundledJsonSchemaTypes,
+  OutputSpecification extends JsonSchemaSpecification,
+>(
+  schema: BundledJsonSchemaTypes[InputSpecificationName],
+  inputSpecificationName: InputSpecificationName,
+  outputSpecification: OutputSpecification,
+  options?: JsonSchemaTranslationOptions,
+): JsonSchema<OutputSpecification>;
+// B, B
+export function translateJsonSchema<
+  InputSpecificationName extends keyof BundledJsonSchemaTypes,
+  OutputSpecificationName extends keyof BundledJsonSchemaTypes,
+>(
+  schema: BundledJsonSchemaTypes[InputSpecificationName],
+  inputSpecificationName: InputSpecificationName,
+  outputSpecificationName: OutputSpecificationName,
+  options?: JsonSchemaTranslationOptions,
+): BundledJsonSchemaTypes[OutputSpecificationName];
+// B, A
+export function translateJsonSchema<
+  AdditionalSpecifications extends AdditionalJsonSchemaSpecifications,
+  InputSpecificationName extends keyof BundledJsonSchemaTypes,
+  OutputSpecificationName extends keyof AdditionalSpecifications,
+>(
+  schema: BundledJsonSchemaTypes[InputSpecificationName],
+  inputSpecificationName: InputSpecificationName,
+  outputSpecificationName: OutputSpecificationName,
+  options: JsonSchemaTranslationOptions<AdditionalSpecifications>,
+): JsonSchema<AdditionalSpecifications[OutputSpecificationName]>;
+// A, S
+export function translateJsonSchema<
+  AdditionalSpecifications extends AdditionalJsonSchemaSpecifications,
+  InputSpecificationName extends keyof AdditionalSpecifications,
+  OutputSpecification extends JsonSchemaSpecification,
+>(
+  schema: JsonSchema<AdditionalSpecifications[InputSpecificationName]>,
+  inputSpecificationName: InputSpecificationName,
+  outputSpecification: OutputSpecification,
+  options: JsonSchemaTranslationOptions<AdditionalSpecifications>,
+): JsonSchema<OutputSpecification>;
+// A, B
+export function translateJsonSchema<
+  AdditionalSpecifications extends AdditionalJsonSchemaSpecifications,
+  InputSpecificationName extends keyof AdditionalSpecifications,
+  OutputSpecificationName extends keyof BundledJsonSchemaTypes,
+>(
+  schema: JsonSchema<AdditionalSpecifications[InputSpecificationName]>,
+  inputSpecificationName: InputSpecificationName,
+  outputSpecificationName: OutputSpecificationName,
+  options: JsonSchemaTranslationOptions<AdditionalSpecifications>,
+): BundledJsonSchemaTypes[OutputSpecificationName];
+// A, A
+export function translateJsonSchema<
+  AdditionalSpecifications extends AdditionalJsonSchemaSpecifications,
+  InputSpecificationName extends keyof AdditionalSpecifications,
+  OutputSpecificationName extends keyof AdditionalSpecifications,
+>(
+  schema: JsonSchema<AdditionalSpecifications[InputSpecificationName]>,
+  inputSpecificationName: InputSpecificationName,
+  outputSpecificationName: OutputSpecificationName,
+  options: JsonSchemaTranslationOptions<AdditionalSpecifications>,
+): JsonSchema<AdditionalSpecifications[OutputSpecificationName]>;
+// impl
+export function translateJsonSchema<
+  AdditionalSpecifications extends AdditionalJsonSchemaSpecifications,
+  InputSpecificationOrName extends
+    | keyof AdditionalSpecifications
+    | keyof BundledJsonSchemaTypes
+    | JsonSchemaSpecification,
+  OutputSpecificationOrName extends
+    | keyof AdditionalSpecifications
+    | keyof BundledJsonSchemaTypes
+    | JsonSchemaSpecification,
+  InputSpecification extends ResolveSpecification<
+    InputSpecificationOrName,
+    AdditionalSpecifications
+  > = ResolveSpecification<InputSpecificationOrName, AdditionalSpecifications>,
+  OutputSpecification extends ResolveSpecification<
+    OutputSpecificationOrName,
+    AdditionalSpecifications
+  > = ResolveSpecification<OutputSpecificationOrName, AdditionalSpecifications>,
+>(
+  inputSchema: JsonSchema<InputSpecification>,
+  inputSpecificationOrName: InputSpecificationOrName,
+  outputSpecificationOrName: OutputSpecificationOrName,
+  options?: JsonSchemaTranslationOptions<AdditionalSpecifications>,
+): JsonSchema<OutputSpecification> {
+  const mergedOptions = {
+    ...options,
+    ...defaultJsonSchemaTranslationOptionsBase,
+    additional: options?.additional as AdditionalSpecifications | undefined,
+  };
+
+  const inputSpecification = resolveSpecification<
+    InputSpecificationOrName,
+    AdditionalSpecifications,
+    InputSpecification
+  >(inputSpecificationOrName, mergedOptions.additional);
+
+  const outputSpecification = resolveSpecification<
+    OutputSpecificationOrName,
+    AdditionalSpecifications,
+    OutputSpecification
+  >(outputSpecificationOrName, mergedOptions.additional);
+
+  const unhandledKeysMap = getUnhandledKeysMap(mergedOptions.unhandledKeys);
+
+  const outputSchema = translateSchema({
     input: {
       schema: inputSchema,
       settings: inputSpecification,
@@ -45,36 +167,12 @@ export function translateJsonSchema<
     },
     path: [],
     forceAllowBooleanSchema: false,
-    unhandledKeys: unhandledKeys,
-    copyJson: options.copyJson,
+    unhandledKeys: unhandledKeysMap,
+    copyJson: mergedOptions.copyJson,
     seen: new Map(),
   });
 
-  if (unhandledKeys.size) {
-    if (options.unhandledKeys === "throw") {
-      const pathsAndReasons = Array.from(
-        unhandledKeys,
-        ([path, reason]) =>
-          `${path.reduce(
-            (acc, curr) =>
-              typeof curr === "number"
-                ? `${acc}[${curr}]`
-                : acc
-                  ? `${acc}.${curr}`
-                  : curr,
-            "",
-          )}: ${reason}`,
-      ).join("\n");
-
-      throw new Error(`Unhandled keys:\n${pathsAndReasons}`);
-    } else if (options.unhandledKeys === "warn") {
-      console.warn("Unhandled keys:", unhandledKeys);
-    } else if (typeof options.unhandledKeys === "function") {
-      options.unhandledKeys(unhandledKeys);
-    } else if (options.unhandledKeys !== "ignore") {
-      throw new Error(`Unknown unhandledKeys option: ${options.unhandledKeys}`);
-    }
-  }
+  handleUnhandledKeysMap(mergedOptions.unhandledKeys, unhandledKeysMap);
 
   return outputSchema;
 }

@@ -1,7 +1,7 @@
 import { type JsonSchema } from "../JsonSchema.ts";
 import { type NonEmptyArray } from "../utils.ts";
-import { translateJsonSchemaInternal } from "../translateJsonSchemaInternal.ts";
 import { type Mutator } from "./Mutator.ts";
+import { translateSchema } from "./schema.ts";
 
 export const translateObjectKeywords: Mutator = (ctx) => {
   translateBasicObjectKeywords(ctx);
@@ -59,7 +59,7 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
         },
         key,
       ) => {
-        const schema = translateJsonSchemaInternal({
+        const schema = translateSchema({
           ...ctx,
           input: {
             ...ctx.input,
@@ -179,7 +179,7 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
       ctx.input.schema.additionalProperties !== undefined
     ) {
       // @ts-expect-error forceAdditionalProperties causes issues here
-      ctx.output.schema.additionalProperties = translateJsonSchemaInternal({
+      ctx.output.schema.additionalProperties = translateSchema({
         ...ctx,
         input: {
           ...ctx.input,
@@ -203,7 +203,7 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
         ctx.input.schema.patternProperties,
       ).reduce(
         (acc: Record<string, JsonSchema<typeof ctx.output.settings>>, key) => {
-          acc[key] = translateJsonSchemaInternal({
+          acc[key] = translateSchema({
             ...ctx,
             input: {
               ...ctx.input,
@@ -227,7 +227,7 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
       ctx.output.settings.unevaluatedProperties &&
       ctx.input.schema.unevaluatedProperties != undefined
     ) {
-      ctx.output.schema.unevaluatedProperties = translateJsonSchemaInternal({
+      ctx.output.schema.unevaluatedProperties = translateSchema({
         ...ctx,
         input: {
           ...ctx.input,
@@ -246,7 +246,7 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
       ctx.output.settings.propertyNames &&
       ctx.input.schema.propertyNames != undefined
     ) {
-      const propertyNames = translateJsonSchemaInternal({
+      const propertyNames = translateSchema({
         ...ctx,
         input: {
           ...ctx.input,
@@ -295,7 +295,7 @@ const translateObjectDependencyKeywords: Mutator = (ctx) => {
             typeof ctx.input.settings
           >;
 
-          acc[key] = translateJsonSchemaInternal({
+          acc[key] = translateSchema({
             ...ctx,
             input: {
               ...ctx.input,
@@ -318,7 +318,7 @@ const translateObjectDependencyKeywords: Mutator = (ctx) => {
           const schema = ctx.input.schema.dependencies[key];
 
           if (!Array.isArray(schema)) {
-            acc[key] = translateJsonSchemaInternal({
+            acc[key] = translateSchema({
               ...ctx,
               input: {
                 ...ctx.input,

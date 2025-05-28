@@ -1,7 +1,7 @@
 import { type JsonObject } from "../Json.ts";
 import { type JsonSchema } from "../JsonSchema.ts";
-import { translateJsonSchemaInternal } from "../translateJsonSchemaInternal.ts";
 import { type Mutator } from "./Mutator.ts";
+import { translateSchema } from "./schema.ts";
 
 export const translateDefinitionsKeyword: Mutator = (ctx) => {
   type OutputSpecification = typeof ctx.output.settings;
@@ -18,7 +18,7 @@ export const translateDefinitionsKeyword: Mutator = (ctx) => {
     ) {
       const outputDefs = Object.keys(inputDefs).reduce(
         (outputDefs: Record<string, JsonSchema<OutputSpecification>>, key) => {
-          outputDefs[key] = translateJsonSchemaInternal({
+          outputDefs[key] = translateSchema({
             ...ctx,
             input: {
               ...ctx.input,

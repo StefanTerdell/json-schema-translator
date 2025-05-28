@@ -1,7 +1,7 @@
 import { JsonSchemaStaticKeywordsObject } from "../JsonSchema.ts";
 import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
-import { translateJsonSchemaInternal } from "../translateJsonSchemaInternal.ts";
 import { Mutator } from "./Mutator.ts";
+import { translateSchema } from "./schema.ts";
 
 export const translateStringKeywords: Mutator = (ctx) => {
   translateBasicKeywords(ctx);
@@ -105,7 +105,7 @@ const translateContentKeywords: Mutator = (ctx) => {
       ctx.output.settings.contentSchema &&
       ctx.input.schema.contentSchema !== undefined
     ) {
-      ctx.output.schema.contentSchema = translateJsonSchemaInternal({
+      ctx.output.schema.contentSchema = translateSchema({
         ...ctx,
         input: {
           ...ctx.input,

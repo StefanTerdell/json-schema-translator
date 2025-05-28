@@ -1,10 +1,10 @@
-import { translateJsonSchemaInternal } from "../translateJsonSchemaInternal.ts";
 import { type Mutator } from "./Mutator.ts";
+import { translateSchema } from "./schema.ts";
 
 export const translateConditionalKeywords: Mutator = (ctx) => {
   if (ctx.input.settings.if) {
     if (ctx.output.settings.if && ctx.input.schema.if !== undefined) {
-      const x = translateJsonSchemaInternal({
+      const x = translateSchema({
         ...ctx,
         input: {
           ...ctx.input,
@@ -21,7 +21,7 @@ export const translateConditionalKeywords: Mutator = (ctx) => {
 
     if (ctx.input.settings.then) {
       if (ctx.output.settings.then && ctx.input.schema.then !== undefined) {
-        const x = translateJsonSchemaInternal({
+        const x = translateSchema({
           ...ctx,
           input: {
             ...ctx.input,
@@ -39,7 +39,7 @@ export const translateConditionalKeywords: Mutator = (ctx) => {
 
     if (ctx.input.settings.else) {
       if (ctx.output.settings.else && ctx.input.schema.else !== undefined) {
-        const x = translateJsonSchemaInternal({
+        const x = translateSchema({
           ...ctx,
           input: {
             ...ctx.input,
@@ -57,7 +57,7 @@ export const translateConditionalKeywords: Mutator = (ctx) => {
   }
 
   if (ctx.input.schema.not !== undefined) {
-    const x = translateJsonSchemaInternal({
+    const x = translateSchema({
       ...ctx,
       input: {
         ...ctx.input,

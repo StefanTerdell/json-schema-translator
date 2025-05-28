@@ -5,6 +5,7 @@ import {
 import { type JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
 import { type Mutator } from "./Mutator.ts";
 
+/** @internal */
 export const translateTypeKeyword: Mutator = ({
   input,
   output,

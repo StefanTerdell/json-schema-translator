@@ -1,6 +1,6 @@
 import { type JsonSchema } from "../JsonSchema.ts";
-import { translateJsonSchemaInternal } from "../translateJsonSchemaInternal.ts";
 import { type Mutator } from "./Mutator.ts";
+import { translateSchema } from "./schema.ts";
 
 export const translateArrayKeywords: Mutator = (ctx) => {
   translateBasicArrayKeywords(ctx);
@@ -68,7 +68,7 @@ const translateItemKeywords: Mutator = (ctx) => {
         | JsonSchema<typeof ctx.input.settings>[]
         | undefined
     )?.map((schema, index) =>
-      translateJsonSchemaInternal({
+      translateSchema({
         ...ctx,
         input: {
           ...ctx.input,
@@ -81,7 +81,7 @@ const translateItemKeywords: Mutator = (ctx) => {
 
     const items =
       ctx.input.schema.items !== undefined
-        ? translateJsonSchemaInternal({
+        ? translateSchema({
             ...ctx,
             input: {
               ...ctx.input,
@@ -119,7 +119,7 @@ const translateItemKeywords: Mutator = (ctx) => {
     const [items, additionalItems] = Array.isArray(ctx.input.schema.items)
       ? [
           ctx.input.schema.items.map((schema, index) =>
-            translateJsonSchemaInternal({
+            translateSchema({
               ...ctx,
               input: {
                 ...ctx.input,
@@ -131,7 +131,7 @@ const translateItemKeywords: Mutator = (ctx) => {
           ),
           ctx.input.settings.additionalItems &&
           ctx.input.schema.additionalItems !== undefined
-            ? translateJsonSchemaInternal({
+            ? translateSchema({
                 ...ctx,
                 input: {
                   ...ctx.input,
@@ -145,7 +145,7 @@ const translateItemKeywords: Mutator = (ctx) => {
         ]
       : [
           ctx.input.schema.items !== undefined
-            ? translateJsonSchemaInternal({
+            ? translateSchema({
                 ...ctx,
                 input: {
                   ...ctx.input,
@@ -159,7 +159,7 @@ const translateItemKeywords: Mutator = (ctx) => {
             : undefined,
           ctx.input.settings.additionalItems &&
           ctx.input.schema.additionalItems !== undefined
-            ? translateJsonSchemaInternal({
+            ? translateSchema({
                 ...ctx,
                 input: {
                   ...ctx.input,
@@ -201,7 +201,7 @@ const translateItemKeywords: Mutator = (ctx) => {
       ctx.output.settings.unevaluatedItems &&
       ctx.input.schema.unevaluatedItems != undefined
     ) {
-      ctx.output.schema.unevaluatedItems = translateJsonSchemaInternal({
+      ctx.output.schema.unevaluatedItems = translateSchema({
         ...ctx,
         input: {
           ...ctx.input,
@@ -220,7 +220,7 @@ const translateItemKeywords: Mutator = (ctx) => {
       ctx.output.settings.contains &&
       ctx.input.schema.contains != undefined
     ) {
-      ctx.output.schema.contains = translateJsonSchemaInternal({
+      ctx.output.schema.contains = translateSchema({
         ...ctx,
         input: {
           ...ctx.input,

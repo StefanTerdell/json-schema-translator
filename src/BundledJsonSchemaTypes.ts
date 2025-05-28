@@ -5,6 +5,7 @@ import {
   jsonSchemaDraft2019_09Specification,
 } from "./specifications/draft2019_09.ts";
 import {
+  JsonSchemaDraft2020_12,
   JsonSchemaDraft2020_12Specification,
   jsonSchemaDraft2020_12Specification,
 } from "./specifications/draft2020_12.ts";
@@ -39,7 +40,7 @@ export type BundledJsonSchemaTypes = {
   draft6: JsonSchemaDraft6;
   draft7: JsonSchemaDraft7;
   draft2019_09: JsonSchemaDraft2019_09;
-  draft2020_12: JsonSchemaDraft2019_09;
+  draft2020_12: JsonSchemaDraft2020_12;
   googleAi: GoogleAiJsonSchema;
   openAiStructuredOutput: OpenAiStructuredOutputSchema;
 };
