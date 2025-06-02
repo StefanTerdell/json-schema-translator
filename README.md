@@ -157,6 +157,8 @@ const translatorResult: JsonSchemaDraft2020_12 = translator(myTupleSchema);
 
 You can easily define your own specification and derive a type from it. In the example below we will be basing the specification on draft 4. For a full list of options, reference the files in the `./src/specifications`-directory, or the definition of the root type itself in `./src/JsonSchemaSpecification.ts`.
 
+### Extending an existing specification
+
 ```typescript
 import {
   jsonSchemaDraft4Specification,
@@ -174,6 +176,8 @@ const myCustomSchemaSpecification = {
 
 type MyCustomSchemaType = JsonSchema<typeof myCustomSchemaSpecification>;
 ```
+
+### Using the specification
 
 The specification can then be used directly as an input specification
 
@@ -208,4 +212,16 @@ const optionsResult: JsonSchemaDraft6 = translateJsonSchema(
   "draft6",
   { specifications },
 );
+```
+
+Naturally it also works with `jsonSchemaTranslator`.
+
+```typescript
+const customTranslator = jsonSchemaTranslator(
+  "draft6",
+  "myCustomSchemaSpecification",
+  { specifications },
+);
+
+const myTanslatorResult: MyCustomSchemaType = customTranslator(optionsResult);
 ```
