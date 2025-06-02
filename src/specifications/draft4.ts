@@ -22,8 +22,15 @@ export const jsonSchemaDraft4Specification = {
   markdownDescription: false,
 
   // Types
-  integer: true,
-  null: true,
+  type: [
+    "string",
+    "number",
+    "integer",
+    "boolean",
+    "object",
+    "array",
+    "null",
+  ] as const,
   strictTypes: false,
 
   // Arrays
@@ -38,15 +45,25 @@ export const jsonSchemaDraft4Specification = {
   maxContains: false,
 
   // Format
-  format: ["date-time", "email", "hostname", "ipv4", "ipv6", "uri"] as const,
+  format: true,
+  stringFormats: [
+    "date-time",
+    "email",
+    "hostname",
+    "ipv4",
+    "ipv6",
+    "uri",
+  ] as const,
   strictFormats: true,
 
   // Numbers
   multipleOf: true,
   minimum: true,
-  exclusiveMinimum: "boolean",
+  exclusiveMinimum: true,
+  booleanExclusiveMinimum: true,
   maximum: true,
-  exclusiveMaximum: "boolean",
+  exclusiveMaximum: true,
+  booleanExclusiveMaximum: true,
 
   // Strings
   minLength: true,
@@ -80,6 +97,7 @@ export const jsonSchemaDraft4Specification = {
   anyOf: true,
   oneOf: true,
   allOf: true,
+  discriminator: false,
 
   // Objects and properties
   unevaluatedProperties: false,

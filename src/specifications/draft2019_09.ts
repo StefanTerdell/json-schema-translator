@@ -5,7 +5,7 @@ export const jsonSchemaDraft2019_09Specification = {
   // Shared
   nullable: false,
   arbitraryJson: true,
-  booleanSchemas: false,
+  booleanSchemas: true,
 
   // Annotations
   $schema: "https://json-schema.org/draft/2019-09/schema" as const,
@@ -22,8 +22,15 @@ export const jsonSchemaDraft2019_09Specification = {
   markdownDescription: false,
 
   // Types
-  integer: true,
-  null: true,
+  type: [
+    "string",
+    "number",
+    "integer",
+    "boolean",
+    "object",
+    "array",
+    "null",
+  ] as const,
   strictTypes: false,
 
   // Arrays
@@ -38,7 +45,8 @@ export const jsonSchemaDraft2019_09Specification = {
   maxContains: true,
 
   // Format
-  format: [
+  format: true,
+  stringFormats: [
     "date",
     "date-time",
     "duration",
@@ -100,6 +108,7 @@ export const jsonSchemaDraft2019_09Specification = {
   anyOf: true,
   oneOf: true,
   allOf: true,
+  discriminator: false,
 
   // Objects and properties
   unevaluatedProperties: true,

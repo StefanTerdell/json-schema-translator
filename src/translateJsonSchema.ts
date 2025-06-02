@@ -140,7 +140,7 @@ export function translateJsonSchema<
   const mergedOptions = {
     ...options,
     ...defaultJsonSchemaTranslationOptionsBase,
-    additional: options?.additional as AdditionalSpecifications | undefined,
+    additional: options?.specifications as AdditionalSpecifications | undefined,
   };
 
   const inputSpecification = resolveSpecification<

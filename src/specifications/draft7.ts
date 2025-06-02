@@ -22,8 +22,15 @@ export const jsonSchemaDraft7Specification = {
   markdownDescription: false,
 
   // Types
-  integer: true,
-  null: true,
+  type: [
+    "string",
+    "number",
+    "integer",
+    "boolean",
+    "object",
+    "array",
+    "null",
+  ] as const,
   strictTypes: false,
 
   // Arrays
@@ -38,7 +45,8 @@ export const jsonSchemaDraft7Specification = {
   maxContains: false,
 
   // Format
-  format: [
+  format: true,
+  stringFormats: [
     "date",
     "date-time",
     "email",
@@ -98,6 +106,7 @@ export const jsonSchemaDraft7Specification = {
   anyOf: true,
   oneOf: true,
   allOf: true,
+  discriminator: false,
 
   // Objects and properties
   unevaluatedProperties: false,

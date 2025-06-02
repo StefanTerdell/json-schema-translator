@@ -22,8 +22,15 @@ export const googleAiJsonSchemaSpecification = {
   markdownDescription: false,
 
   // Types
-  integer: true,
-  null: true,
+  type: [
+    "string",
+    "number",
+    "integer",
+    "boolean",
+    "object",
+    "array",
+    "null",
+  ] as const,
   strictTypes: true,
 
   // Arrays
@@ -38,7 +45,9 @@ export const googleAiJsonSchemaSpecification = {
   maxContains: false,
 
   // Format
-  format: ["float", "double", "int32", "int64", "enum", "date-time"],
+  format: true,
+  stringFormats: ["enum", "date-time", "enum"] as const,
+  numberFormats: ["float", "double", "int32", "int64", "enum"] as const,
   strictFormats: true,
 
   // Numbers
@@ -59,7 +68,8 @@ export const googleAiJsonSchemaSpecification = {
 
   // Constants
   const: false,
-  enum: "strings",
+  enum: true,
+  stringConstants: true,
   nonEmptyEnum: false,
 
   // Structuring
@@ -80,6 +90,7 @@ export const googleAiJsonSchemaSpecification = {
   anyOf: true,
   oneOf: false,
   allOf: false,
+  discriminator: false,
 
   // Objects and properties
   unevaluatedProperties: false,
@@ -103,5 +114,4 @@ export const googleAiJsonSchemaSpecification = {
 
 export type GoogleAiJsonSchemaSpecification =
   typeof googleAiJsonSchemaSpecification;
-export type GoogleAiJsonSchema =
-  JsonSchema<GoogleAiJsonSchemaSpecification>;
+export type GoogleAiJsonSchema = JsonSchema<GoogleAiJsonSchemaSpecification>;

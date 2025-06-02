@@ -8,7 +8,8 @@ export * from "./specifications/draft4.ts";
 export * from "./specifications/draft6.ts";
 export * from "./specifications/draft7.ts";
 export * from "./specifications/google_ai.ts";
-export * from "./specifications/open_ai.ts";
+export * from "./specifications/open_ai_structured_output.ts";
+export * from "./specifications/open_api_3_0_schema.ts";
 
 export { translateJsonSchema } from "./translateJsonSchema.ts";
 export { jsonSchemaTranslator } from "./jsonSchemaTranslator.ts";

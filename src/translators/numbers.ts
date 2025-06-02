@@ -1,6 +1,12 @@
 import { type Mutator } from "./Mutator.ts";
 
-export const translateNumberKeywords: Mutator = ({
+export const translateNumberKeywords: Mutator = (ctx) => {
+  translateBasicNumberKeywords(ctx);
+  translateMinimumAndExclusiveMinimum(ctx);
+  translateMaximumAndExclusiveMaximum(ctx);
+};
+
+export const translateBasicNumberKeywords: Mutator = ({
   input,
   output,
   handledKeys,
@@ -12,140 +18,221 @@ export const translateNumberKeywords: Mutator = ({
 
     handledKeys.add("multipleOf");
   }
-
-  if (input.settings.minimum) {
-    if (output.settings.minimum) {
-      if (input.settings.exclusiveMinimum === true) {
-        if (output.settings.exclusiveMinimum === true) {
-          // Both input and output uses numbers for exclusive limits
-
-          if (input.schema.minimum !== undefined) {
-            output.schema.minimum = input.schema.minimum;
-          }
-
-          if (input.schema.exclusiveMinimum !== undefined) {
-            output.schema.exclusiveMinimum = input.schema.exclusiveMinimum;
-          }
-        }
-
-        if (output.settings.exclusiveMinimum === "boolean") {
-          // Input uses numbers for exclusive limits while output uses flags
-
-          if (input.schema.exclusiveMinimum !== undefined) {
-            if (input.schema.minimum !== undefined) {
-              output.schema.minimum = Math.max(
-                Number(input.schema.exclusiveMinimum),
-                Number(input.schema.minimum),
-              );
-            } else {
-              // @ts-expect-error narrowing
-              output.schema.minimum = input.schema.exclusiveMinimum;
-              // @ts-expect-error narrowing
-              output.schema.exclusiveMinimum = true;
-            }
-          } else if (input.schema.minimum !== undefined) {
-            output.schema.minimum = input.schema.minimum;
-          }
-        }
-      }
-
-      if (input.settings.exclusiveMinimum === "boolean") {
-        if (output.settings.exclusiveMinimum === true) {
-          // Input uses flags for exclusive limits while output uses numbers
-
-          if (input.schema.minimum !== undefined) {
-            if (input.schema.exclusiveMinimum === true) {
-              // @ts-expect-error ISSUE: Narrowing :p
-              output.schema.exclusiveMinimum = input.schema.minimum;
-            } else {
-              output.schema.minimum = input.schema.minimum;
-            }
-          }
-        }
-
-        if (output.settings.exclusiveMinimum === "boolean") {
-          // Both input and output use flags for exclusive limits
-
-          if (input.schema.minimum !== undefined) {
-            output.schema.minimum = input.schema.minimum;
-          }
-
-          if (input.schema.exclusiveMinimum !== undefined) {
-            output.schema.exclusiveMinimum = input.schema.exclusiveMinimum;
-          }
-        }
-      }
-    }
-
-    handledKeys.add("minimum");
-    handledKeys.add("exclusiveMinimum");
-  }
-
-  if (input.settings.maximum) {
-    if (output.settings.maximum) {
-      if (input.settings.exclusiveMaximum === true) {
-        if (output.settings.exclusiveMaximum === true) {
-          // Both input and output uses numbers for exclusive limits
-
-          if (input.schema.maximum !== undefined) {
-            output.schema.maximum = input.schema.maximum;
-          }
-
-          if (input.schema.exclusiveMaximum !== undefined) {
-            output.schema.exclusiveMaximum = input.schema.exclusiveMaximum;
-          }
-        }
-
-        if (output.settings.exclusiveMaximum === "boolean") {
-          // Input uses numbers for exclusive limits while output uses flags
-
-          if (input.schema.exclusiveMaximum !== undefined) {
-            if (input.schema.maximum !== undefined) {
-              output.schema.maximum = Math.max(
-                Number(input.schema.exclusiveMaximum),
-                Number(input.schema.maximum),
-              );
-            } else {
-              // @ts-expect-error narrowing
-              output.schema.maximum = input.schema.exclusiveMaximum;
-              // @ts-expect-error narrowing
-              output.schema.exclusiveMaximum = true;
-            }
-          } else if (input.schema.maximum !== undefined) {
-            output.schema.maximum = input.schema.maximum;
-          }
-        }
-      }
-
-      if (input.settings.exclusiveMaximum === "boolean") {
-        if (output.settings.exclusiveMaximum === true) {
-          // Input uses flags for exclusive limits while output uses numbers
-
-          if (input.schema.maximum !== undefined) {
-            if (input.schema.exclusiveMaximum === true) {
-              // @ts-expect-error ISSUE: Narrowing :p
-              output.schema.exclusiveMaximum = input.schema.maximum;
-            } else {
-              output.schema.maximum = input.schema.maximum;
-            }
-          }
-        }
-
-        if (output.settings.exclusiveMaximum === "boolean") {
-          // Both input and output use flags for exclusive limits
-
-          if (input.schema.maximum !== undefined) {
-            output.schema.maximum = input.schema.maximum;
-          }
-
-          if (input.schema.exclusiveMaximum !== undefined) {
-            output.schema.exclusiveMaximum = input.schema.exclusiveMaximum;
-          }
-        }
-      }
-    }
-
-    handledKeys.add("maximum");
-    handledKeys.add("exclusiveMaximum");
-  }
 };
+
+const translateMinimumAndExclusiveMinimum =
+  createLimitAndExclusiveLimitTranslator("minimum");
+const translateMaximumAndExclusiveMaximum =
+  createLimitAndExclusiveLimitTranslator("maximum");
+
+function createLimitAndExclusiveLimitTranslator(
+  limit: "minimum" | "maximum",
+): Mutator {
+  const exclusiveLimit =
+    limit === "minimum" ? "exclusiveMinimum" : "exclusiveMaximum";
+  const booleanExclusiveLimit =
+    limit === "minimum" ? "booleanExclusiveMinimum" : "booleanExclusiveMaximum";
+  const leastPermissive =
+    limit === "minimum"
+      ? (a: number, b: number) => Math.max(a, b)
+      : (a: number, b: number) => Math.min(a, b);
+
+  return ({ input, output, handledKeys }) => {
+    if (input.settings[limit]) {
+      // input supports the limit
+      if (output.settings[limit]) {
+        // both input and output supports the limit
+        if (input.settings[exclusiveLimit]) {
+          // input supports the exclusive limit
+          if (output.settings[exclusiveLimit]) {
+            // both input and output supports the exclusive limit
+            if (input.settings[booleanExclusiveLimit]) {
+              if (output.settings[booleanExclusiveLimit]) {
+                // both input and output use booleans for the exclusive limit values
+
+                if (input.schema[limit] !== undefined) {
+                  output.schema[limit] = input.schema[limit];
+                }
+
+                if (input.schema[exclusiveLimit] !== undefined) {
+                  output.schema[exclusiveLimit] = input.schema[exclusiveLimit];
+                }
+              } else {
+                // only input use booleans for the exclusive limit values
+
+                if (input.schema[limit] !== undefined) {
+                  if (input.schema[exclusiveLimit] === true) {
+                    // @ts-expect-error :p
+                    output.schema[exclusiveLimit] = input.schema[limit];
+                  } else {
+                    output.schema[limit] = input.schema[limit];
+                  }
+                }
+              }
+            } else {
+              if (output.settings[booleanExclusiveLimit]) {
+                // only output use booleans for the exclusive limit values
+
+                if (typeof input.schema[exclusiveLimit] === "number") {
+                  // @ts-expect-error :p
+                  output.schema[exclusiveLimit] = true;
+
+                  if (typeof input.schema[limit] === "number") {
+                    output.schema[limit] = leastPermissive(
+                      input.schema[limit],
+                      input.schema[exclusiveLimit],
+                    );
+                  } else {
+                    output.schema[limit] = input.schema[exclusiveLimit];
+                  }
+                }
+              } else {
+                // neither input nor output use booleans for the exclusive limit values
+
+                if (input.schema[limit] !== undefined) {
+                  output.schema[limit] = input.schema[limit];
+                }
+
+                if (input.schema[exclusiveLimit] !== undefined) {
+                  output.schema[exclusiveLimit] = input.schema[exclusiveLimit];
+                }
+              }
+            }
+          } else {
+            // only input supports the exclusive limit
+            if (typeof input.schema[limit] === "number") {
+              if (typeof input.schema[exclusiveLimit] === "number") {
+                output.schema[limit] = leastPermissive(
+                  input.schema[limit],
+                  input.schema[exclusiveLimit],
+                );
+              } else {
+                output.schema[limit] = input.schema[limit];
+              }
+            }
+          }
+
+          handledKeys.add(exclusiveLimit);
+        } else {
+          if (output.settings[exclusiveLimit]) {
+            // only output supports the exclusive limit
+
+            if (input.schema[limit] !== undefined) {
+              output.schema[limit] = input.schema[limit];
+            }
+          } else {
+            // nethier input nor output supports the exclusive limit
+
+            if (input.schema[limit] !== undefined) {
+              output.schema[limit] = input.schema[limit];
+            }
+          }
+        }
+      } else {
+        // only input supports the limit
+        if (input.settings[exclusiveLimit]) {
+          // input supports the exclusive limit
+          if (output.settings[exclusiveLimit]) {
+            // both input and output support the exclusive limit
+
+            if (input.settings[booleanExclusiveLimit]) {
+              if (output.settings[booleanExclusiveLimit]) {
+                // both input and output use booleans for exclusive limit values
+                if (input.schema[exclusiveLimit] !== undefined) {
+                  // since the limit value will not be copied an exclusive limit value will do nothing, so it's copied pretty much on principle.
+                  output.schema[exclusiveLimit] = input.schema[exclusiveLimit];
+                }
+              } else {
+                // only input uses booleans for exclusive limit values
+                // No-op: since the limit value will not be copied an exclusive limit value can not be inferred from it
+              }
+            } else {
+              if (output.settings[booleanExclusiveLimit]) {
+                // only output uses booleans for exclusive limit values
+                // No-op: since the limit value will not be copied, an exclusive limit value would do nothing
+              } else {
+                // neither input nor output use booleans for exclusive limit values
+                if (input.schema[exclusiveLimit] !== undefined) {
+                  output.schema[exclusiveLimit] = input.schema[exclusiveLimit];
+                }
+              }
+            }
+          } else {
+            // only input supports the exclusive limit
+            // No-op: output supports neither limit or exclusive limit
+          }
+
+          handledKeys.add(exclusiveLimit);
+        } else {
+          // input does not support the exclusive limit
+          if (output.settings[exclusiveLimit]) {
+            // only output supports the exclusive limit
+            if (output.settings[booleanExclusiveLimit]) {
+              // output uses booleans for exclusive limit values
+              // no-op: even if there is a limit there's no way to know if it is intended as exclusive or not
+            } else {
+              // output does not use booleans for exclusive limit values
+              // no-op: even if there is a limit there's no way to know if it is intended as exclusive or not
+            }
+          } else {
+            // nethier input nor output support the exclusive limit
+            // no-op
+          }
+        }
+      }
+
+      handledKeys.add(limit);
+    } else {
+      // input does not support the limit
+      if (output.settings[limit]) {
+        // only output supports the limit
+        if (input.settings[exclusiveLimit]) {
+          // input supports exclusive limit
+          if (input.settings[booleanExclusiveLimit]) {
+            // input uses booleans for exclusive limit values
+            if (output.settings[booleanExclusiveLimit]) {
+              // both input and output use booleans for exclusive limit values
+              if (input.schema[exclusiveLimit] !== undefined) {
+                output.schema[exclusiveLimit] = input.schema[exclusiveLimit];
+              }
+            } else {
+              // only input uses booleans for exclusive limit values
+              // no-op: there is no limit to infer an exclusive limit value from
+            }
+          } else {
+            // input does not use booleans for exclusive limit values
+            if (output.settings[booleanExclusiveLimit]) {
+              // only output uses booleans for exclusive limit values
+              if (typeof input.schema[exclusiveLimit] === "number") {
+                // @ts-expect-error :p
+                output.schema[exclusiveLimit] = true;
+                output.schema[limit] = input.schema[exclusiveLimit];
+              }
+            } else {
+              // neither input nor output use booleans for exclusive limit values
+              if (input.schema[exclusiveLimit] !== undefined) {
+                output.schema[exclusiveLimit] = input.schema[exclusiveLimit];
+              }
+            }
+          }
+
+          handledKeys.add(exclusiveLimit);
+        } else {
+          // input does not support the exclusive limit
+          if (output.settings[exclusiveLimit]) {
+            // only output supports the exclusive limit
+            if (output.settings[booleanExclusiveLimit]) {
+              // output uses booleans for exclusive limit values
+              // no-op: there's no limit to flag as exclusive or not
+            } else {
+              // output does not use booleans for exclusive limit values
+              // no-op: even if there is a limit there's no way to know if it is intended as exclusive or not
+            }
+          }
+        }
+      } else {
+        // neither input nor output supports the limit
+      }
+    }
+  };
+}

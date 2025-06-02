@@ -8,8 +8,8 @@ export type JsonSchemaTranslationOptions<
     | undefined = undefined,
 > = Partial<JsonSchemaTranslationOptionsBase> &
   (AdditionalSpecifications extends undefined
-    ? { additional?: AdditionalJsonSchemaSpecifications }
-    : { additional: AdditionalSpecifications });
+    ? { specifications?: AdditionalJsonSchemaSpecifications }
+    : { specifications: AdditionalSpecifications });
 
 export type AdditionalJsonSchemaSpecifications = {
   [key: string | number | symbol]: JsonSchemaSpecification;

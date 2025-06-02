@@ -26,10 +26,11 @@ export const translateTypeKeyword: Mutator = ({
             skipIntegerFallback,
           ),
         )
-        .filter((type) => type !== undefined);
+        .filter((type) => type !== undefined) as typeof output.schema.type;
     } else {
       const type = translateType(
         {
+          // @ts-ignore-error :p
           type: input.schema.type,
           settings: input.settings,
         },
@@ -60,12 +61,12 @@ const translateType = <
   },
   skipIntegerFallback: boolean,
 ): JsonSchemaType<OutputJsonSchemaSpecification> | undefined => {
-  if (input.settings.null && input.type === "null") {
+  if (input.settings.type.includes("null") && input.type === "null") {
     if (output.settings.nullable) {
       output.schema.nullable = true;
     }
 
-    if (output.settings.null) {
+    if (output.settings.type.includes("null")) {
       return "null" as JsonSchemaType<
         OutputJsonSchemaSpecification & { null: true }
       >;
@@ -74,8 +75,8 @@ const translateType = <
     }
   }
 
-  if (input.settings.integer && input.type === "integer") {
-    if (output.settings.integer) {
+  if (input.settings.type.includes("integer") && input.type === "integer") {
+    if (output.settings.type.includes("integer")) {
       return "integer" as JsonSchemaType<
         OutputJsonSchemaSpecification & { integer: true }
       >;

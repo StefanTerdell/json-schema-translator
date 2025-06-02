@@ -72,18 +72,37 @@ const translateContentKeywords: Mutator = (ctx) => {
     ? ctx.input.schema.contentMediaType
     : media?.type;
 
-  if (ctx.output.settings.media && (contentEncoding || contentMediaType)) {
-    // @ts-expect-error ISSUE: Narrowing breaks across generics
-    ctx.output.schema.media = {
-      binaryEncoding: contentEncoding,
-      type: contentMediaType,
-    };
+  if (ctx.output.settings.media) {
+    if (contentEncoding !== undefined) {
+      if (contentMediaType !== undefined) {
+        // @ts-expect-error ISSUE: Narrowing breaks across generics
+        ctx.output.schema.media = {
+          binaryEncoding: contentEncoding,
+          type: contentMediaType,
+        };
+      } else {
+        // @ts-expect-error ISSUE: Narrowing breaks across generics
+        ctx.output.schema.media = {
+          binaryEncoding: contentEncoding,
+        };
+      }
+    } else {
+      if (contentMediaType !== undefined) {
+        // @ts-expect-error ISSUE: Narrowing breaks across generics
+        ctx.output.schema.media = {
+          type: contentMediaType,
+        };
+      }
+    }
   } else {
-    if (ctx.output.settings.contentEncoding) {
+    if (ctx.output.settings.contentEncoding && contentEncoding !== undefined) {
       ctx.output.schema.contentEncoding = contentEncoding;
     }
 
-    if (ctx.output.settings.contentMediaType) {
+    if (
+      ctx.output.settings.contentMediaType &&
+      contentMediaType !== undefined
+    ) {
       ctx.output.schema.contentMediaType = contentMediaType;
     }
   }

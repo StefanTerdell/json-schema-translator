@@ -160,7 +160,7 @@ export function jsonSchemaTranslator<
   const mergedOptions = {
     ...defaultJsonSchemaTranslationOptionsBase,
     ...options,
-    additional: options?.additional as AdditionalSpecifications | undefined,
+    additional: options?.specifications as AdditionalSpecifications | undefined,
   };
 
   const inputSpecification = resolveSpecification<

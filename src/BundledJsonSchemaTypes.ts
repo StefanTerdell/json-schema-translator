@@ -33,7 +33,7 @@ import {
   OpenAiStructuredOutputSchema,
   OpenAiStructuredOutputSchemaSpecification,
   openAiStructuredOutputSchemaSpecification,
-} from "./specifications/open_ai.ts";
+} from "./specifications/open_ai_structured_output.ts";
 
 export type BundledJsonSchemaTypes = {
   draft4: JsonSchemaDraft4;

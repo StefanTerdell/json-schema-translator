@@ -109,7 +109,11 @@ export type JsonSchemaStaticKeywordsObject<
   Spec extends JsonSchemaSpecification,
 > = {
   // type
-  type?: JsonSchemaType<Spec> | Array<JsonSchemaType<Spec>>;
+  type?: If<
+    Spec["singleType"],
+    JsonSchemaType<Spec>,
+    JsonSchemaType<Spec> | Array<JsonSchemaType<Spec>>
+  >;
   nullable?: If<Spec["nullable"], boolean>;
 
   // strings:
@@ -216,6 +220,10 @@ export type JsonSchemaStaticKeywordsObject<
   anyOf?: Array<JsonSchema<Spec>>;
   oneOf?: Array<JsonSchema<Spec>>;
   allOf?: Array<JsonSchema<Spec>>;
+  discriminator?: If<
+    Spec["discriminator"],
+    { propertyName: string; mapping?: { [key: string]: string } }
+  >;
 
   // conditionals
   if?: JsonSchema<Spec>;
@@ -272,16 +280,16 @@ export type AjvErrorMessages = {
 /* Represents a single value of the `type` keyword in a Json Schema, optionally strict based on the `strictTypes` option */
 export type JsonSchemaType<Spec extends JsonSchemaSpecification> = If<
   Spec["strictTypes"],
-  JsonSchemaValidType<Spec>,
-  LooseStringLiteral<JsonSchemaValidType<Spec>>
+  Spec["type"][number],
+  LooseStringLiteral<Spec["type"][number]>
 >;
 
-/* Represents a single validated value of the `type` keyword in a Json Schema */
-export type JsonSchemaValidType<Spec extends JsonSchemaSpecification> =
-  | "string"
-  | "number"
-  | "object"
-  | "array"
-  | "boolean"
-  | If<Spec["null"], "null", never>
-  | If<Spec["integer"], "integer", never>;
+// /* Represents a single validated value of the `type` keyword in a Json Schema */
+// export type JsonSchemaValidType<Spec extends JsonSchemaSpecification> =
+//   | "string"
+//   | "number"
+//   | "object"
+//   | "array"
+//   | "boolean"
+//   | If<Spec["null"], "null", never>
+//   | If<Spec["integer"], "integer", never>;

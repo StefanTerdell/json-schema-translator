@@ -1,3 +1,4 @@
+import { copy } from "../copy.ts";
 import { type Mutator } from "./Mutator.ts";
 import { translateSchema } from "./schema.ts";
 
@@ -54,5 +55,16 @@ export const translateFactoringKeywords: Mutator = (ctx) => {
     }
 
     ctx.handledKeys.add("allOf");
+  }
+
+  if (ctx.input.settings.discriminator) {
+    if (ctx.output.settings.discriminator && ctx.input.schema.discriminator) {
+      ctx.output.schema.discriminator = copy(
+        ctx.copyJson,
+        ctx.input.schema.discriminator,
+      );
+    }
+
+    ctx.handledKeys.add("discriminator");
   }
 };

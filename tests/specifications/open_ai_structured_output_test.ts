@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert/equals";
 import { jsonSchemaDraft7Specification } from "../../src/index.ts";
-import { openAiStructuredOutputSchemaSpecification } from "../../src/specifications/open_ai.ts";
+import { openAiStructuredOutputSchemaSpecification } from "../../src/specifications/open_ai_structured_output.ts";
 import { translateJsonSchema } from "../../src/translateJsonSchema.ts";
 
 Deno.test(

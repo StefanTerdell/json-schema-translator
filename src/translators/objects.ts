@@ -75,7 +75,7 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
 
         if (
           !explicitlyRequired &&
-          ctx.output.settings.null &&
+          ctx.output.settings.type.includes("null") &&
           ctx.output.settings.addNullTypeToOptionalProperties &&
           (typeof schema !== "object" ||
             schema.type !== "null" ||
@@ -85,7 +85,10 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
             if (Array.isArray(schema.type)) {
               schema.type.push("null" as (typeof schema.type)[number]);
             } else if (schema.type) {
-              schema.type = [schema.type, "null" as typeof schema.type];
+              if (!ctx.output.settings.singleType) {
+                // @ts-expect-error :p
+                schema.type = [schema.type, "null" as typeof schema.type];
+              }
             } else {
               schema.type = "null" as typeof schema.type;
             }
@@ -126,7 +129,7 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
             schema.nullable === true;
 
           const isOptionalByNullType =
-            ctx.output.settings.null &&
+            ctx.output.settings.type.includes("null") &&
             ctx.output.settings.treatPropertiesWithNullTypeAsOptional &&
             typeof schema === "object" &&
             (schema.type === "null" ||

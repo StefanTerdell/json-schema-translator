@@ -1,20 +1,20 @@
 import { type JsonSchema } from "../JsonSchema.ts";
 import { type JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
 
-export const openAiStructuredOutputSchemaSpecification = {
+export const openApi3_0SchemaSpecification = {
   // Shared
-  nullable: false,
-  arbitraryJson: false,
+  nullable: true,
+  arbitraryJson: true,
   booleanSchemas: false,
 
   // Annotations
   $schema: false,
   $comment: false,
-  deprecated: false,
-  examples: true,
+  deprecated: true,
+  examples: false,
   $vocabulary: false,
-  readOnly: false,
-  writeOnly: false,
+  readOnly: true,
+  writeOnly: true,
 
   // Extensions
   errorMessage: false,
@@ -22,36 +22,40 @@ export const openAiStructuredOutputSchemaSpecification = {
   markdownDescription: false,
 
   // Types
-  integer: true,
-  null: true,
-  strictTypes: true,
+  type: ["string", "number", "integer", "boolean", "object", "array"] as const,
+  strictTypes: false,
+  singleType: true,
 
   // Arrays
   prefixItems: false,
   additionalItems: true,
-  maxItems: false,
-  minItems: false,
+  maxItems: true,
+  minItems: true,
   unevaluatedItems: false,
-  uniqueItems: false,
+  uniqueItems: true,
   contains: false,
   minContains: false,
   maxContains: false,
 
   // Format
-  format: false,
+  format: true,
+  numberFormats: ["int32", "int64", "float", "double"] as const,
+  stringFormats: ["byte", "binary", "date", "date-time", "password"] as const,
   strictFormats: false,
 
   // Numbers
-  multipleOf: false,
-  minimum: false,
-  exclusiveMinimum: false,
-  maximum: false,
-  exclusiveMaximum: false,
+  multipleOf: true,
+  minimum: true,
+  exclusiveMinimum: true,
+  booleanExclusiveMinimum: true,
+  maximum: true,
+  exclusiveMaximum: true,
+  booleanExclusiveMaximum: true,
 
   // Strings
-  minLength: false,
-  maxLength: false,
-  pattern: false,
+  minLength: true,
+  maxLength: true,
+  pattern: true,
   media: false,
   contentMediaType: false,
   contentEncoding: false,
@@ -60,11 +64,11 @@ export const openAiStructuredOutputSchemaSpecification = {
   // Constants
   const: false,
   enum: true,
-  nonEmptyEnum: false,
+  nonEmptyEnum: true,
 
   // Structuring
-  $id: "$id" as const,
-  $defs: "$defs" as const,
+  $id: false,
+  $defs: "definitions" as const,
   $anchor: false,
   $dynamicRef: false,
   $dynamicAnchor: false,
@@ -78,30 +82,30 @@ export const openAiStructuredOutputSchemaSpecification = {
 
   // Factoring
   anyOf: true,
-  oneOf: false,
-  allOf: false,
+  oneOf: true,
+  allOf: true,
+  discriminator: true,
 
   // Objects and properties
   unevaluatedProperties: false,
-  patternProperties: false,
+  patternProperties: true,
   propertyNames: false,
-  minProperties: false,
-  maxProperties: false,
-  nonEmptyRequired: false,
-  allPropertiesRequired: true,
+  minProperties: true,
+  maxProperties: true,
+  nonEmptyRequired: true,
+  allPropertiesRequired: false,
   additionalProperties: true,
-  forceAdditionalProperties: false,
-  dependencies: false,
+  forceAdditionalProperties: undefined,
+  dependencies: true,
   dependentRequired: false,
   dependentSchemas: false,
-  nonEmptyDependencies: false,
-  addNullTypeToOptionalProperties: true,
+  nonEmptyDependencies: true,
+  addNullTypeToOptionalProperties: false,
   treatPropertiesWithNullTypeAsOptional: false,
   setOptionalPropertiesToNullable: false,
   treatNullablePropertiesAsOptional: false,
 } satisfies JsonSchemaSpecification;
 
-export type OpenAiStructuredOutputSchemaSpecification =
-  typeof openAiStructuredOutputSchemaSpecification;
-export type OpenAiStructuredOutputSchema =
-  JsonSchema<OpenAiStructuredOutputSchemaSpecification>;
+export type OpenApi3_0SchemaSpecification =
+  typeof openApi3_0SchemaSpecification;
+export type OpenApi3_0Schema = JsonSchema<OpenApi3_0SchemaSpecification>;
