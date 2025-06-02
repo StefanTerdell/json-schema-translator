@@ -24,7 +24,7 @@ const myTupleSchema: JsonSchemaDraft6 = {
   // The `item` keyword below defines a "tuple" - an array of fixed
   // length where each index is confined to a specific type.
   items: [
-    // In this particular case the first index must be an object.
+    // In this particular case the first item must be an object.
     {
       type: "object",
       required: ["b64"],
@@ -42,6 +42,7 @@ const myTupleSchema: JsonSchemaDraft6 = {
       // No other properties are allowed.
       additionalProperties: false,
     },
+    // The second item must be either a string or a number.
     {
       type: ["number", "string"],
     },
@@ -106,7 +107,10 @@ const myTranslatedTupleSchema: JsonSchemaDraft2020_12 = {
       },
       additionalProperties: false,
     },
-    { type: ["number", "string"] },
+    // The second item schema remains unchanged.
+    {
+      type: ["number", "string"],
+    },
   ],
   // In conjunction with `prefixItems`, the `items` keyword now
   // fills the role of the `additionalItems` keyword:

@@ -1,10 +1,10 @@
-# Json Schema Translator - JST for short
+# Json Schema Translator
 
-JST translates one version of Json Schema to another in an externally type-safe manner.
+Json Schema Translator translates one version of Json Schema to another in an externally type-safe manner.
 
 The heart of the external type API is the JsonSchemaSpecification-type. Types representing the Json schemas defined by specifications satisfying this type are then inferred from the settings defined in them.
 
-JST comes bundled with specifications (and schema types) for many popular Json Schema variants:
+It comes bundled with specifications (and schema types) for many popular Json Schema variants:
 
 - Json Schema Draft 4
 - Json Schema Draft 6
@@ -25,7 +25,7 @@ const myGoogleAiSchema: GoogleAiJsonSchema = translateJsonSchema(
 );
 ```
 
-See the [Custom Specifications](lkajsdlkjsad) section for how to define your own.
+See the [Custom Specifications](#custom-specifications) section for how to define your own.
 
 ## Example
 
@@ -53,7 +53,7 @@ const myTupleSchema: JsonSchemaDraft6 = {
   // The `item` keyword below defines a "tuple" - an array of fixed
   // length where each index is confined to a specific type.
   items: [
-    // In this particular case the first index must be an object.
+    // In this particular case the first item must be an object.
     {
       type: "object",
       required: ["b64"],
@@ -71,6 +71,7 @@ const myTupleSchema: JsonSchemaDraft6 = {
       // No other properties are allowed.
       additionalProperties: false,
     },
+    // The second item must be either a string or a number.
     {
       type: ["number", "string"],
     },
@@ -84,7 +85,7 @@ const myTupleSchema: JsonSchemaDraft6 = {
 
 To translate this Json Schema Draft 6 schema into Draft 2020_12, simply feed the schema to the `translateJsonSchema` function, supply a matching input specification, and the target output specification.
 
-Hint: To see which specifications are included by default see the [Introduction](<README#Json Schema Translator - JST for short>) section of the readme. For how to define your own, see the [Custom Specifications](lkajsdlkjsad) section
+Hint: To see which specifications are included by default see the [Introduction](#json-schema-translator) section of the readme. For how to define your own, see the [Custom Specifications](#custom-specifications) section
 
 ```typescript
 import { translateJsonSchema } from "./src/index.ts";
@@ -129,7 +130,10 @@ const myTranslatedTupleSchema: JsonSchemaDraft2020_12 = {
       },
       additionalProperties: false,
     },
-    { type: ["number", "string"] },
+    // The second item schema remains unchanged.
+    {
+      type: ["number", "string"],
+    },
   ],
   // In conjunction with `prefixItems`, the `items` keyword now
   // fills the role of the `additionalItems` keyword:
