@@ -26,41 +26,46 @@ export type If<Condition, Then, Else = unknown> = Condition extends true
   ? Then
   : Else;
 
-/** Returns true if the passed value represents a JSON Schema that:
- * 1. Permits any value
- * 2. Contains no annotations
- *
- * In other words, the function checks if the schema is one of:
- * - `true`
- * - `{}`
+/** Asserts that the the passed object...
+ * 1. contains all of the provided keys
+ * 2. (optionally) contains no other keys.
  */
-export const isAnySchema = (schema: unknown): schema is true | EmptyObject => {
-  return (
-    schema === true ||
-    (typeof schema === "object" &&
-      schema !== null &&
-      Object.keys(schema).length === 0)
-  );
+export const hasKeys = <WithKey extends PropertyKey | never = never>(
+  object: object,
+  withKeys: WithKey[],
+  exactKeys?: boolean,
+): object is {
+  [Key in WithKey]: unknown;
+} => {
+  const keys: PropertyKey[] = Object.keys(object);
+
+  if (exactKeys && keys.length !== withKeys.length) {
+    return false;
+  }
+
+  return withKeys.every((key) => keys.includes(key));
 };
 
-/** Returns true if the passed value represents a JSON Schema that:
- * 1. Permits no values at all
- * 2. Contains no annotations
- *
- * In other words, the function checks if the schema is one of:
- * - `false`
- * - `{ "not": true }`
- * - `{ "not": {} }`
+/** Asserts that the passed value...
+ * 1. is an object
+ * 2. is not null
+ * 3. contains all of the provided keys
+ * 4. (optionally) contains no other keys.
  */
-export const isNeverSchema = (
-  schema: unknown,
-): schema is false | { not: EmptyObject } => {
-  return (
-    schema === false ||
-    (typeof schema === "object" &&
-      schema !== null &&
-      Object.keys(schema).length === 1 &&
-      "not" in schema &&
-      isAnySchema(schema.not))
-  );
+export const isObject = <WithKey extends PropertyKey | never = never>(
+  object: unknown,
+  withKeys?: WithKey[],
+  exactKeys?: boolean,
+): object is {
+  [Key in WithKey]: unknown;
+} => {
+  if (typeof object !== "object" || object === null) {
+    return false;
+  }
+
+  if (withKeys === undefined) {
+    return true;
+  }
+
+  return hasKeys(object, withKeys, exactKeys);
 };

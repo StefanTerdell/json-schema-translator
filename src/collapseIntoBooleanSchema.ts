@@ -3,7 +3,7 @@ import {
   type JsonSchema,
 } from "./JsonSchema.ts";
 import { type JsonSchemaSpecification } from "./JsonSchemaSpecification.ts";
-import { isAnySchema, isNeverSchema } from "./utils.ts";
+import { isAnySchema, isNeverSchema } from "./schemaUtils.ts";
 
 export const collapseIntoBooleanSchema = <
   Specification extends JsonSchemaSpecification,
@@ -16,7 +16,7 @@ export const collapseIntoBooleanSchema = <
   forceAllowBooleanSchemas: ForceAllowBooleanSchemas,
 ): JsonSchema<Specification> => {
   if (output.settings.booleanSchemas) {
-    if (isAnySchema(output.schema)) {
+    if (isAnySchema(output.schema, output.settings)) {
       const schema: JsonSchema<
         Specification & { booleanSchemas: true },
         ForceAllowBooleanSchemas
@@ -25,7 +25,7 @@ export const collapseIntoBooleanSchema = <
       return schema;
     }
 
-    if (isNeverSchema(output.schema)) {
+    if (isNeverSchema(output.schema, output.settings)) {
       const schema: JsonSchema<
         Specification & { booleanSchemas: true },
         ForceAllowBooleanSchemas
@@ -36,14 +36,14 @@ export const collapseIntoBooleanSchema = <
   }
 
   if (forceAllowBooleanSchemas) {
-    if (isAnySchema(output.schema)) {
+    if (isAnySchema(output.schema, output.settings)) {
       const schema: JsonSchema<Specification, ForceAllowBooleanSchemas & true> =
         true;
 
       return schema;
     }
 
-    if (isNeverSchema(output.schema)) {
+    if (isNeverSchema(output.schema, output.settings)) {
       const schema: JsonSchema<Specification, ForceAllowBooleanSchemas & true> =
         false;
 

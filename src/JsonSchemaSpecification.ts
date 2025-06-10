@@ -51,6 +51,8 @@ type TypeOptions = {
   strictTypes?: boolean;
   /** Disable the ability to assign multiple types to the `type` keyword by using an array */
   singleType?: boolean;
+  /** Option - Disable/enable converting "never" schemas into a `not` union of all possible types */
+  verboseNot?: boolean;
 };
 
 type ArrayKeywords = {
@@ -212,6 +214,8 @@ type ObjectOptions = {
   setOptionalPropertiesToNullable?: boolean;
   /** Option - Disable/enable removing all properties with a `nullable` value set to `true` from the list of `required` properties. If the `nullable` option is disabled this option has no effect. */
   treatNullablePropertiesAsOptional?: boolean;
+  /** Option - Disable/enable removing all properties with no permissible values ("never"-schemas) */
+  excludeNeverProperties?: boolean;
 };
 
 export type JsonSchemaSpecification = SharedKeywords &

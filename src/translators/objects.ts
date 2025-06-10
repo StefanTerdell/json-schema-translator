@@ -1,4 +1,5 @@
 import { type JsonSchema } from "../JsonSchema.ts";
+import { isAnySchema, isNeverSchema } from "../schemaUtils.ts";
 import { type NonEmptyArray } from "../utils.ts";
 import { type Mutator } from "./Mutator.ts";
 import { translateSchema } from "./schema.ts";
@@ -69,6 +70,12 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
           forceAllowBooleanSchema: false,
         });
 
+        const isNever = isNeverSchema(schema, ctx.output.settings);
+
+        if (ctx.output.settings.excludeNeverProperties && isNever) {
+          return acc;
+        }
+
         const explicitlyRequired = Boolean(
           ctx.input.schema.required?.includes(key),
         );
@@ -89,8 +96,28 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
                 // @ts-expect-error :p
                 schema.type = [schema.type, "null" as typeof schema.type];
               }
-            } else {
-              schema.type = "null" as typeof schema.type;
+            } else if (
+              schema.anyOf &&
+              !schema.anyOf.some(
+                (subSchema) =>
+                  typeof subSchema === "object" &&
+                  (Array.isArray(subSchema.type)
+                    ? subSchema.type.includes("null")
+                    : subSchema.type === "null"),
+              )
+            ) {
+              schema.anyOf.push({ type: "null" } as typeof schema);
+            } else if (
+              schema.oneOf &&
+              !schema.oneOf.some(
+                (subSchema) =>
+                  typeof subSchema === "object" &&
+                  (Array.isArray(subSchema.type)
+                    ? subSchema.type.includes("null")
+                    : subSchema.type === "null"),
+              )
+            ) {
+              schema.oneOf.push({ type: "null" } as typeof schema);
             }
 
             if (schema.enum && !schema.enum.includes(null)) {
@@ -227,10 +254,11 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
 
   if (ctx.input.settings.unevaluatedProperties) {
     if (
-      ctx.output.settings.unevaluatedProperties &&
+      (ctx.output.settings.unevaluatedProperties ||
+        ctx.output.settings.additionalProperties) &&
       ctx.input.schema.unevaluatedProperties != undefined
     ) {
-      ctx.output.schema.unevaluatedProperties = translateSchema({
+      const unevaluatedProperties = translateSchema({
         ...ctx,
         input: {
           ...ctx.input,
@@ -239,6 +267,18 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
         path: [...ctx.path, "unevaluatedProperties"],
         forceAllowBooleanSchema: false,
       });
+
+      if (ctx.output.settings.unevaluatedProperties) {
+        ctx.output.schema.unevaluatedProperties = unevaluatedProperties;
+      } else if (ctx.output.schema.additionalProperties === undefined) {
+        // @ts-expect-error :p
+        ctx.output.schema.additionalProperties = unevaluatedProperties;
+      } else if (
+        isAnySchema(ctx.output.schema.additionalProperties, ctx.output.settings)
+      ) {
+        // @ts-expect-error :p
+        ctx.output.schema.additionalProperties = unevaluatedProperties;
+      }
     }
 
     ctx.handledKeys.add("unevaluatedProperties");

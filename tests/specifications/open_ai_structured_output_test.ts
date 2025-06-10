@@ -19,6 +19,7 @@ Deno.test(
               type: "string",
               const: "baz",
             },
+            never: { not: {} },
             array: {
               type: "array",
               items: {
@@ -55,6 +56,10 @@ Deno.test(
                 format: "url",
               },
             },
+            tuple: {
+              type: "array",
+              items: [{}, { not: {} }],
+            },
           },
         },
         jsonSchemaDraft7Specification,
@@ -62,7 +67,7 @@ Deno.test(
       ),
       {
         type: "object",
-        required: ["foo", "bar", "array", "record"],
+        required: ["foo", "bar", "array", "record", "tuple"],
         properties: {
           foo: {
             type: "integer",
@@ -86,6 +91,25 @@ Deno.test(
               },
             },
             additionalProperties: false,
+          },
+          tuple: {
+            type: ["array", "null"],
+            items: [
+              {},
+              {
+                not: {
+                  type: [
+                    "string",
+                    "number",
+                    "integer",
+                    "boolean",
+                    "object",
+                    "array",
+                    "null",
+                  ],
+                },
+              },
+            ],
           },
         },
         additionalProperties: false,

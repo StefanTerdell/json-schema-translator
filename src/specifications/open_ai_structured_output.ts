@@ -32,6 +32,7 @@ export const openAiStructuredOutputSchemaSpecification = {
     "null",
   ] as const,
   strictTypes: true,
+  verboseNot: true,
 
   // Arrays
   prefixItems: false,
@@ -107,6 +108,7 @@ export const openAiStructuredOutputSchemaSpecification = {
   treatPropertiesWithNullTypeAsOptional: false,
   setOptionalPropertiesToNullable: false,
   treatNullablePropertiesAsOptional: false,
+  excludeNeverProperties: true,
 } satisfies JsonSchemaSpecification;
 
 export type OpenAiStructuredOutputSchemaSpecification =

@@ -126,6 +126,7 @@ export const jsonSchemaDraft7Specification = {
   treatPropertiesWithNullTypeAsOptional: false,
   setOptionalPropertiesToNullable: false,
   treatNullablePropertiesAsOptional: false,
+  excludeNeverProperties: false,
 } satisfies JsonSchemaSpecification;
 
 export type JsonSchemaDraft7Specification =

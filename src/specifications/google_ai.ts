@@ -110,6 +110,7 @@ export const googleAiJsonSchemaSpecification = {
   treatPropertiesWithNullTypeAsOptional: false,
   setOptionalPropertiesToNullable: false,
   treatNullablePropertiesAsOptional: false,
+  excludeNeverProperties: true,
 } satisfies JsonSchemaSpecification;
 
 export type GoogleAiJsonSchemaSpecification =

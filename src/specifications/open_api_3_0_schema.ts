@@ -104,6 +104,7 @@ export const openApi3_0SchemaSpecification = {
   treatPropertiesWithNullTypeAsOptional: false,
   setOptionalPropertiesToNullable: false,
   treatNullablePropertiesAsOptional: false,
+  excludeNeverProperties: false,
 } satisfies JsonSchemaSpecification;
 
 export type OpenApi3_0SchemaSpecification =

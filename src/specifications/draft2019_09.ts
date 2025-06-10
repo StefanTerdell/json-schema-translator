@@ -128,6 +128,7 @@ export const jsonSchemaDraft2019_09Specification = {
   treatPropertiesWithNullTypeAsOptional: false,
   setOptionalPropertiesToNullable: false,
   treatNullablePropertiesAsOptional: false,
+  excludeNeverProperties: false,
 } satisfies JsonSchemaSpecification;
 
 export type JsonSchemaDraft2019_09Specification =
