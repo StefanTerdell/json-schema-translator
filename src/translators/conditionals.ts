@@ -3,99 +3,99 @@ import { type Mutator } from "./Mutator.ts";
 import { translateSchema } from "./schema.ts";
 
 export const translateConditionalKeywords: Mutator = (ctx) => {
-  if (ctx.input.settings.if) {
-    if (ctx.output.settings.if && ctx.input.schema.if !== undefined) {
+  if (ctx.from.settings.if) {
+    if (ctx.into.settings.if && ctx.from.schema.if !== undefined) {
       const ifSchema = translateSchema({
         ...ctx,
-        input: {
-          ...ctx.input,
-          schema: ctx.input.schema.if,
+        from: {
+          ...ctx.from,
+          schema: ctx.from.schema.if,
         },
         path: [...ctx.path, "if"],
         forceAllowBooleanSchema: false,
       });
 
-      ctx.output.schema.if = ifSchema;
+      ctx.into.schema.if = ifSchema;
     }
 
     ctx.handledKeys.add("if");
 
-    if (ctx.input.settings.then) {
-      if (ctx.output.settings.then && ctx.input.schema.then !== undefined) {
+    if (ctx.from.settings.then) {
+      if (ctx.into.settings.then && ctx.from.schema.then !== undefined) {
         const thenSchema = translateSchema({
           ...ctx,
-          input: {
-            ...ctx.input,
-            schema: ctx.input.schema.then,
+          from: {
+            ...ctx.from,
+            schema: ctx.from.schema.then,
           },
           path: [...ctx.path, "then"],
           forceAllowBooleanSchema: false,
         });
 
-        ctx.output.schema.then = thenSchema;
+        ctx.into.schema.then = thenSchema;
       }
 
       ctx.handledKeys.add("then");
     }
 
-    if (ctx.input.settings.else) {
-      if (ctx.output.settings.else && ctx.input.schema.else !== undefined) {
+    if (ctx.from.settings.else) {
+      if (ctx.into.settings.else && ctx.from.schema.else !== undefined) {
         const elseSchema = translateSchema({
           ...ctx,
-          input: {
-            ...ctx.input,
-            schema: ctx.input.schema.else,
+          from: {
+            ...ctx.from,
+            schema: ctx.from.schema.else,
           },
           path: [...ctx.path, "else"],
           forceAllowBooleanSchema: false,
         });
 
-        ctx.output.schema.else = elseSchema;
+        ctx.into.schema.else = elseSchema;
       }
 
       ctx.handledKeys.add("else");
     }
   }
 
-  if (ctx.input.schema.not !== undefined) {
+  if (ctx.from.schema.not !== undefined) {
     const notSchema = translateSchema({
       ...ctx,
-      input: {
-        ...ctx.input,
-        schema: ctx.input.schema.not,
+      from: {
+        ...ctx.from,
+        schema: ctx.from.schema.not,
       },
       path: [...ctx.path, "not"],
       forceAllowBooleanSchema: false,
     });
 
     if (
-      ctx.output.settings.verboseNot === true &&
-      isAnySchema(notSchema, ctx.output.settings)
+      ctx.into.settings.verboseNot === true &&
+      isAnySchema(notSchema, ctx.into.settings)
     ) {
-      if (ctx.output.settings.singleType) {
-        const eitherType = ctx.output.settings.type.map((type) => ({
+      if (ctx.into.settings.singleType) {
+        const eitherType = ctx.into.settings.type.map((type) => ({
           type,
         }));
 
-        if (ctx.output.settings.anyOf) {
+        if (ctx.into.settings.anyOf) {
           // @ts-expect-error :p
-          ctx.output.schema.not = {
+          ctx.into.schema.not = {
             anyOf: eitherType,
           };
-        } else if (ctx.output.settings.oneOf) {
+        } else if (ctx.into.settings.oneOf) {
           // @ts-expect-error :p
-          ctx.output.schema.not = {
+          ctx.into.schema.not = {
             oneOf: eitherType,
           };
         }
       } else {
         // @ts-expect-error :p
-        ctx.output.schema.not = {
-          type: ctx.output.settings.type,
+        ctx.into.schema.not = {
+          type: ctx.into.settings.type,
         };
       }
     } else {
-      ctx.output.schema.not = notSchema;
+      ctx.into.schema.not = notSchema;
     }
   }
 

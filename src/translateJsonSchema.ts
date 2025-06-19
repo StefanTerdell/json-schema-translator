@@ -158,11 +158,11 @@ export function translateJsonSchema<
   const unhandledKeysMap = getUnhandledKeysMap(mergedOptions.unhandledKeys);
 
   const outputSchema = translateSchema({
-    input: {
+    from: {
       schema: inputSchema,
       settings: inputSpecification,
     },
-    output: {
+    into: {
       settings: outputSpecification,
     },
     path: [],

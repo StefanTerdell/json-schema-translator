@@ -10,13 +10,13 @@ Deno.test("MultipleOf keyword", () => {
   const schema: JsonSchemaDraft6 = {};
 
   translateNumberKeywords({
-    input: {
+    from: {
       schema: {
         multipleOf: 3,
       },
       settings: jsonSchemaDraft4Specification,
     },
-    output: {
+    into: {
       schema,
       settings: jsonSchemaDraft6Specification,
     },

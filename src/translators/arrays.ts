@@ -8,8 +8,8 @@ export const translateArrayKeywords: Mutator = (ctx) => {
 };
 
 const translateBasicArrayKeywords: Mutator = ({
-  input,
-  output,
+  from: input,
+  into: output,
   handledKeys,
 }) => {
   if (input.settings.contains) {
@@ -62,16 +62,16 @@ const translateBasicArrayKeywords: Mutator = ({
 };
 
 const translateItemKeywords: Mutator = (ctx) => {
-  if (ctx.input.settings.prefixItems) {
+  if (ctx.from.settings.prefixItems) {
     const prefixItems = (
-      ctx.input.schema.prefixItems as
-        | JsonSchema<typeof ctx.input.settings>[]
+      ctx.from.schema.prefixItems as
+        | JsonSchema<typeof ctx.from.settings>[]
         | undefined
     )?.map((schema, index) =>
       translateSchema({
         ...ctx,
-        input: {
-          ...ctx.input,
+        from: {
+          ...ctx.from,
           schema,
         },
         path: [...ctx.path, "prefixItems", index],
@@ -80,13 +80,13 @@ const translateItemKeywords: Mutator = (ctx) => {
     );
 
     const items =
-      ctx.input.schema.items !== undefined
+      ctx.from.schema.items !== undefined
         ? translateSchema({
             ...ctx,
-            input: {
-              ...ctx.input,
-              schema: ctx.input.schema.items as JsonSchema<
-                typeof ctx.input.settings
+            from: {
+              ...ctx.from,
+              schema: ctx.from.schema.items as JsonSchema<
+                typeof ctx.from.settings
               >,
             },
             path: [...ctx.path, "items"],
@@ -94,49 +94,49 @@ const translateItemKeywords: Mutator = (ctx) => {
           })
         : undefined;
 
-    if (ctx.output.settings.prefixItems) {
+    if (ctx.into.settings.prefixItems) {
       if (prefixItems !== undefined) {
-        ctx.output.schema.prefixItems = prefixItems;
+        ctx.into.schema.prefixItems = prefixItems;
       }
 
       if (items !== undefined) {
-        ctx.output.schema.items = items;
+        ctx.into.schema.items = items;
       }
     } else {
       if (prefixItems != undefined) {
         // @ts-expect-error narrowing
-        ctx.output.schema.items = prefixItems;
+        ctx.into.schema.items = prefixItems;
       }
 
       if (items !== undefined) {
-        ctx.output.schema.additionalItems = items;
+        ctx.into.schema.additionalItems = items;
       }
     }
 
     ctx.handledKeys.add("prefixItems");
     ctx.handledKeys.add("items");
   } else {
-    const [items, additionalItems] = Array.isArray(ctx.input.schema.items)
+    const [items, additionalItems] = Array.isArray(ctx.from.schema.items)
       ? [
-          ctx.input.schema.items.map((schema, index) =>
+          ctx.from.schema.items.map((schema, index) =>
             translateSchema({
               ...ctx,
-              input: {
-                ...ctx.input,
+              from: {
+                ...ctx.from,
                 schema,
               },
               path: [...ctx.path, "items", index],
               forceAllowBooleanSchema: false,
             }),
           ),
-          ctx.input.settings.additionalItems &&
-          ctx.input.schema.additionalItems !== undefined
+          ctx.from.settings.additionalItems &&
+          ctx.from.schema.additionalItems !== undefined
             ? translateSchema({
                 ...ctx,
-                input: {
-                  ...ctx.input,
+                from: {
+                  ...ctx.from,
                   // @ts-expect-error narrowing
-                  schema: ctx.input.schema.additionalItems,
+                  schema: ctx.from.schema.additionalItems,
                 },
                 path: [...ctx.path, "additionalItems"],
                 forceAllowBooleanSchema: true,
@@ -144,27 +144,27 @@ const translateItemKeywords: Mutator = (ctx) => {
             : undefined,
         ]
       : [
-          ctx.input.schema.items !== undefined
+          ctx.from.schema.items !== undefined
             ? translateSchema({
                 ...ctx,
-                input: {
-                  ...ctx.input,
-                  schema: ctx.input.schema.items as JsonSchema<
-                    typeof ctx.input.settings
+                from: {
+                  ...ctx.from,
+                  schema: ctx.from.schema.items as JsonSchema<
+                    typeof ctx.from.settings
                   >,
                 },
                 path: [...ctx.path, "items"],
                 forceAllowBooleanSchema: false,
               })
             : undefined,
-          ctx.input.settings.additionalItems &&
-          ctx.input.schema.additionalItems !== undefined
+          ctx.from.settings.additionalItems &&
+          ctx.from.schema.additionalItems !== undefined
             ? translateSchema({
                 ...ctx,
-                input: {
-                  ...ctx.input,
+                from: {
+                  ...ctx.from,
                   // @ts-expect-error narrowing
-                  schema: ctx.input.schema.additionalItems,
+                  schema: ctx.from.schema.additionalItems,
                 },
                 path: [...ctx.path, "additionalItems"],
                 forceAllowBooleanSchema: true,
@@ -172,23 +172,23 @@ const translateItemKeywords: Mutator = (ctx) => {
             : undefined,
         ];
 
-    if (ctx.output.settings.prefixItems && Array.isArray(items)) {
+    if (ctx.into.settings.prefixItems && Array.isArray(items)) {
       if (items !== undefined) {
-        ctx.output.schema.prefixItems = items;
+        ctx.into.schema.prefixItems = items;
       }
 
       if (additionalItems != undefined) {
         // @ts-expect-error narrowing
-        ctx.output.schema.items = additionalItems;
+        ctx.into.schema.items = additionalItems;
       }
     } else {
       if (items != undefined) {
         // @ts-expect-error narrowing
-        ctx.output.schema.items = items;
+        ctx.into.schema.items = items;
       }
 
       if (additionalItems !== undefined) {
-        ctx.output.schema.additionalItems = additionalItems;
+        ctx.into.schema.additionalItems = additionalItems;
       }
     }
 
@@ -196,16 +196,16 @@ const translateItemKeywords: Mutator = (ctx) => {
     ctx.handledKeys.add("additionalItems");
   }
 
-  if (ctx.input.settings.unevaluatedItems) {
+  if (ctx.from.settings.unevaluatedItems) {
     if (
-      ctx.output.settings.unevaluatedItems &&
-      ctx.input.schema.unevaluatedItems != undefined
+      ctx.into.settings.unevaluatedItems &&
+      ctx.from.schema.unevaluatedItems != undefined
     ) {
-      ctx.output.schema.unevaluatedItems = translateSchema({
+      ctx.into.schema.unevaluatedItems = translateSchema({
         ...ctx,
-        input: {
-          ...ctx.input,
-          schema: ctx.input.schema.unevaluatedItems,
+        from: {
+          ...ctx.from,
+          schema: ctx.from.schema.unevaluatedItems,
         },
         path: [...ctx.path, "unevaluatedItems"],
         forceAllowBooleanSchema: false,
@@ -215,16 +215,13 @@ const translateItemKeywords: Mutator = (ctx) => {
     ctx.handledKeys.add("unevaluatedItems");
   }
 
-  if (ctx.input.settings.contains) {
-    if (
-      ctx.output.settings.contains &&
-      ctx.input.schema.contains != undefined
-    ) {
-      ctx.output.schema.contains = translateSchema({
+  if (ctx.from.settings.contains) {
+    if (ctx.into.settings.contains && ctx.from.schema.contains != undefined) {
+      ctx.into.schema.contains = translateSchema({
         ...ctx,
-        input: {
-          ...ctx.input,
-          schema: ctx.input.schema.contains,
+        from: {
+          ...ctx.from,
+          schema: ctx.from.schema.contains,
         },
         path: [...ctx.path, "contains"],
         forceAllowBooleanSchema: false,

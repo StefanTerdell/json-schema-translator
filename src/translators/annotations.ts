@@ -1,4 +1,5 @@
 import { type Mutator } from "./Mutator.ts";
+import { match } from "./MutatorContext.ts";
 
 export const translateAnnotationKeywords: Mutator = (ctx) => {
   translateDefaultAnnotationKeywords(ctx);
@@ -7,8 +8,8 @@ export const translateAnnotationKeywords: Mutator = (ctx) => {
 };
 
 const translateDefaultAnnotationKeywords: Mutator = ({
-  input,
-  output,
+  from: input,
+  into: output,
   handledKeys,
 }) => {
   if (input.schema.title !== undefined) {
@@ -40,11 +41,23 @@ const translateDefaultAnnotationKeywords: Mutator = ({
   handledKeys.add("default");
 };
 
-const translateControlledAnnotationKeywords: Mutator = ({
-  input,
-  output,
-  handledKeys,
-}) => {
+const translateControlledAnnotationKeywords: Mutator = (ctx) => {
+  match(
+    ctx,
+    { $comment: true },
+    {
+      from(ctx) {
+        ctx.handledKeys.add("$comment");
+      },
+      both(ctx) {
+        ctx.into.schema.$comment = ctx.from.schema.$comment;
+        ctx.handledKeys.add("$comment");
+      },
+    },
+  );
+
+  const { from: input, into: output, handledKeys } = ctx;
+
   if (input.settings.$comment) {
     if (output.settings.$comment && input.schema.$comment !== undefined) {
       output.schema.$comment = input.schema.$comment;
@@ -94,7 +107,11 @@ const translateControlledAnnotationKeywords: Mutator = ({
   }
 };
 
-const translate$schemaKeyword: Mutator = ({ input, output, handledKeys }) => {
+const translate$schemaKeyword: Mutator = ({
+  from: input,
+  into: output,
+  handledKeys,
+}) => {
   if (input.settings.$schema !== undefined) {
     if (
       output.settings.$schema !== undefined &&

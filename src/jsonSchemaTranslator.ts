@@ -186,11 +186,11 @@ export function jsonSchemaTranslator<
     );
 
     const outputSchema = translateSchema({
-      input: {
+      from: {
         schema: inputSchema,
         settings: inputSpecification,
       },
-      output: {
+      into: {
         settings: outputSpecification,
       },
       path: [],

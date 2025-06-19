@@ -69,3 +69,67 @@ export const isObject = <WithKey extends PropertyKey | never = never>(
 
   return hasKeys(object, withKeys, exactKeys);
 };
+
+/** Derive a type from an object type where all
+ * `true` literal values have been flipped to
+ * `false` and vise versa.
+ *
+ * All values of other types than `true` or `false` are dropped.
+ *
+ * @example
+ * ```typescript
+ * ({ foo: true, bar: 123 }) satisfies ToggleBooleanValues<{ foo: false }>
+ * ```
+ */
+export type ToggledBooleanLiterals<Object extends object> = {
+  [Key in KeysWithExactValue<Object, true>]: false;
+} & {
+  [Key in KeysWithExactValue<Object, false>]: true;
+};
+
+type KeysWithExactValue<Object extends object, Value> = {
+  [Key in keyof Object]: Object[Key] extends Value
+    ? Value extends Object[Key]
+      ? Key
+      : never
+    : never;
+}[keyof Object];
+
+/** Replace the value type of one or more properties
+ * of an object type.
+ *
+ *@example
+ * ```typescript
+ * ({ foo: true, bar: 123 }) satisfies Replace<
+ *   { foo: string; bar: number },
+ *   { foo: boolean }
+ * >;
+ * ```
+ */
+export type Replace<
+  Source extends Base,
+  Target extends Partial<Base>,
+  Base extends object = { [Key in keyof Source]: unknown },
+> = {
+  [Key in keyof Base]: Target[Key] extends Base[Key]
+    ? Target[Key]
+    : Source[Key];
+};
+
+export function replace<
+  Source extends object,
+  Target extends { [Key in keyof Source]?: unknown },
+>(source: Source, target: Target): Replace<Source, Target> {
+  return Object.keys(source).reduce(
+    (acc: Record<PropertyKey, unknown>, key) => {
+      if (key in target) {
+        acc[key] = target[key as keyof Target];
+      } else {
+        acc[key] = source[key as keyof Source];
+      }
+
+      return acc;
+    },
+    {},
+  ) as Replace<Source, Target>;
+}

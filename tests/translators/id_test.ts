@@ -21,13 +21,13 @@ Deno.test("id should be copied from and to the specified path", () => {
   const outputSchema: JsonSchema<typeof outputSettings> = {};
 
   translateIdKeyword({
-    input: {
+    from: {
       schema: inputSchema,
       settings: inputSettings,
     },
     path: [],
     handledKeys: new Set(),
-    output: {
+    into: {
       schema: outputSchema,
       settings: outputSettings,
     },

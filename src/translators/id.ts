@@ -2,18 +2,18 @@ import { type JsonObject } from "../Json.ts";
 import { type Mutator } from "./Mutator.ts";
 
 export const translateIdKeyword: Mutator = (ctx) => {
-  if (typeof ctx.input.settings.$id === "string") {
-    const id = (ctx.input.schema as JsonObject)[ctx.input.settings.$id];
+  if (typeof ctx.from.settings.$id === "string") {
+    const id = (ctx.from.schema as JsonObject)[ctx.from.settings.$id];
 
     if (
       id !== undefined &&
       typeof id === "string" &&
-      typeof ctx.output.settings.$id === "string"
+      typeof ctx.into.settings.$id === "string"
     ) {
       // @ts-expect-error ISSUE: Narrowing breaks down across generics
-      ctx.output.schema[ctx.output.settings.$id] = id;
+      ctx.into.schema[ctx.into.settings.$id] = id;
     }
 
-    ctx.handledKeys.add(ctx.input.settings.$id);
+    ctx.handledKeys.add(ctx.from.settings.$id);
   }
 };

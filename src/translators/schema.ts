@@ -7,28 +7,28 @@ import { translateConstantKeywords } from "../translators/constants.ts";
 import { translateDefinitionsKeyword } from "../translators/definitions.ts";
 import { translateFactoringKeywords } from "../translators/factoring.ts";
 import { translateIdKeyword } from "../translators/id.ts";
-import { type MutatorContext } from "../translators/Mutator.ts";
+import { type MutatorContext } from "../translators/MutatorContext.ts";
 import { translateNullableKeyword } from "../translators/nullable.ts";
 import { translateNumberKeywords } from "../translators/numbers.ts";
 import { translateObjectKeywords } from "../translators/objects.ts";
 import { translateStringKeywords } from "../translators/strings.ts";
 import { translateStructuringKeywords } from "../translators/structuring.ts";
 import { translateTypeKeyword } from "../translators/type.ts";
-import { type TranslateJsonSchemaContext } from "../TranslateJsonSchemaContext.ts";
+import { type TranslatorContext } from "../TranslatorContext.ts";
 import { collapseIntoBooleanSchema } from "../collapseIntoBooleanSchema.ts";
 import { type Mutator } from "./Mutator.ts";
 import { copy } from "../copy.ts";
 
 /** @internal */
-export type TranslateNodeContext<
+export type TranslateSchemaContext<
   InputJsonSchemaSpecification extends JsonSchemaSpecification,
   OutputJsonSchemaSpecification extends JsonSchemaSpecification,
   ForceAllowBooleanSchema extends boolean,
-> = TranslateJsonSchemaContext<
+> = TranslatorContext<
   InputJsonSchemaSpecification,
   OutputJsonSchemaSpecification
 > & {
-  input: {
+  from: {
     schema: JsonSchema<InputJsonSchemaSpecification, ForceAllowBooleanSchema>;
   };
   forceAllowBooleanSchema: ForceAllowBooleanSchema;
@@ -40,13 +40,13 @@ export const translateSchema = <
   OutputJsonSchemaSpecification extends JsonSchemaSpecification,
   ForceAllowBooleanSchema extends boolean,
 >(
-  ctx: TranslateNodeContext<
+  ctx: TranslateSchemaContext<
     InputJsonSchemaSpecification,
     OutputJsonSchemaSpecification,
     ForceAllowBooleanSchema
   >,
 ): JsonSchema<OutputJsonSchemaSpecification, ForceAllowBooleanSchema> => {
-  const alreadyTranslated = ctx.seen.get(ctx.input.schema);
+  const alreadyTranslated = ctx.seen.get(ctx.from.schema);
 
   if (alreadyTranslated) {
     return alreadyTranslated;
@@ -57,17 +57,17 @@ export const translateSchema = <
     OutputJsonSchemaSpecification
   > = {
     ...ctx,
-    input: {
-      ...ctx.input,
+    from: {
+      ...ctx.from,
       schema:
-        typeof ctx.input.schema === "boolean"
-          ? ctx.input.schema
+        typeof ctx.from.schema === "boolean"
+          ? ctx.from.schema
             ? {}
             : { not: {} }
-          : ctx.input.schema,
+          : ctx.from.schema,
     },
-    output: {
-      ...ctx.output,
+    into: {
+      ...ctx.into,
       schema: {},
     },
     handledKeys: new Set(),
@@ -91,24 +91,24 @@ export const translateSchema = <
   copyJson(mctx);
 
   const outputSchema = collapseIntoBooleanSchema(
-    mctx.output,
+    mctx.into,
     ctx.forceAllowBooleanSchema,
   );
 
-  ctx.seen.set(ctx.input.schema, outputSchema);
+  ctx.seen.set(ctx.from.schema, outputSchema);
 
   return outputSchema;
 };
 
 const copyJson: Mutator = (ctx) => {
-  if (ctx.input.settings.arbitraryJson) {
-    for (const key of Object.keys(ctx.input.schema).filter(
+  if (ctx.from.settings.arbitraryJson) {
+    for (const key of Object.keys(ctx.from.schema).filter(
       (key) => !ctx.handledKeys.has(key),
     )) {
-      if (ctx.output.settings.arbitraryJson) {
-        if (!(key in ctx.output.schema)) {
+      if (ctx.into.settings.arbitraryJson) {
+        if (!(key in ctx.into.schema)) {
           // @ts-expect-error CBA
-          ctx.output.schema[key] = copy(ctx.copyJson, ctx.input.schema[key]);
+          ctx.into.schema[key] = copy(ctx.copyJson, ctx.from.schema[key]);
         } else {
           ctx.unhandledKeys.set([...ctx.path, key], "conflict");
         }
@@ -122,8 +122,8 @@ const copyJson: Mutator = (ctx) => {
 };
 
 const copyErrorMessage: Mutator = (ctx) => {
-  if (ctx.input.settings.errorMessage === "ajv") {
-    if (ctx.output.settings.errorMessage === "ajv") {
+  if (ctx.from.settings.errorMessage === "ajv") {
+    if (ctx.into.settings.errorMessage === "ajv") {
       const isAjvErrorMessage = (obj: object): obj is AjvErrorMessages =>
         Object.values(obj).every(
           (value) =>
@@ -131,14 +131,14 @@ const copyErrorMessage: Mutator = (ctx) => {
             (typeof value === "object" && value && isAjvErrorMessage(value)),
         );
 
-      const errorMessage = ctx.input.schema.errorMessage;
+      const errorMessage = ctx.from.schema.errorMessage;
 
       if (
         typeof errorMessage === "object" &&
         errorMessage &&
         isAjvErrorMessage(errorMessage)
       ) {
-        ctx.output.schema.errorMessage = copy(ctx.copyJson, errorMessage);
+        ctx.into.schema.errorMessage = copy(ctx.copyJson, errorMessage);
         ctx.handledKeys.add("errorMessage");
       }
     }

@@ -1,8 +1,8 @@
 import { type Mutator } from "./Mutator.ts";
 
 export const translateStructuringKeywords: Mutator = ({
-  input,
-  output,
+  from: input,
+  into: output,
   handledKeys,
 }) => {
   if (input.schema.$ref !== undefined) {

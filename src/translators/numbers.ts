@@ -7,8 +7,8 @@ export const translateNumberKeywords: Mutator = (ctx) => {
 };
 
 export const translateBasicNumberKeywords: Mutator = ({
-  input,
-  output,
+  from: input,
+  into: output,
   handledKeys,
 }) => {
   if (input.settings.multipleOf) {
@@ -37,7 +37,7 @@ function createLimitAndExclusiveLimitTranslator(
       ? (a: number, b: number) => Math.max(a, b)
       : (a: number, b: number) => Math.min(a, b);
 
-  return ({ input, output, handledKeys }) => {
+  return ({ from: input, into: output, handledKeys }) => {
     if (input.settings[limit]) {
       // input supports the limit
       if (output.settings[limit]) {

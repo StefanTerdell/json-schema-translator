@@ -4,24 +4,24 @@ import { type Mutator } from "./Mutator.ts";
 import { translateSchema } from "./schema.ts";
 
 export const translateDefinitionsKeyword: Mutator = (ctx) => {
-  type OutputSpecification = typeof ctx.output.settings;
-  type InputSpecification = typeof ctx.input.settings;
+  type OutputSpecification = typeof ctx.into.settings;
+  type InputSpecification = typeof ctx.from.settings;
 
-  if (typeof ctx.input.settings.$defs === "string") {
-    const inputDefs = (ctx.input.schema as JsonObject)[
-      ctx.input.settings.$defs
+  if (typeof ctx.from.settings.$defs === "string") {
+    const inputDefs = (ctx.from.schema as JsonObject)[
+      ctx.from.settings.$defs
     ] as Record<string, JsonSchema<InputSpecification>> | undefined;
 
     if (
       inputDefs !== undefined &&
-      typeof ctx.output.settings.$defs === "string"
+      typeof ctx.into.settings.$defs === "string"
     ) {
       const outputDefs = Object.keys(inputDefs).reduce(
         (outputDefs: Record<string, JsonSchema<OutputSpecification>>, key) => {
           outputDefs[key] = translateSchema({
             ...ctx,
-            input: {
-              ...ctx.input,
+            from: {
+              ...ctx.from,
               schema: inputDefs[key],
             },
             forceAllowBooleanSchema: false,
@@ -33,9 +33,9 @@ export const translateDefinitionsKeyword: Mutator = (ctx) => {
       );
 
       // @ts-expect-error ISSUE: Narrowing breaks down across generics
-      ctx.output.schema[ctx.output.settings.$defs] = outputDefs;
+      ctx.into.schema[ctx.into.settings.$defs] = outputDefs;
     }
 
-    ctx.handledKeys.add(ctx.input.settings.$defs);
+    ctx.handledKeys.add(ctx.from.settings.$defs);
   }
 };

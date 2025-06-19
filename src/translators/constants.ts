@@ -1,17 +1,88 @@
 import { type Json } from "../Json.ts";
 import { isNonEmptyArray, type NonEmptyArray } from "../utils.ts";
 import { type Mutator } from "./Mutator.ts";
+import { match } from "./MutatorContext.ts";
 
-export const translateConstantKeywords: Mutator = ({
-  input,
-  output,
-  handledKeys,
-}) => {
-  const values: Json[] = input.schema.enum ?? [];
+export const translateConstantKeywords: Mutator = (ctx) => {
+  match(
+    ctx,
+    {
+      enum: true,
+    },
+    {
+      from(ctx) {
+        ctx.handledKeys.add("enum");
+      },
+      both(ctx) {
+        match(
+          ctx,
+          { const: true },
+          {
+            from(ctx) {
+              ctx.handledKeys.add("const");
+            },
+            both(ctx) {
+              if (ctx.from.schema.enum !== undefined) {
+                if (
+                  !ctx.into.settings.nonEmptyEnum ||
+                  ctx.from.schema.enum.length
+                ) {
+                  ctx.into.schema.enum = ctx.from.schema.enum;
+                }
+              }
 
-  if (input.settings.const) {
-    if (input.schema.const !== undefined) {
-      values.push(input.schema.const);
+              if (ctx.from.schema.const !== undefined) {
+                ctx.into.schema.const = ctx.from.schema.const;
+              }
+            },
+            onlyFrom(ctx) {},
+            onlyInto(ctx) {},
+            none(ctx) {
+              if (ctx.from.schema.enum !== undefined) {
+                if (
+                  !ctx.into.settings.nonEmptyEnum ||
+                  ctx.from.schema.enum.length
+                ) {
+                  ctx.into.schema.enum = ctx.from.schema.enum;
+                }
+              }
+            },
+          },
+        );
+      },
+      onlyFrom(ctx) {
+        match(
+          ctx,
+          { const: true },
+          {
+            from(ctx) {
+              ctx.handledKeys.add("const");
+            },
+            both(ctx) {
+              if (ctx.from.schema.const !== undefined) {
+                ctx.into.schema.const = ctx.from.schema.const;
+              } else if (ctx.from.schema.enum?.length === 1) {
+                ctx.into.schema.const = ctx.from.schema.enum[0];
+              }
+            },
+            onlyInto(ctx) {
+              if (ctx.from.schema.enum?.length === 1) {
+                ctx.into.schema.const = ctx.from.schema.enum[0];
+              }
+            },
+          },
+        );
+      },
+    },
+  );
+
+  const { from, into, handledKeys } = ctx;
+
+  const values: Json[] = from.schema.enum ?? [];
+
+  if (from.settings.const) {
+    if (from.schema.const !== undefined) {
+      values.push(from.schema.const);
     }
 
     handledKeys.add("const");
@@ -19,17 +90,17 @@ export const translateConstantKeywords: Mutator = ({
 
   if (isNonEmptyArray(values)) {
     if (values.length === 1) {
-      if (output.settings.const) {
-        output.schema.const = values[0];
+      if (into.settings.const) {
+        into.schema.const = values[0];
       } else {
-        output.schema.enum = values as NonEmptyArray<Json>;
+        into.schema.enum = values as NonEmptyArray<Json>;
       }
     } else {
-      output.schema.enum = values as NonEmptyArray<Json>;
+      into.schema.enum = values as NonEmptyArray<Json>;
     }
-  } else if (input.schema.enum !== undefined && !output.settings.nonEmptyEnum) {
+  } else if (from.schema.enum !== undefined && !into.settings.nonEmptyEnum) {
     // @ts-expect-error ISSUE: Narrowing breaks across generics
-    output.schema.enum = [];
+    into.schema.enum = [];
   }
 
   handledKeys.add("enum");

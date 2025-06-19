@@ -1,8 +1,8 @@
 import { type Mutator } from "./Mutator.ts";
 
 export const translateNullableKeyword: Mutator = ({
-  input,
-  output,
+  from: input,
+  into: output,
   handledKeys,
 }) => {
   if (input.settings.nullable) {

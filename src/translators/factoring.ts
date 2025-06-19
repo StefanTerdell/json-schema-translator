@@ -3,13 +3,13 @@ import { type Mutator } from "./Mutator.ts";
 import { translateSchema } from "./schema.ts";
 
 export const translateFactoringKeywords: Mutator = (ctx) => {
-  if (ctx.input.settings.anyOf) {
-    if (ctx.output.settings.anyOf && ctx.input.schema.anyOf !== undefined) {
-      ctx.output.schema.anyOf = ctx.input.schema.anyOf.map((schema, index) =>
+  if (ctx.from.settings.anyOf) {
+    if (ctx.into.settings.anyOf && ctx.from.schema.anyOf !== undefined) {
+      ctx.into.schema.anyOf = ctx.from.schema.anyOf.map((schema, index) =>
         translateSchema({
           ...ctx,
-          input: {
-            ...ctx.input,
+          from: {
+            ...ctx.from,
             schema,
           },
           path: [...ctx.path, "anyOf", index],
@@ -21,13 +21,13 @@ export const translateFactoringKeywords: Mutator = (ctx) => {
     ctx.handledKeys.add("anyOf");
   }
 
-  if (ctx.input.settings.oneOf) {
-    if (ctx.output.settings.oneOf && ctx.input.schema.oneOf !== undefined) {
-      ctx.output.schema.oneOf = ctx.input.schema.oneOf.map((schema, index) =>
+  if (ctx.from.settings.oneOf) {
+    if (ctx.into.settings.oneOf && ctx.from.schema.oneOf !== undefined) {
+      ctx.into.schema.oneOf = ctx.from.schema.oneOf.map((schema, index) =>
         translateSchema({
           ...ctx,
-          input: {
-            ...ctx.input,
+          from: {
+            ...ctx.from,
             schema,
           },
           path: [...ctx.path, "oneOf", index],
@@ -39,13 +39,13 @@ export const translateFactoringKeywords: Mutator = (ctx) => {
     ctx.handledKeys.add("oneOf");
   }
 
-  if (ctx.input.settings.allOf) {
-    if (ctx.output.settings.allOf && ctx.input.schema.allOf !== undefined) {
-      ctx.output.schema.allOf = ctx.input.schema.allOf.map((schema, index) =>
+  if (ctx.from.settings.allOf) {
+    if (ctx.into.settings.allOf && ctx.from.schema.allOf !== undefined) {
+      ctx.into.schema.allOf = ctx.from.schema.allOf.map((schema, index) =>
         translateSchema({
           ...ctx,
-          input: {
-            ...ctx.input,
+          from: {
+            ...ctx.from,
             schema,
           },
           path: [...ctx.path, "allOf", index],
@@ -57,11 +57,11 @@ export const translateFactoringKeywords: Mutator = (ctx) => {
     ctx.handledKeys.add("allOf");
   }
 
-  if (ctx.input.settings.discriminator) {
-    if (ctx.output.settings.discriminator && ctx.input.schema.discriminator) {
-      ctx.output.schema.discriminator = copy(
+  if (ctx.from.settings.discriminator) {
+    if (ctx.into.settings.discriminator && ctx.from.schema.discriminator) {
+      ctx.into.schema.discriminator = copy(
         ctx.copyJson,
-        ctx.input.schema.discriminator,
+        ctx.from.schema.discriminator,
       );
     }
 

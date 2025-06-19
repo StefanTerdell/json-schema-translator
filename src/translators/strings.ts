@@ -1,4 +1,4 @@
-import { JsonSchemaStaticKeywordsObject } from "../JsonSchema.ts";
+import { JsonSchemaKeywordsOnlyObject } from "../JsonSchema.ts";
 import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
 import { Mutator } from "./Mutator.ts";
 import { translateSchema } from "./schema.ts";
@@ -8,7 +8,11 @@ export const translateStringKeywords: Mutator = (ctx) => {
   translateContentKeywords(ctx);
 };
 
-const translateBasicKeywords: Mutator = ({ input, output, handledKeys }) => {
+const translateBasicKeywords: Mutator = ({
+  from: input,
+  into: output,
+  handledKeys,
+}) => {
   if (input.settings.minLength) {
     if (output.settings.minLength) {
       if (input.schema.minLength !== undefined) {
@@ -56,80 +60,77 @@ const translateBasicKeywords: Mutator = ({ input, output, handledKeys }) => {
 };
 
 const translateContentKeywords: Mutator = (ctx) => {
-  const media = ctx.input.settings.media
+  const media = ctx.from.settings.media
     ? (
-        ctx.input.schema as unknown as JsonSchemaStaticKeywordsObject<
+        ctx.from.schema as unknown as JsonSchemaKeywordsOnlyObject<
           JsonSchemaSpecification & { media: true }
         >
       ).media
     : undefined;
 
-  const contentEncoding = ctx.input.settings.contentEncoding
-    ? ctx.input.schema.contentEncoding
+  const contentEncoding = ctx.from.settings.contentEncoding
+    ? ctx.from.schema.contentEncoding
     : media?.binaryEncoding;
 
-  const contentMediaType = ctx.input.settings.contentMediaType
-    ? ctx.input.schema.contentMediaType
+  const contentMediaType = ctx.from.settings.contentMediaType
+    ? ctx.from.schema.contentMediaType
     : media?.type;
 
-  if (ctx.output.settings.media) {
+  if (ctx.into.settings.media) {
     if (contentEncoding !== undefined) {
       if (contentMediaType !== undefined) {
         // @ts-expect-error ISSUE: Narrowing breaks across generics
-        ctx.output.schema.media = {
+        ctx.into.schema.media = {
           binaryEncoding: contentEncoding,
           type: contentMediaType,
         };
       } else {
         // @ts-expect-error ISSUE: Narrowing breaks across generics
-        ctx.output.schema.media = {
+        ctx.into.schema.media = {
           binaryEncoding: contentEncoding,
         };
       }
     } else {
       if (contentMediaType !== undefined) {
         // @ts-expect-error ISSUE: Narrowing breaks across generics
-        ctx.output.schema.media = {
+        ctx.into.schema.media = {
           type: contentMediaType,
         };
       }
     }
   } else {
-    if (ctx.output.settings.contentEncoding && contentEncoding !== undefined) {
-      ctx.output.schema.contentEncoding = contentEncoding;
+    if (ctx.into.settings.contentEncoding && contentEncoding !== undefined) {
+      ctx.into.schema.contentEncoding = contentEncoding;
     }
 
-    if (
-      ctx.output.settings.contentMediaType &&
-      contentMediaType !== undefined
-    ) {
-      ctx.output.schema.contentMediaType = contentMediaType;
+    if (ctx.into.settings.contentMediaType && contentMediaType !== undefined) {
+      ctx.into.schema.contentMediaType = contentMediaType;
     }
   }
 
-  if (ctx.input.settings.media) {
+  if (ctx.from.settings.media) {
     ctx.handledKeys.add("media");
   }
 
-  if (ctx.input.settings.contentEncoding) {
+  if (ctx.from.settings.contentEncoding) {
     ctx.handledKeys.add("contentEncoding");
   }
 
-  if (ctx.input.settings.contentMediaType) {
+  if (ctx.from.settings.contentMediaType) {
     ctx.handledKeys.add("contentMediaType");
   }
 
-  if (ctx.input.settings.contentSchema) {
+  if (ctx.from.settings.contentSchema) {
     if (
-      ctx.output.settings.contentSchema &&
-      ctx.input.schema.contentSchema !== undefined
+      ctx.into.settings.contentSchema &&
+      ctx.from.schema.contentSchema !== undefined
     ) {
-      ctx.output.schema.contentSchema = translateSchema({
+      ctx.into.schema.contentSchema = translateSchema({
         ...ctx,
-        input: {
-          ...ctx.input,
+        from: {
+          ...ctx.from,
           // @ts-expect-error narrowing
-          schema: ctx.input.schema.contentSchema,
+          schema: ctx.from.schema.contentSchema,
         },
         path: [...ctx.path, "contentSchema"],
         forceAllowBooleanSchema: false,
