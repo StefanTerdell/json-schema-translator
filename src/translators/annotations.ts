@@ -46,10 +46,10 @@ const translateControlledAnnotationKeywords: Mutator = (ctx) => {
     ctx,
     { $comment: true },
     {
-      from(ctx) {
+      onFrom(ctx) {
         ctx.handledKeys.add("$comment");
       },
-      both(ctx) {
+      onFromAndInto(ctx) {
         ctx.into.schema.$comment = ctx.from.schema.$comment;
         ctx.handledKeys.add("$comment");
       },

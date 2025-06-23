@@ -31,47 +31,53 @@ type Respecify<
 > = Replace<Source, Target, JsonSchemaSpecification>;
 
 export function match<
-  FromSpecification extends JsonSchemaSpecification,
-  IntoSpecification extends JsonSchemaSpecification,
-  Assertions extends Partial<JsonSchemaSpecification>,
+  const FromSpecification extends JsonSchemaSpecification,
+  const IntoSpecification extends JsonSchemaSpecification,
+  const Assertions extends Partial<JsonSchemaSpecification>,
 >(
   ctx: MutatorContext<FromSpecification, IntoSpecification>,
   assertions: Assertions,
   matches: {
-    from?: (
-      ctx: MutatorContext<
-        Respecify<FromSpecification, Assertions>,
-        IntoSpecification
+    onFrom?: (
+      ctx: Omit<
+        MutatorContext<
+          Respecify<FromSpecification, Assertions>,
+          IntoSpecification
+        >,
+        "into"
       >,
     ) => void;
-    onlyFrom?: (
+    onFromNotInto?: (
       ctx: MutatorContext<
         Respecify<FromSpecification, Assertions>,
         Respecify<IntoSpecification, ToggledBooleanLiterals<Assertions>>
       >,
     ) => void;
 
-    into?: (
-      ctx: MutatorContext<
-        FromSpecification,
-        Respecify<IntoSpecification, Assertions>
+    onInto?: (
+      ctx: Omit<
+        MutatorContext<
+          FromSpecification,
+          Respecify<IntoSpecification, Assertions>
+        >,
+        "from"
       >,
     ) => void;
 
-    onlyInto?: (
+    onIntoNotFrom?: (
       ctx: MutatorContext<
         Respecify<FromSpecification, ToggledBooleanLiterals<Assertions>>,
         Respecify<IntoSpecification, Assertions>
       >,
     ) => void;
 
-    both?: (
+    onFromAndInto?: (
       ctx: MutatorContext<
         Respecify<FromSpecification, Assertions>,
         Respecify<IntoSpecification, Assertions>
       >,
     ) => void;
-    none?: (
+    onNeither?: (
       ctx: MutatorContext<
         Respecify<FromSpecification, ToggledBooleanLiterals<Assertions>>,
         Respecify<IntoSpecification, ToggledBooleanLiterals<Assertions>>
@@ -87,19 +93,19 @@ export function match<
 
   if (from) {
     if (into) {
-      matches.from?.(ctx as Any);
-      matches.into?.(ctx as Any);
-      matches.both?.(ctx as Any);
+      matches.onFrom?.(ctx as Any);
+      matches.onInto?.(ctx as Any);
+      matches.onFromAndInto?.(ctx as Any);
     } else {
-      matches.from?.(ctx as Any);
-      matches.onlyFrom?.(ctx as Any);
+      matches.onFrom?.(ctx as Any);
+      matches.onFromNotInto?.(ctx as Any);
     }
   } else {
     if (into) {
-      matches.into?.(ctx as Any);
-      matches.onlyInto?.(ctx as Any);
+      matches.onInto?.(ctx as Any);
+      matches.onIntoNotFrom?.(ctx as Any);
     } else {
-      matches.none?.(ctx as Any);
+      matches.onNeither?.(ctx as Any);
     }
   }
 }

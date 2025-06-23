@@ -10,18 +10,22 @@ export const translateConstantKeywords: Mutator = (ctx) => {
       enum: true,
     },
     {
-      from(ctx) {
+      onFrom(ctx) {
+        // from supports enum
         ctx.handledKeys.add("enum");
       },
-      both(ctx) {
+      onFromAndInto(ctx) {
+        // both support enum
         match(
           ctx,
           { const: true },
           {
-            from(ctx) {
+            onFrom(ctx) {
+              // both supports enum and from supports const
               ctx.handledKeys.add("const");
             },
-            both(ctx) {
+            onFromAndInto(ctx) {
+              // both support enum and const
               if (ctx.from.schema.enum !== undefined) {
                 if (
                   !ctx.into.settings.nonEmptyEnum ||
@@ -35,9 +39,9 @@ export const translateConstantKeywords: Mutator = (ctx) => {
                 ctx.into.schema.const = ctx.from.schema.const;
               }
             },
-            onlyFrom(ctx) {},
-            onlyInto(ctx) {},
-            none(ctx) {
+            onFromNotInto(ctx) {},
+            onIntoNotFrom(ctx) {},
+            onNeither(ctx) {
               if (ctx.from.schema.enum !== undefined) {
                 if (
                   !ctx.into.settings.nonEmptyEnum ||
@@ -50,22 +54,22 @@ export const translateConstantKeywords: Mutator = (ctx) => {
           },
         );
       },
-      onlyFrom(ctx) {
+      onFromNotInto(ctx) {
         match(
           ctx,
           { const: true },
           {
-            from(ctx) {
+            onFrom(ctx) {
               ctx.handledKeys.add("const");
             },
-            both(ctx) {
+            onFromAndInto(ctx) {
               if (ctx.from.schema.const !== undefined) {
                 ctx.into.schema.const = ctx.from.schema.const;
               } else if (ctx.from.schema.enum?.length === 1) {
                 ctx.into.schema.const = ctx.from.schema.enum[0];
               }
             },
-            onlyInto(ctx) {
+            onIntoNotFrom(ctx) {
               if (ctx.from.schema.enum?.length === 1) {
                 ctx.into.schema.const = ctx.from.schema.enum[0];
               }
