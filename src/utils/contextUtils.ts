@@ -1,8 +1,133 @@
 import type { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
+import { Mutator } from "../translators/Mutator.ts";
 import { type MutatorContext } from "../translators/MutatorContext.ts";
 import { matchDeep } from "./matchDeep.ts";
 import { type Respecify } from "./schemaUtils.ts";
 import { type ToggledBooleanLiterals } from "./UtilityTypes.ts";
+
+export const addUnionMembers: Mutator<null, [members: unknown[]], boolean> = (
+  ctx,
+  members,
+) => {
+  let added = false;
+
+  match(
+    ctx,
+    { anyOf: true },
+    {
+      into(ctx) {
+        added = addAnyOfMembers(ctx, members);
+      },
+      notInto(ctx) {
+        match(
+          ctx,
+          { oneOf: true },
+          {
+            into(ctx) {
+              added = addOneOfMembers(ctx, members);
+            },
+          },
+        );
+      },
+    },
+  );
+
+  return added;
+};
+
+const addOneOfMembers: Mutator<
+  { into: { oneOf: true } },
+  [members: unknown[]],
+  boolean
+> = (ctx, members) => {
+  if (ctx.into.schema.oneOf) {
+    match(
+      ctx,
+      { allOf: true },
+      {
+        into(ctx) {
+          if (
+            addAllOfMembers(ctx, [
+              {
+                oneOf: ctx.into.schema.oneOf,
+              },
+              { oneOf: members },
+            ])
+          ) {
+            delete ctx.into.schema.oneOf;
+          }
+        },
+        notInto() {
+          // deno-lint-ignore no-explicit-any
+          for (const member of members as any[]) {
+            ctx.into.schema.oneOf!.push(member);
+          }
+        },
+      },
+    );
+  } else {
+    // deno-lint-ignore no-explicit-any
+    ctx.into.schema.oneOf = members as any[];
+  }
+
+  return true;
+};
+
+const addAllOfMembers: Mutator<
+  { into: { allOf: true } },
+  [members: unknown[]],
+  boolean
+> = (ctx, members) => {
+  if (ctx.into.schema.allOf) {
+    // deno-lint-ignore no-explicit-any
+    for (const member of members as any[]) {
+      ctx.into.schema.allOf.push(member);
+    }
+  } else {
+    // deno-lint-ignore no-explicit-any
+    ctx.into.schema.allOf = members as any[];
+  }
+
+  return true;
+};
+
+const addAnyOfMembers: Mutator<
+  { into: { anyOf: true } },
+  [members: unknown[]],
+  boolean
+> = (ctx, members) => {
+  if (ctx.into.schema.anyOf) {
+    match(
+      ctx,
+      { allOf: true },
+      {
+        into(ctx) {
+          if (
+            addAllOfMembers(ctx, [
+              {
+                anyOf: ctx.into.schema.anyOf,
+              },
+              { anyOf: members },
+            ])
+          ) {
+            delete ctx.into.schema.anyOf;
+          }
+        },
+        notInto() {
+          // deno-lint-ignore no-explicit-any
+          for (const member of members as any[]) {
+            ctx.into.schema.anyOf!.push(member);
+          }
+        },
+      },
+    );
+  } else {
+    // deno-lint-ignore no-explicit-any
+    ctx.into.schema.anyOf = members as any[];
+  }
+
+  return true;
+};
 
 export function match<
   FromSpecification extends JsonSchemaSpecification,

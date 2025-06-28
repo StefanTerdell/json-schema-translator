@@ -11,7 +11,7 @@ import { translateNumberKeywords } from "./keywords/numbers.ts";
 import { translateObjectKeywords } from "./keywords/objects.ts";
 import { translateStringKeywords } from "./keywords/strings.ts";
 import { translateStructuringKeywords } from "./keywords/structuring.ts";
-import { translateTypeKeyword } from "./keywords/type.ts";
+import { translateType } from "./keywords/type.ts";
 import { translateTitle } from "./keywords/title.ts";
 import { translateDescriptionAndMarkdownDescription } from "./keywords/descriptionAndMarkdownDescription.ts";
 import { translateDefault } from "./keywords/default.ts";
@@ -26,7 +26,7 @@ import { translate$schema } from "./keywords/$schema.ts";
 export const translateKeywords: Mutator = (ctx) => {
   translateId(ctx);
   translateDefinitions(ctx);
-  translateTypeKeyword(ctx);
+  translateType(ctx);
   translateNullableKeyword(ctx);
   translateFactoringKeywords(ctx);
   translateConditionalKeywords(ctx);

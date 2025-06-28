@@ -1,4 +1,4 @@
-import { match } from "../../utils/contextUtils.ts";
+import { addUnionMembers, match } from "../../utils/contextUtils.ts";
 import { type Mutator } from "../Mutator.ts";
 
 const copyEnum: Mutator<{ enum: true }> = (ctx) => {
@@ -27,59 +27,13 @@ const copyEnumToConst: Mutator<{
       ctx.into.schema.const = ctx.from.schema.enum[0];
       return true;
     } else if (ctx.from.schema.enum.length > 1) {
-      let added = false;
-
-      match(
+      return addUnionMembers(
         ctx,
-        { anyOf: true },
-        {
-          into(ctx) {
-            if (ctx.from.schema.enum) {
-              const anyOf = ctx.from.schema.enum.map((value) => ({
-                const: value,
-              }));
-
-              added = addAnyOf(ctx, anyOf);
-            }
-          },
-        },
+        ctx.from.schema.enum.map((value) => ({
+          const: value,
+        })),
       );
-
-      return added;
     }
-  }
-};
-
-const addAnyOf: Mutator<
-  { into: { anyOf: true } },
-  [anyOf: unknown[]],
-  boolean
-> = (ctx, anyOf) => {
-  if (ctx.into.schema.anyOf) {
-    if (ctx.into.settings.allOf) {
-      if (!ctx.into.schema.allOf) {
-        ctx.into.schema.allOf = [];
-      }
-
-      ctx.into.schema.allOf.push(
-        // @ts-expect-error :p
-        {
-          anyOf: ctx.into.schema.anyOf,
-        },
-        { anyOf },
-      );
-
-      delete ctx.into.schema.anyOf;
-
-      return true;
-    } else {
-      return false;
-    }
-  } else {
-    // @ts-expect-error :p
-    ctx.into.schema.anyOf = anyOf;
-
-    return true;
   }
 };
 

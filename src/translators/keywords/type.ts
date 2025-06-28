@@ -1,94 +1,157 @@
-import {
-  JsonSchemaKeywordsOnlyObject,
-  JsonSchemaType,
-} from "../../JsonSchema.ts";
+import { JsonSchemaType } from "../../JsonSchema.ts";
 import { JsonSchemaSpecification } from "../../JsonSchemaSpecification.ts";
+import { addUnionMembers, match } from "../../utils/contextUtils.ts";
 import { Mutator } from "../Mutator.ts";
 
-/** @internal */
-export const translateTypeKeyword: Mutator = ({
-  from: input,
-  into: output,
-  handledKeys,
-}) => {
-  if (input.schema.type !== undefined) {
-    if (Array.isArray(input.schema.type)) {
-      const skipIntegerFallback = input.schema.type.includes("number");
+export const translateType: Mutator = (ctx) => {
+  ctx.handledKeys.add("type");
 
-      output.schema.type = input.schema.type
-        .map((type) =>
-          translateType(
-            {
-              type,
-              settings: input.settings,
-            },
-            output,
-            skipIntegerFallback,
-          ),
-        )
-        .filter((type) => type !== undefined) as typeof output.schema.type;
-    } else {
-      const type = translateType(
-        {
-          // @ts-ignore-error :p
-          type: input.schema.type,
-          settings: input.settings,
-        },
-        output,
-        false,
+  if (Array.isArray(ctx.from.schema.type)) {
+    if (ctx.from.schema.type.length) {
+      const results = ctx.from.schema.type.map((type) =>
+        translateTypeValue(ctx, type),
       );
 
+      const types = results
+        .filter(
+          //deduplicate
+          ({ type }, index, arr) =>
+            arr.findIndex((result) => result.type === type) === index,
+        )
+        .map(({ type }) => type);
+
+      const numberOrIntegerResults = results.filter(
+        (x) => x.type === "number" || x.type === "integer",
+      );
+
+      const multipleOf =
+        numberOrIntegerResults.length === 1
+          ? numberOrIntegerResults[0].multipleOf
+          : undefined;
+
+      const nullable = results.some((type) => type.nullable) || undefined;
+
+      if (nullable) {
+        match(
+          ctx,
+          { nullable: true },
+          {
+            into(ctx) {
+              ctx.into.schema.nullable = nullable;
+            },
+          },
+        );
+      }
+
+      if (multipleOf !== undefined) {
+        match(
+          ctx,
+          { multipleOf: true },
+          {
+            into(ctx) {
+              ctx.into.schema.multipleOf = multipleOf;
+            },
+          },
+        );
+      }
+
+      match(
+        ctx,
+        { singleType: true },
+        {
+          into(ctx) {
+            addUnionMembers(
+              ctx,
+              results.map(({ type }) => ({ type })),
+            );
+          },
+          notInto(ctx) {
+            ctx.into.schema.type = types as typeof ctx.into.schema.type;
+          },
+        },
+      );
+    } else if (ctx.from.schema.type !== undefined) {
+      const { type, nullable, multipleOf } = translateTypeValue(
+        ctx,
+        // deno-lint-ignore no-explicit-any
+        ctx.from.schema.type as any,
+      );
+
+      if (nullable !== undefined) {
+        match(
+          ctx,
+          { nullable: true },
+          {
+            into(ctx) {
+              ctx.into.schema.nullable = nullable;
+            },
+          },
+        );
+      }
+
+      if (multipleOf !== undefined) {
+        match(
+          ctx,
+          { multipleOf: true },
+          {
+            into(ctx) {
+              ctx.into.schema.multipleOf = multipleOf;
+            },
+          },
+        );
+      }
+
       if (type !== undefined) {
-        output.schema.type = type;
+        ctx.into.schema.type = type;
       }
     }
   }
-
-  handledKeys.add("type");
 };
-
-const translateType = <
-  InputJsonSchemaSpecification extends JsonSchemaSpecification,
-  OutputJsonSchemaSpecification extends JsonSchemaSpecification,
+const translateTypeValue = <
+  FromSpecification extends JsonSchemaSpecification,
+  IntoSpecification extends JsonSchemaSpecification,
 >(
-  input: {
-    type: JsonSchemaType<InputJsonSchemaSpecification>;
-    settings: InputJsonSchemaSpecification;
+  ctx: {
+    from: {
+      settings: FromSpecification;
+    };
+    into: {
+      settings: IntoSpecification;
+    };
   },
-  output: {
-    settings: OutputJsonSchemaSpecification;
-    schema: JsonSchemaKeywordsOnlyObject<OutputJsonSchemaSpecification>;
-  },
-  skipIntegerFallback: boolean,
-): JsonSchemaType<OutputJsonSchemaSpecification> | undefined => {
-  if (input.settings.type.includes("null") && input.type === "null") {
-    if (output.settings.nullable) {
-      output.schema.nullable = true;
-    }
+  type: JsonSchemaType<FromSpecification>,
+): {
+  type: JsonSchemaType<IntoSpecification> | undefined;
+  nullable: boolean | undefined;
+  multipleOf?: number;
+} => {
+  const nullable =
+    type === "null" && ctx.into.settings.nullable ? true : undefined;
 
-    if (output.settings.type.includes("null")) {
-      return "null" as JsonSchemaType<
-        OutputJsonSchemaSpecification & { null: true }
-      >;
-    } else {
-      return undefined;
-    }
-  }
-
-  if (input.settings.type.includes("integer") && input.type === "integer") {
-    if (output.settings.type.includes("integer")) {
-      return "integer" as JsonSchemaType<
-        OutputJsonSchemaSpecification & { integer: true }
-      >;
-    } else if (!skipIntegerFallback) {
-      if (output.settings.multipleOf) {
-        output.schema.multipleOf = 1;
+  if (type === "integer") {
+    if (ctx.into.settings.type.includes("integer")) {
+      return { type: "integer", nullable };
+    } else if (ctx.into.settings.type.includes("number")) {
+      if (ctx.into.settings.multipleOf) {
+        return {
+          type: "number",
+          multipleOf: 1,
+          nullable,
+        };
       }
-      return "number";
+
+      return {
+        type: "number",
+        nullable,
+      };
     } else {
-      return undefined;
+      return { type: undefined, nullable };
     }
   }
 
-  return input.type as unknown as JsonSchemaType<OutputJsonSchemaSpecification>;
+  if (!ctx.into.settings.strictTypes || ctx.into.settings.type.includes(type)) {
+    return { type, nullable };
+  }
+
+  return { type: undefined, nullable };
 };
