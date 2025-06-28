@@ -1,7 +1,7 @@
 import { JsonObject } from "../../Json.ts";
 import { Mutator } from "../Mutator.ts";
 
-export const translateIdKeyword: Mutator = (ctx) => {
+export const translateId: Mutator = (ctx) => {
   if (typeof ctx.from.settings.$id === "string") {
     const id = (ctx.from.schema as JsonObject)[ctx.from.settings.$id];
 

@@ -3,7 +3,7 @@ import { JsonSchema } from "../../JsonSchema.ts";
 import { Mutator } from "../Mutator.ts";
 import { translateSchema } from "../translateSchema.ts";
 
-export const translateDefinitionsKeyword: Mutator = (ctx) => {
+export const translateDefinitions: Mutator = (ctx) => {
   type OutputSpecification = typeof ctx.into.settings;
   type InputSpecification = typeof ctx.from.settings;
 
@@ -14,6 +14,7 @@ export const translateDefinitionsKeyword: Mutator = (ctx) => {
 
     if (
       inputDefs !== undefined &&
+      Object.keys(inputDefs).length &&
       typeof ctx.into.settings.$defs === "string"
     ) {
       const outputDefs = Object.keys(inputDefs).reduce(
