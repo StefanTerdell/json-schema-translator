@@ -49,7 +49,7 @@ export const hasKeys = <WithKey extends PropertyKey | never = never>(
 /** Asserts that the passed value...
  * 1. is an object
  * 2. is not null
- * 3. contains all of the provided keys
+ * 3. (optionally) contains all of the provided keys
  * 4. (optionally) contains no other keys.
  */
 export const isObject = <WithKey extends PropertyKey | never = never>(

@@ -25,36 +25,33 @@ export type MutatorContext<
   };
 };
 
-type Respecify<
+export type Respecify<
   Source extends JsonSchemaSpecification,
   Target extends Partial<JsonSchemaSpecification>,
 > = Replace<Source, Target, JsonSchemaSpecification>;
 
+export type Specify<Target extends Partial<JsonSchemaSpecification>> =
+  Respecify<JsonSchemaSpecification, Target>;
+
 export function match<
-  const FromSpecification extends JsonSchemaSpecification,
-  const IntoSpecification extends JsonSchemaSpecification,
-  const Assertions extends Partial<JsonSchemaSpecification>,
+  FromSpecification extends JsonSchemaSpecification,
+  IntoSpecification extends JsonSchemaSpecification,
+  Assertions extends Partial<JsonSchemaSpecification>,
 >(
   ctx: MutatorContext<FromSpecification, IntoSpecification>,
   assertions: Assertions,
   matches: {
     from?: (
-      ctx: Omit<
-        MutatorContext<
-          Respecify<FromSpecification, Assertions>,
-          IntoSpecification
-        >,
-        "into"
+      ctx: MutatorContext<
+        Respecify<FromSpecification, Assertions>,
+        IntoSpecification
       >,
     ) => void;
 
     notFrom?: (
-      ctx: Omit<
-        MutatorContext<
-          Respecify<FromSpecification, ToggledBooleanLiterals<Assertions>>,
-          IntoSpecification
-        >,
-        "into"
+      ctx: MutatorContext<
+        Respecify<FromSpecification, ToggledBooleanLiterals<Assertions>>,
+        IntoSpecification
       >,
     ) => void;
 
@@ -66,22 +63,16 @@ export function match<
     ) => void;
 
     into?: (
-      ctx: Omit<
-        MutatorContext<
-          FromSpecification,
-          Respecify<IntoSpecification, Assertions>
-        >,
-        "from"
+      ctx: MutatorContext<
+        FromSpecification,
+        Respecify<IntoSpecification, Assertions>
       >,
     ) => void;
 
     notInto?: (
-      ctx: Omit<
-        MutatorContext<
-          FromSpecification,
-          Respecify<IntoSpecification, ToggledBooleanLiterals<Assertions>>
-        >,
-        "from"
+      ctx: MutatorContext<
+        FromSpecification,
+        Respecify<IntoSpecification, ToggledBooleanLiterals<Assertions>>
       >,
     ) => void;
 

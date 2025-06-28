@@ -3,7 +3,7 @@ import { type JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
 import { translateAnnotationKeywords } from "../translators/annotations.ts";
 import { translateArrayKeywords } from "../translators/arrays.ts";
 import { translateConditionalKeywords } from "../translators/conditionals.ts";
-import { translateConstantKeywords } from "../translators/constants.ts";
+import { translateConstantKeywords } from "../translators/enumAndConst.ts";
 import { translateDefinitionsKeyword } from "../translators/definitions.ts";
 import { translateFactoringKeywords } from "../translators/factoring.ts";
 import { translateIdKeyword } from "../translators/id.ts";
