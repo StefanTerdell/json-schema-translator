@@ -1,7 +1,7 @@
-import { JsonSchemaKeywordsOnlyObject } from "../JsonSchema.ts";
-import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
-import { Mutator } from "./Mutator.ts";
-import { translateSchema } from "./schema.ts";
+import { JsonSchemaKeywordsOnlyObject } from "../../JsonSchema.ts";
+import { JsonSchemaSpecification } from "../../JsonSchemaSpecification.ts";
+import { Mutator } from "../Mutator.ts";
+import { translateSchema } from "../translateSchema.ts";
 
 export const translateStringKeywords: Mutator = (ctx) => {
   translateBasicKeywords(ctx);

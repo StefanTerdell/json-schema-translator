@@ -1,8 +1,8 @@
-import { type JsonSchema } from "../JsonSchema.ts";
-import { isAnySchema, isNeverSchema } from "../schemaUtils.ts";
-import { type NonEmptyArray } from "../utils.ts";
-import { type Mutator } from "./Mutator.ts";
-import { translateSchema } from "./schema.ts";
+import { JsonSchema } from "../../JsonSchema.ts";
+import { isAnySchema, isNeverSchema } from "../../utils/schemaUtils.ts";
+import { NonEmptyArray } from "../../utils/UtilityTypes.ts";
+import { Mutator } from "../Mutator.ts";
+import { translateSchema } from "../translateSchema.ts";
 
 export const translateObjectKeywords: Mutator = (ctx) => {
   translateBasicObjectKeywords(ctx);

@@ -1,4 +1,4 @@
-import { type LooseStringLiteral } from "./utils.ts";
+import { type LooseStringLiteral } from "./utils/UtilityTypes.ts";
 
 type SharedKeywords = {
   /** Keyword - Disable/enable the "nullable" keyword */

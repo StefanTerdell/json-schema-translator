@@ -1,4 +1,4 @@
-import { type Mutator } from "./Mutator.ts";
+import { Mutator } from "../Mutator.ts";
 
 export const translateStructuringKeywords: Mutator = ({
   from: input,

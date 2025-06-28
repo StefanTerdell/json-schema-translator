@@ -1,6 +1,6 @@
-import { isAnySchema } from "../schemaUtils.ts";
-import { type Mutator } from "./Mutator.ts";
-import { translateSchema } from "./schema.ts";
+import { isAnySchema } from "../../utils/schemaUtils.ts";
+import { Mutator } from "../Mutator.ts";
+import { translateSchema } from "../translateSchema.ts";
 
 export const translateConditionalKeywords: Mutator = (ctx) => {
   if (ctx.from.settings.if) {

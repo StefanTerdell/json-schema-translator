@@ -1,5 +1,6 @@
 import { type JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
-import { MutatorContext, Specify } from "./MutatorContext.ts";
+import { Specify } from "../utils/schemaUtils.ts";
+import { MutatorContext } from "./MutatorContext.ts";
 
 export type Mutator<
   Assertions extends

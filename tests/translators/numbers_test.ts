@@ -4,7 +4,7 @@ import {
   JsonSchemaDraft6,
   jsonSchemaDraft6Specification,
 } from "../../src/specifications/draft6.ts";
-import { translateNumberKeywords } from "../../src/translators/numbers.ts";
+import { translateNumberKeywords } from "../../src/translators/keywords/numbers.ts";
 
 Deno.test("MultipleOf keyword", () => {
   const schema: JsonSchemaDraft6 = {};

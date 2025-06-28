@@ -4,7 +4,7 @@ import {
 } from "./BundledJsonSchemaTypes.ts";
 import { type JsonSchemaSpecification } from "./JsonSchemaSpecification.ts";
 import { type AdditionalJsonSchemaSpecifications } from "./JsonSchemaTranslationOptions.ts";
-import { type EmptyObject } from "./utils.ts";
+import { type EmptyObject } from "./utils/UtilityTypes.ts";
 
 /** @internal */
 export type ResolveSpecification<

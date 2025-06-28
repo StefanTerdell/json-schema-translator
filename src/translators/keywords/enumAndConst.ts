@@ -1,5 +1,5 @@
-import { type Mutator } from "./Mutator.ts";
-import { match } from "./MutatorContext.ts";
+import { match } from "../../utils/contextUtils.ts";
+import { type Mutator } from "../Mutator.ts";
 
 const copyEnum: Mutator<{ enum: true }> = (ctx) => {
   if (ctx.from.schema.enum !== undefined) {

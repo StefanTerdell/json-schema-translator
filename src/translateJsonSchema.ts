@@ -10,7 +10,7 @@ import {
   resolveSpecification,
   type ResolveSpecification,
 } from "./resolveSpecification.ts";
-import { translateSchema } from "./translators/schema.ts";
+import { translateSchema } from "./translators/translateSchema.ts";
 import {
   getUnhandledKeysMap,
   handleUnhandledKeysMap,

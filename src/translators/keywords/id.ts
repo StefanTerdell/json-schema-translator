@@ -1,5 +1,5 @@
-import { type JsonObject } from "../Json.ts";
-import { type Mutator } from "./Mutator.ts";
+import { JsonObject } from "../../Json.ts";
+import { Mutator } from "../Mutator.ts";
 
 export const translateIdKeyword: Mutator = (ctx) => {
   if (typeof ctx.from.settings.$id === "string") {

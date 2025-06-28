@@ -1,9 +1,9 @@
 import {
-  type JsonSchemaKeywordsOnlyObject,
-  type JsonSchemaType,
-} from "../JsonSchema.ts";
-import { type JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
-import { type Mutator } from "./Mutator.ts";
+  JsonSchemaKeywordsOnlyObject,
+  JsonSchemaType,
+} from "../../JsonSchema.ts";
+import { JsonSchemaSpecification } from "../../JsonSchemaSpecification.ts";
+import { Mutator } from "../Mutator.ts";
 
 /** @internal */
 export const translateTypeKeyword: Mutator = ({

@@ -7,7 +7,7 @@ import {
   JsonSchemaDraft4,
   jsonSchemaDraft4Specification,
 } from "../../src/specifications/draft4.ts";
-import { translateSchema } from "../../src/translators/schema.ts";
+import { translateSchema } from "../../src/translators/translateSchema.ts";
 
 Deno.test("Hello", () => {
   const input: JsonSchemaDraft2020_12 = {

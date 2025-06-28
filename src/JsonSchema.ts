@@ -1,14 +1,14 @@
 import { type Json, type JsonObject } from "./Json.ts";
 import { type JsonSchemaSpecification } from "./JsonSchemaSpecification.ts";
 import {
-  EmptyObject,
-  IsLiteralString,
+  type EmptyObject,
+  type IsLiteralString,
   type All,
   type If,
   type LiteralStringOrNever,
   type LooseStringLiteral,
   type NonEmptyArray,
-} from "./utils.ts";
+} from "./utils/UtilityTypes.ts";
 
 /** Represents a JsonSchema as defined by the provided JsonSchemaSpecification. Depending on the settings and specific keyword this can either be a JsonSchemaObject or a boolean */
 export type JsonSchema<

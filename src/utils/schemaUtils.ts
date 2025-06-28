@@ -1,5 +1,15 @@
-import { JsonSchemaSpecification } from "./JsonSchemaSpecification.ts";
-import { EmptyObject, isObject, hasKeys } from "./utils.ts";
+import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
+import { EmptyObject, Replace } from "./UtilityTypes.ts";
+import { isObject } from "./isObject.ts";
+import { hasKeys } from "./hasKeys.ts";
+
+export type Respecify<
+  Source extends JsonSchemaSpecification,
+  Target extends Partial<JsonSchemaSpecification>,
+> = Replace<Source, Target, JsonSchemaSpecification>;
+
+export type Specify<Target extends Partial<JsonSchemaSpecification>> =
+  Respecify<JsonSchemaSpecification, Target>;
 
 export type AnySchema<T extends JsonSchemaSpecification> =
   T["verboseNot"] extends true

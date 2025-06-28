@@ -1,7 +1,7 @@
 import { assertEquals } from "@std/assert/equals";
 import { jsonSchemaDraft4Specification } from "../../src/specifications/draft4.ts";
 import { JsonSchema, JsonSchemaSpecification } from "../../src/index.ts";
-import { translateIdKeyword } from "../../src/translators/id.ts";
+import { translateIdKeyword } from "../../src/translators/keywords/id.ts";
 
 Deno.test("id should be copied from and to the specified path", () => {
   const inputSettings = {

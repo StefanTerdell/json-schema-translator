@@ -1,6 +1,6 @@
-import { copy } from "../copy.ts";
-import { type Mutator } from "./Mutator.ts";
-import { translateSchema } from "./schema.ts";
+import { copy } from "../../copy.ts";
+import { Mutator } from "../Mutator.ts";
+import { translateSchema } from "../translateSchema.ts";
 
 export const translateFactoringKeywords: Mutator = (ctx) => {
   if (ctx.from.settings.anyOf) {

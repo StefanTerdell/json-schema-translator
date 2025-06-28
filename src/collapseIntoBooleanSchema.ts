@@ -3,7 +3,7 @@ import {
   type JsonSchema,
 } from "./JsonSchema.ts";
 import { type JsonSchemaSpecification } from "./JsonSchemaSpecification.ts";
-import { isAnySchema, isNeverSchema } from "./schemaUtils.ts";
+import { isAnySchema, isNeverSchema } from "./utils/schemaUtils.ts";
 
 export const collapseIntoBooleanSchema = <
   Specification extends JsonSchemaSpecification,
