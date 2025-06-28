@@ -38,7 +38,7 @@ export function match<
   ctx: MutatorContext<FromSpecification, IntoSpecification>,
   assertions: Assertions,
   matches: {
-    onFrom?: (
+    from?: (
       ctx: Omit<
         MutatorContext<
           Respecify<FromSpecification, Assertions>,
@@ -47,14 +47,25 @@ export function match<
         "into"
       >,
     ) => void;
-    onFromNotInto?: (
+
+    notFrom?: (
+      ctx: Omit<
+        MutatorContext<
+          Respecify<FromSpecification, ToggledBooleanLiterals<Assertions>>,
+          IntoSpecification
+        >,
+        "into"
+      >,
+    ) => void;
+
+    onlyFrom?: (
       ctx: MutatorContext<
         Respecify<FromSpecification, Assertions>,
         Respecify<IntoSpecification, ToggledBooleanLiterals<Assertions>>
       >,
     ) => void;
 
-    onInto?: (
+    into?: (
       ctx: Omit<
         MutatorContext<
           FromSpecification,
@@ -64,20 +75,30 @@ export function match<
       >,
     ) => void;
 
-    onIntoNotFrom?: (
+    notInto?: (
+      ctx: Omit<
+        MutatorContext<
+          FromSpecification,
+          Respecify<IntoSpecification, ToggledBooleanLiterals<Assertions>>
+        >,
+        "from"
+      >,
+    ) => void;
+
+    onlyInto?: (
       ctx: MutatorContext<
         Respecify<FromSpecification, ToggledBooleanLiterals<Assertions>>,
         Respecify<IntoSpecification, Assertions>
       >,
     ) => void;
 
-    onFromAndInto?: (
+    both?: (
       ctx: MutatorContext<
         Respecify<FromSpecification, Assertions>,
         Respecify<IntoSpecification, Assertions>
       >,
     ) => void;
-    onNeither?: (
+    none?: (
       ctx: MutatorContext<
         Respecify<FromSpecification, ToggledBooleanLiterals<Assertions>>,
         Respecify<IntoSpecification, ToggledBooleanLiterals<Assertions>>
@@ -92,20 +113,22 @@ export function match<
   type Any = any;
 
   if (from) {
+    matches.from?.(ctx as Any);
     if (into) {
-      matches.onFrom?.(ctx as Any);
-      matches.onInto?.(ctx as Any);
-      matches.onFromAndInto?.(ctx as Any);
+      matches.into?.(ctx as Any);
+      matches.both?.(ctx as Any);
     } else {
-      matches.onFrom?.(ctx as Any);
-      matches.onFromNotInto?.(ctx as Any);
+      matches.notInto?.(ctx as Any);
+      matches.onlyFrom?.(ctx as Any);
     }
   } else {
+    matches.notFrom?.(ctx as Any);
     if (into) {
-      matches.onInto?.(ctx as Any);
-      matches.onIntoNotFrom?.(ctx as Any);
+      matches.into?.(ctx as Any);
+      matches.onlyInto?.(ctx as Any);
     } else {
-      matches.onNeither?.(ctx as Any);
+      matches.notInto?.(ctx as Any);
+      matches.none?.(ctx as Any);
     }
   }
 }
