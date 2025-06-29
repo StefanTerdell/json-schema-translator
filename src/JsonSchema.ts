@@ -216,18 +216,18 @@ export type JsonSchemaKeywordsOnlyObject<Spec extends JsonSchemaSpecification> =
     uniqueItems?: boolean;
 
     // factoring:
-    anyOf?: Array<JsonSchema<Spec>>;
-    oneOf?: Array<JsonSchema<Spec>>;
-    allOf?: Array<JsonSchema<Spec>>;
+    anyOf?: If<Spec["anyOf"], Array<JsonSchema<Spec>>>;
+    oneOf?: If<Spec["oneOf"], Array<JsonSchema<Spec>>>;
+    allOf?: If<Spec["allOf"], Array<JsonSchema<Spec>>>;
     discriminator?: If<
       Spec["discriminator"],
       { propertyName: string; mapping?: { [key: string]: string } }
     >;
 
     // conditionals
-    if?: JsonSchema<Spec>;
-    then?: JsonSchema<Spec>;
-    else?: JsonSchema<Spec>;
+    if?: If<Spec["if"], JsonSchema<Spec>>;
+    then?: If<Spec["then"], JsonSchema<Spec>>;
+    else?: If<Spec["else"], JsonSchema<Spec>>;
     not?: JsonSchema<Spec>;
 
     // annotations
