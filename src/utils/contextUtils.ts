@@ -5,6 +5,43 @@ import { matchDeep } from "./matchDeep.ts";
 import { type Respecify } from "./schemaUtils.ts";
 import { type ToggledBooleanLiterals } from "./UtilityTypes.ts";
 
+export const addType: Mutator<null, [type: string], boolean> = (
+  ctx,
+  newType,
+) => {
+  if (
+    ctx.into.settings.type.includes(newType) ||
+    !ctx.into.settings.strictTypes
+  ) {
+    if (ctx.into.schema.type === undefined) {
+      ctx.into.schema.type = newType;
+    } else if (Array.isArray(ctx.into.schema.type)) {
+      if (!ctx.into.schema.type.includes(newType)) {
+        ctx.into.schema.type.push(newType);
+      }
+    } else {
+      const currentType = ctx.into.schema.type satisfies string;
+
+      match(
+        ctx,
+        { singleType: true },
+        {
+          into(ctx) {
+            addUnionMembers(ctx, [{ type: currentType }, { type: newType }]);
+          },
+          notInto(ctx) {
+            ctx.into.schema.type = [currentType, newType];
+          },
+        },
+      );
+    }
+
+    return true;
+  } else {
+    return false;
+  }
+};
+
 export const addUnionMembers: Mutator<null, [members: unknown[]], boolean> = (
   ctx,
   members,
@@ -35,7 +72,7 @@ export const addUnionMembers: Mutator<null, [members: unknown[]], boolean> = (
   return added;
 };
 
-const addOneOfMembers: Mutator<
+export const addOneOfMembers: Mutator<
   { into: { oneOf: true } },
   [members: unknown[]],
   boolean
@@ -73,7 +110,7 @@ const addOneOfMembers: Mutator<
   return true;
 };
 
-const addAllOfMembers: Mutator<
+export const addAllOfMembers: Mutator<
   { into: { allOf: true } },
   [members: unknown[]],
   boolean
@@ -91,7 +128,7 @@ const addAllOfMembers: Mutator<
   return true;
 };
 
-const addAnyOfMembers: Mutator<
+export const addAnyOfMembers: Mutator<
   { into: { anyOf: true } },
   [members: unknown[]],
   boolean
