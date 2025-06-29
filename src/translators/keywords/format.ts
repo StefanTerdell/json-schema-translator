@@ -1,24 +1,22 @@
 import { Mutator } from "../Mutator.ts";
 
-export const translateFormat: Mutator = ({
-  from: input,
-  into: output,
-  handledKeys,
-}) => {
-  if (input.settings.format) {
-    if (output.settings.format && input.schema.format !== undefined) {
+export const translateFormat: Mutator = (ctx) => {
+  if (ctx.from.settings.format) {
+    if (ctx.into.settings.format && ctx.from.schema.format !== undefined) {
       if (
-        !input.settings.strictFormats ||
-        !Array.isArray(input.settings.format) ||
-        (input.settings.format.includes(input.schema.format as string) &&
-          (!output.settings.strictFormats ||
-            !Array.isArray(output.settings.format) ||
-            output.settings.format.includes(output.schema.format as string)))
+        ctx.into.settings.strictFormats &&
+        Array.isArray(ctx.into.settings.format)
       ) {
-        output.schema.format = input.schema.format;
+        if (
+          ctx.into.settings.format.includes(ctx.from.schema.format as string)
+        ) {
+          ctx.into.schema.format = ctx.from.schema.format;
+        }
+      } else {
+        ctx.into.schema.format = ctx.from.schema.format;
       }
     }
 
-    handledKeys.add("format");
+    ctx.handledKeys.add("format");
   }
 };
