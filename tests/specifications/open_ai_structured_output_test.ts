@@ -53,7 +53,7 @@ Deno.test(
               minProperties: 3,
               unevaluatedProperties: true,
               propertyNames: {
-                format: "url",
+                format: "uri",
               },
             },
             tuple: {
