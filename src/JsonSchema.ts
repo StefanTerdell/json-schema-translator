@@ -121,10 +121,10 @@ export type JsonSchemaKeywordsOnlyObject<Spec extends JsonSchemaSpecification> =
     pattern?: If<Spec["pattern"], string>;
     format?: Spec["format"] extends true
       ? string
-      : Spec["format"] extends (infer F extends string)[]
+      : Spec["format"] extends (infer Format extends string)[]
         ? Spec["strictFormats"] extends true
-          ? F
-          : LooseStringLiteral<F>
+          ? Format
+          : LooseStringLiteral<Format>
         : unknown;
 
     // string content
@@ -173,11 +173,11 @@ export type JsonSchemaKeywordsOnlyObject<Spec extends JsonSchemaSpecification> =
         : Spec["forceAdditionalProperties"]
     >;
     patternProperties?: Record<string, JsonSchema<Spec>>;
-    unevaluatedProperties?: If<Spec["unevaluatedProperties"], JsonSchema<Spec>>;
-    propertyNames?: If<
-      Spec["propertyNames"],
-      Omit<JsonSchemaObject<Spec>, "type"> | boolean
+    unevaluatedProperties?: If<
+      Spec["unevaluatedProperties"],
+      JsonSchema<Spec, true>
     >;
+    propertyNames?: If<Spec["propertyNames"], JsonSchema<Spec, true>>;
     maxProperties?: If<Spec["maxProperties"], number>;
     minProperties?: If<Spec["minProperties"], number>;
 

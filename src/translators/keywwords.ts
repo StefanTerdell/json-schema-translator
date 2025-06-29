@@ -1,13 +1,11 @@
 import { Mutator } from "./Mutator.ts";
 
-import { translateArrayKeywords } from "./keywords/arrays.ts";
 import { translateNot } from "./keywords/not.ts";
 import { translateEnumAndConst } from "./keywords/enumAndConst.ts";
 import { translateDefinitions } from "./keywords/definitions.ts";
 import { translateDiscriminator } from "./keywords/discriminator.ts";
 import { translateId } from "./keywords/id.ts";
 import { translateNullable } from "./keywords/nullable.ts";
-import { translateNumberKeywords } from "./keywords/numbers.ts";
 import { translateObjectKeywords } from "./keywords/objects.ts";
 import { translateType } from "./keywords/type.ts";
 import { translateTitle } from "./keywords/title.ts";
@@ -37,6 +35,19 @@ import { translateMaxLength } from "./keywords/maxLength.ts";
 import { translatePattern } from "./keywords/pattern.ts";
 import { translateContentEncodingAndContentMediaTypeAndContentSchemaAndMedia } from "./keywords/contentEncodingAndContentMediaTypeAndContentSchemaAndMedia.ts";
 import { translateFormat } from "./keywords/format.ts";
+import { translateMultipleOf } from "./keywords/multipleOf.ts";
+import { translateMinItems } from "./keywords/minItems.ts";
+import { translateMaxItems } from "./keywords/maxItems.ts";
+import { translateMinContains } from "./keywords/minContains.ts";
+import { translateMaxContains } from "./keywords/maxContains.ts";
+import { translateUnevaluatedItems } from "./keywords/unevaluatedItems.ts";
+import { translateUniqueItems } from "./keywords/uniqueItems.ts";
+import { translatePrefixItemsAndItemsAndAdditionalItems } from "./keywords/prefixItemsAndItemsAndAdditionalItems.ts";
+import { translateDependenciesAndDependantRequiredAndDependantSchemas } from "./keywords/translateDependenciesAndDependantRequiredAndDependantSchemas.ts";
+import { translateMinProperties } from "./keywords/minProperties.ts";
+import { translateMaxProperties } from "./keywords/maxProperties.ts";
+import { translatePropertyOrdering } from "./keywords/propertyOrdering.ts";
+import { translatePropertyNames } from "./keywords/propertyNames.ts";
 
 export const translateKeywords: Mutator = (ctx) => {
   translateId(ctx);
@@ -66,18 +77,30 @@ export const translateKeywords: Mutator = (ctx) => {
   translate$anchor(ctx);
   translate$dynamicAnchor(ctx);
   translate$recursiveAnchor(ctx);
-
+  translateMinLength(ctx);
+  translateMaxLength(ctx);
+  translatePattern(ctx);
+  translateFormat(ctx);
+  translateMultipleOf(ctx);
+  translateMinItems(ctx);
+  translateMaxItems(ctx);
+  translateMinContains(ctx);
+  translateMaxContains(ctx);
+  translateUniqueItems(ctx);
+  translateMinContains(ctx);
+  translateUnevaluatedItems(ctx);
+  translateMinProperties(ctx);
+  translateMaxProperties(ctx);
+  translatePropertyOrdering(ctx);
+  translatePropertyNames(ctx);
   translateDescriptionAndMarkdownDescription(ctx);
   translateContentEncodingAndContentMediaTypeAndContentSchemaAndMedia(ctx);
   translateEnumAndConst(ctx);
 
-  translateMinLength(ctx);
-  translateMaxLength(ctx);
-  translatePattern(ctx);
+  // TODO: Migrate to match
+  translatePrefixItemsAndItemsAndAdditionalItems(ctx);
+  translateDependenciesAndDependantRequiredAndDependantSchemas(ctx);
 
-  translateFormat(ctx);
-
-  translateNumberKeywords(ctx);
-  translateArrayKeywords(ctx);
+  // TODO: Break out keywords
   translateObjectKeywords(ctx);
 };

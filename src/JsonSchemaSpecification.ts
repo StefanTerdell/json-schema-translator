@@ -35,6 +35,8 @@ type ExtensionOptions = {
   errorMessage?: "ajv" | false;
   /** Option - Optionally enable the `propertyOrdering` keyword. Will be copied if enabled in both schema specifiactions and based on the keys of `properties` if enabled only in output */
   propertyOrdering?: boolean;
+  /** Option - Always create `propertyOrdering` from the order of the `properties` keyword properties if the input specification doesn't provide it. Does nothing if the `propertyOrdering` keyword isn't enabled.  */
+  derivePropertyOrderingFromKeys?: boolean;
   /** Option - Optionally enable the `markdownDescription` keyword. Will be copied if enabled in both schema scpecifications or moved into 'description' if enabled only in the input and if the input schema does not have a `description` */
   markdownDescription?: boolean;
 };

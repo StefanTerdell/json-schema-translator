@@ -2,66 +2,10 @@ import { JsonSchema } from "../../JsonSchema.ts";
 import { Mutator } from "../Mutator.ts";
 import { translateSchema } from "../translateSchema.ts";
 
-export const translateArrayKeywords: Mutator = (ctx) => {
-  translateBasicArrayKeywords(ctx);
-  translateItemKeywords(ctx);
-};
-
-const translateBasicArrayKeywords: Mutator = ({
-  from: input,
-  into: output,
-  handledKeys,
-}) => {
-  if (input.settings.contains) {
-    if (input.settings.minContains) {
-      if (
-        output.settings.minContains &&
-        input.schema.minContains !== undefined
-      ) {
-        output.schema.minContains = input.schema.minContains;
-      }
-
-      handledKeys.add("minContains");
-    }
-
-    if (input.settings.maxContains) {
-      if (
-        output.settings.maxContains &&
-        input.schema.maxContains !== undefined
-      ) {
-        output.schema.maxContains = input.schema.maxContains;
-      }
-
-      handledKeys.add("maxContains");
-    }
-  }
-
-  if (input.settings.minItems) {
-    if (output.settings.minItems && input.schema.minItems !== undefined) {
-      output.schema.minItems = input.schema.minItems;
-    }
-
-    handledKeys.add("minItems");
-  }
-
-  if (input.settings.maxItems) {
-    if (output.settings.maxItems && input.schema.maxItems !== undefined) {
-      output.schema.maxItems = input.schema.maxItems;
-    }
-
-    handledKeys.add("maxItems");
-  }
-
-  if (input.settings.uniqueItems) {
-    if (output.settings.uniqueItems && input.schema.uniqueItems !== undefined) {
-      output.schema.uniqueItems = input.schema.uniqueItems;
-    }
-
-    handledKeys.add("uniqueItems");
-  }
-};
-
-const translateItemKeywords: Mutator = (ctx) => {
+// @TODO: Migrate to match
+export const translatePrefixItemsAndItemsAndAdditionalItems: Mutator = (
+  ctx,
+) => {
   if (ctx.from.settings.prefixItems) {
     const prefixItems = (
       ctx.from.schema.prefixItems as
@@ -194,40 +138,5 @@ const translateItemKeywords: Mutator = (ctx) => {
 
     ctx.handledKeys.add("items");
     ctx.handledKeys.add("additionalItems");
-  }
-
-  if (ctx.from.settings.unevaluatedItems) {
-    if (
-      ctx.into.settings.unevaluatedItems &&
-      ctx.from.schema.unevaluatedItems != undefined
-    ) {
-      ctx.into.schema.unevaluatedItems = translateSchema({
-        ...ctx,
-        from: {
-          ...ctx.from,
-          schema: ctx.from.schema.unevaluatedItems,
-        },
-        path: [...ctx.path, "unevaluatedItems"],
-        forceAllowBooleanSchema: false,
-      });
-    }
-
-    ctx.handledKeys.add("unevaluatedItems");
-  }
-
-  if (ctx.from.settings.contains) {
-    if (ctx.into.settings.contains && ctx.from.schema.contains != undefined) {
-      ctx.into.schema.contains = translateSchema({
-        ...ctx,
-        from: {
-          ...ctx.from,
-          schema: ctx.from.schema.contains,
-        },
-        path: [...ctx.path, "contains"],
-        forceAllowBooleanSchema: false,
-      });
-    }
-
-    ctx.handledKeys.add("contains");
   }
 };

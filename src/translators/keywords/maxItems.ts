@@ -1,0 +1,19 @@
+import { match } from "../../utils/contextUtils.ts";
+import { Mutator } from "../Mutator.ts";
+
+export const translateMaxItems: Mutator = (ctx) => {
+  match(
+    ctx,
+    { maxItems: true },
+    {
+      from(ctx) {
+        ctx.handledKeys.add("maxItems");
+      },
+      both(ctx) {
+        if (ctx.from.schema.maxItems !== undefined) {
+          ctx.into.schema.maxItems = ctx.from.schema.maxItems;
+        }
+      },
+    },
+  );
+};
