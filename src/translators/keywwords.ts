@@ -1,16 +1,15 @@
 import { Mutator } from "./Mutator.ts";
 
 import { translateArrayKeywords } from "./keywords/arrays.ts";
-import { translateConditionalKeywords } from "./keywords/conditionals.ts";
-import { translateConstantKeywords } from "./keywords/enumAndConst.ts";
+import { translateNot } from "./keywords/not.ts";
+import { translateEnumAndConst } from "./keywords/enumAndConst.ts";
 import { translateDefinitions } from "./keywords/definitions.ts";
-import { translateFactoringKeywords } from "./keywords/factoring.ts";
+import { translateDiscriminator } from "./keywords/discriminator.ts";
 import { translateId } from "./keywords/id.ts";
-import { translateNullableKeyword } from "./keywords/nullable.ts";
+import { translateNullable } from "./keywords/nullable.ts";
 import { translateNumberKeywords } from "./keywords/numbers.ts";
 import { translateObjectKeywords } from "./keywords/objects.ts";
 import { translateStringKeywords } from "./keywords/strings.ts";
-import { translateStructuringKeywords } from "./keywords/structuring.ts";
 import { translateType } from "./keywords/type.ts";
 import { translateTitle } from "./keywords/title.ts";
 import { translateDescriptionAndMarkdownDescription } from "./keywords/descriptionAndMarkdownDescription.ts";
@@ -22,18 +21,33 @@ import { translateExamples } from "./keywords/examples.ts";
 import { translateWriteOnly } from "./keywords/writeOnly.ts";
 import { translateReadOnly } from "./keywords/readOnly.ts";
 import { translate$schema } from "./keywords/$schema.ts";
+import { translateAnyOf } from "./keywords/anyOf.ts";
+import { translateOneOf } from "./keywords/oneOf.ts";
+import { translateAllOf } from "./keywords/allOf.ts";
+import { translateIf } from "./keywords/if.ts";
+import { translateThen } from "./keywords/then.ts";
+import { translateElse } from "./keywords/else.ts";
+import { translate$ref } from "./keywords/$ref.ts";
+import { translate$dynamicRef } from "./keywords/$dynamicRef.ts";
+import { translate$recursiveRef } from "./keywords/$recursiveRef.ts";
+import { translate$anchor } from "./keywords/$anchor.ts";
+import { translate$dynamicAnchor } from "./keywords/$dynamicAnchor.ts";
+import { translate$recursiveAnchor } from "./keywords/$recursiveAnchor.ts";
 
 export const translateKeywords: Mutator = (ctx) => {
   translateId(ctx);
   translateDefinitions(ctx);
   translateType(ctx);
-  translateNullableKeyword(ctx);
-  translateFactoringKeywords(ctx);
-  translateConditionalKeywords(ctx);
-
-  // translateAnnotationKeywords(ctx);
+  translateNullable(ctx);
+  translateAnyOf(ctx);
+  translateOneOf(ctx);
+  translateAllOf(ctx);
+  translateDiscriminator(ctx);
+  translateNot(ctx);
+  translateIf(ctx);
+  translateThen(ctx);
+  translateElse(ctx);
   translateTitle(ctx);
-  translateDescriptionAndMarkdownDescription(ctx);
   translateDefault(ctx);
   translate$vocabulary(ctx);
   translate$comment(ctx);
@@ -42,9 +56,16 @@ export const translateKeywords: Mutator = (ctx) => {
   translateWriteOnly(ctx);
   translateReadOnly(ctx);
   translate$schema(ctx);
+  translate$ref(ctx);
+  translate$dynamicRef(ctx);
+  translate$recursiveRef(ctx);
+  translate$anchor(ctx);
+  translate$dynamicAnchor(ctx);
+  translate$recursiveAnchor(ctx);
 
-  translateConstantKeywords(ctx);
-  translateStructuringKeywords(ctx);
+  translateDescriptionAndMarkdownDescription(ctx);
+  translateEnumAndConst(ctx);
+
   translateStringKeywords(ctx);
   translateNumberKeywords(ctx);
   translateArrayKeywords(ctx);

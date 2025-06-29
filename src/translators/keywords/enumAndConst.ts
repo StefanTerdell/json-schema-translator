@@ -37,7 +37,7 @@ const copyEnumToConst: Mutator<{
   }
 };
 
-export const translateConstantKeywords: Mutator = (ctx) => {
+export const translateEnumAndConst: Mutator = (ctx) => {
   match(
     ctx,
     {
