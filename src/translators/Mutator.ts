@@ -1,4 +1,5 @@
 import { type JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
+import { ResolveParameters } from "../utils/Parameters.ts";
 import { Specify } from "../utils/schemaUtils.ts";
 import { MutatorContext } from "./MutatorContext.ts";
 
@@ -31,5 +32,5 @@ export type Mutator<
       : JsonSchemaSpecification,
 >(
   ctx: MutatorContext<FromSpecification, IntoSpecification>,
-  ...args: Parameters
+  ...args: ResolveParameters<typeof ctx, Parameters>
 ) => ReturnType;
