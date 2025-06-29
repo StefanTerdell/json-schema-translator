@@ -29,7 +29,7 @@ export type Translator<
     : Assertions extends Partial<JsonSchemaSpecification>
       ? Specify<Assertions>
       : JsonSchemaSpecification,
-  ForceAllowBooleanSchema extends boolean,
+  const ForceAllowBooleanSchema extends boolean,
 >(
   ctx: TranslatorContext<
     FromSpecification,
