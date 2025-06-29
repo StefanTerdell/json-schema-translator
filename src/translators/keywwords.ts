@@ -9,7 +9,6 @@ import { translateId } from "./keywords/id.ts";
 import { translateNullable } from "./keywords/nullable.ts";
 import { translateNumberKeywords } from "./keywords/numbers.ts";
 import { translateObjectKeywords } from "./keywords/objects.ts";
-import { translateStringKeywords } from "./keywords/strings.ts";
 import { translateType } from "./keywords/type.ts";
 import { translateTitle } from "./keywords/title.ts";
 import { translateDescriptionAndMarkdownDescription } from "./keywords/descriptionAndMarkdownDescription.ts";
@@ -33,6 +32,11 @@ import { translate$recursiveRef } from "./keywords/$recursiveRef.ts";
 import { translate$anchor } from "./keywords/$anchor.ts";
 import { translate$dynamicAnchor } from "./keywords/$dynamicAnchor.ts";
 import { translate$recursiveAnchor } from "./keywords/$recursiveAnchor.ts";
+import { translateMinLength } from "./keywords/minLength.ts";
+import { translateMaxLength } from "./keywords/maxLength.ts";
+import { translatePattern } from "./keywords/pattern.ts";
+import { translateContentEncodingAndContentMediaTypeAndContentSchemaAndMedia } from "./keywords/contentEncodingAndContentMediaTypeAndContentSchemaAndMedia.ts";
+import { translateFormat } from "./keywords/format.ts";
 
 export const translateKeywords: Mutator = (ctx) => {
   translateId(ctx);
@@ -64,9 +68,15 @@ export const translateKeywords: Mutator = (ctx) => {
   translate$recursiveAnchor(ctx);
 
   translateDescriptionAndMarkdownDescription(ctx);
+  translateContentEncodingAndContentMediaTypeAndContentSchemaAndMedia(ctx);
   translateEnumAndConst(ctx);
 
-  translateStringKeywords(ctx);
+  translateMinLength(ctx);
+  translateMaxLength(ctx);
+  translatePattern(ctx);
+
+  translateFormat(ctx);
+
   translateNumberKeywords(ctx);
   translateArrayKeywords(ctx);
   translateObjectKeywords(ctx);
