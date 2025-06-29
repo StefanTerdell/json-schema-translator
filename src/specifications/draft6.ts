@@ -45,8 +45,7 @@ export const jsonSchemaDraft6Specification = {
   maxContains: false,
 
   // Format
-  format: true,
-  stringFormats: [
+  format: [
     "date-time",
     "email",
     "hostname",

@@ -98,7 +98,9 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
               }
             } else if (
               schema.anyOf &&
+              // @ts-expect-error:
               !schema.anyOf.some(
+                // @ts-expect-error:
                 (subSchema) =>
                   typeof subSchema === "object" &&
                   (Array.isArray(subSchema.type)
@@ -106,10 +108,13 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
                     : subSchema.type === "null"),
               )
             ) {
+              // @ts-expect-error:
               schema.anyOf.push({ type: "null" } as typeof schema);
             } else if (
               schema.oneOf &&
+              // @ts-expect-error:
               !schema.oneOf.some(
+                // @ts-expect-error:
                 (subSchema) =>
                   typeof subSchema === "object" &&
                   (Array.isArray(subSchema.type)
@@ -117,6 +122,7 @@ const translateObjectPropertyKeywords: Mutator = (ctx) => {
                     : subSchema.type === "null"),
               )
             ) {
+              // @ts-expect-error:
               schema.oneOf.push({ type: "null" } as typeof schema);
             }
 

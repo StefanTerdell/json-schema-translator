@@ -38,9 +38,17 @@ export const openApi3_0SchemaSpecification = {
   maxContains: false,
 
   // Format
-  format: true,
-  numberFormats: ["int32", "int64", "float", "double"] as const,
-  stringFormats: ["byte", "binary", "date", "date-time", "password"] as const,
+  format: [
+    "binary",
+    "date",
+    "date-time",
+    "password",
+    "int32",
+    "int64",
+    "float",
+    "double",
+    "byte",
+  ] as const,
   strictFormats: false,
 
   // Numbers

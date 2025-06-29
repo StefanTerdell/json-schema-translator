@@ -45,15 +45,7 @@ export const jsonSchemaDraft4Specification = {
   maxContains: false,
 
   // Format
-  format: true,
-  stringFormats: [
-    "date-time",
-    "email",
-    "hostname",
-    "ipv4",
-    "ipv6",
-    "uri",
-  ] as const,
+  format: ["date-time", "email", "hostname", "ipv4", "ipv6", "uri"] as const,
   strictFormats: true,
 
   // Numbers

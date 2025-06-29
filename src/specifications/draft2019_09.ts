@@ -45,8 +45,7 @@ export const jsonSchemaDraft2019_09Specification = {
   maxContains: true,
 
   // Format
-  format: true,
-  stringFormats: [
+  format: [
     "date",
     "date-time",
     "duration",

@@ -78,16 +78,12 @@ type ArrayKeywords = {
 
 type FormatKeywords = {
   /** Keyword - Disable/enable the `format` keyword. Can optionally be set to an array of strings to enable autocomplete. For validation of these values see the `strictFormats` option. */
-  format: boolean;
+  format: boolean | string[];
 };
 
 type FormatOptions = {
-  /** Option - Enable validation of the `format` keyword value. The `stringFormats` and/or the `numberFormats` options must be set for this option to have any effect. */
+  /** Option - Enable validation of the `format` keyword value. The `format` keyword must be an array of valid formats for this option to have any effect. */
   strictFormats?: boolean;
-  /** Option - Define which formats are available in combination with the `string` type. */
-  stringFormats?: string[];
-  /** Option - Define which formats are available in combination with the `number` type. */
-  numberFormats?: string[];
 };
 
 type NumberKeywords = {
