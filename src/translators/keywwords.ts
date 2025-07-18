@@ -43,11 +43,13 @@ import { translateMaxContains } from "./keywords/maxContains.ts";
 import { translateUnevaluatedItems } from "./keywords/unevaluatedItems.ts";
 import { translateUniqueItems } from "./keywords/uniqueItems.ts";
 import { translatePrefixItemsAndItemsAndAdditionalItems } from "./keywords/prefixItemsAndItemsAndAdditionalItems.ts";
-import { translateDependenciesAndDependantRequiredAndDependantSchemas } from "./keywords/translateDependenciesAndDependantRequiredAndDependantSchemas.ts";
 import { translateMinProperties } from "./keywords/minProperties.ts";
 import { translateMaxProperties } from "./keywords/maxProperties.ts";
 import { translatePropertyOrdering } from "./keywords/propertyOrdering.ts";
 import { translatePropertyNames } from "./keywords/propertyNames.ts";
+import { translateDependencies } from "./keywords/dependencies.ts";
+import { translateDependentRequired } from "./keywords/dependentRequired.ts";
+import { translateDependentSchemas } from "./keywords/dependentSchemas.ts";
 
 export const translateKeywords: Mutator = (ctx) => {
   translateId(ctx);
@@ -97,9 +99,9 @@ export const translateKeywords: Mutator = (ctx) => {
   translateContentEncodingAndContentMediaTypeAndContentSchemaAndMedia(ctx);
   translateEnumAndConst(ctx);
   translatePrefixItemsAndItemsAndAdditionalItems(ctx);
-
-  // TODO: Migrate to match
-  translateDependenciesAndDependantRequiredAndDependantSchemas(ctx);
+  translateDependencies(ctx);
+  translateDependentRequired(ctx);
+  translateDependentSchemas(ctx);
 
   // TODO: Break out keywords
   translateObjectKeywords(ctx);
