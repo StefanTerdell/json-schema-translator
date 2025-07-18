@@ -202,7 +202,7 @@ export type JsonSchemaKeywordsOnlyObject<Spec extends JsonSchemaSpecification> =
     // arrays:
     items?: If<
       Spec["prefixItems"],
-      JsonSchema<Spec>,
+      JsonSchema<Spec, true>,
       JsonSchema<Spec> | Array<JsonSchema<Spec>>
     >;
     prefixItems?: If<Spec["prefixItems"], Array<JsonSchema<Spec>>>;

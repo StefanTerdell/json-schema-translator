@@ -96,9 +96,9 @@ export const translateKeywords: Mutator = (ctx) => {
   translateDescriptionAndMarkdownDescription(ctx);
   translateContentEncodingAndContentMediaTypeAndContentSchemaAndMedia(ctx);
   translateEnumAndConst(ctx);
+  translatePrefixItemsAndItemsAndAdditionalItems(ctx);
 
   // TODO: Migrate to match
-  translatePrefixItemsAndItemsAndAdditionalItems(ctx);
   translateDependenciesAndDependantRequiredAndDependantSchemas(ctx);
 
   // TODO: Break out keywords
