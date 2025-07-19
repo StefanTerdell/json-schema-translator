@@ -11,7 +11,7 @@ It comes bundled with specifications (and schema types) for many popular Json Sc
 - Json Schema Draft 7
 - Json Schema Draft 2019-09
 - Json Schema Draft 2020-12
-- Open AI structued output
+- Open AI structured output
 - Google AI
 - Open API 3.0
 
