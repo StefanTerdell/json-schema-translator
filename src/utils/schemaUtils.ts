@@ -3,7 +3,7 @@ import { Replace } from "./UtilityTypes.ts";
 import { isObject } from "./isObject.ts";
 import { hasKeys } from "./hasKeys.ts";
 import { matchDeep } from "./matchDeep.ts";
-import { Pair } from "../translators/Pair.ts";
+import { isStrictPair, UnstrictPair } from "../translators/Pair.ts";
 import { matchPair } from "./pairUtils.ts";
 
 export type Respecify<
@@ -38,11 +38,8 @@ export type Specify<Target extends Partial<JsonSchemaSpecification>> =
  * - `{ "anyOf": [ { "type": ... }, { "type": ... }, ... ] }`
  * - `{ "oneOf": [ { "type": ... }, { "type": ... }, ... ] }`
  */
-export const isAnySchema = <
-  T extends JsonSchemaSpecification,
-  KeywordObject extends boolean,
->(
-  pair: Pair<T, KeywordObject>,
+export const isAnySchema = <Spec extends JsonSchemaSpecification>(
+  pair: UnstrictPair<Spec>,
 ): boolean => {
   if (pair.specification.forceAnySchema !== undefined) {
     if (matchDeep(pair.schema, pair.specification.forceAnySchema)) {
@@ -92,13 +89,13 @@ export const isAnySchema = <
  * - `{ "not": { "oneOf": [ { "type": ... }, { "type": ... }, ... ] } }`
  */
 export const isNeverSchema = <Spec extends JsonSchemaSpecification>(
-  pair: Pair<Spec, boolean>,
+  pair: UnstrictPair<Spec>,
 ): boolean => {
   if (pair.schema === false) {
     return true;
   }
 
-  if (typeof pair.schema !== "object" || pair.schema.not === undefined) {
+  if (!isStrictPair(pair)) {
     return false;
   }
 
@@ -110,6 +107,7 @@ export const isNeverSchema = <Spec extends JsonSchemaSpecification>(
     {
       true(pair) {
         result =
+          typeof pair.schema === "object" &&
           pair.schema.not !== undefined &&
           isAnySchema({
             ...pair,
@@ -122,11 +120,8 @@ export const isNeverSchema = <Spec extends JsonSchemaSpecification>(
   return result;
 };
 
-const isAnySchemaByType = <
-  Spec extends JsonSchemaSpecification,
-  KeywordObject extends boolean,
->(
-  pair: Pair<Spec, KeywordObject>,
+const isAnySchemaByType = <Spec extends JsonSchemaSpecification>(
+  pair: UnstrictPair<Spec>,
 ): boolean => {
   if (typeof pair.schema === "boolean") {
     return false;
@@ -143,11 +138,8 @@ const isAnySchemaByType = <
   return pair.specification.type.every((type) => types.includes(type));
 };
 
-const isAnySchemaByXOf = <
-  T extends JsonSchemaSpecification,
-  KeywordObject extends boolean,
->(
-  pair: Pair<T, KeywordObject>,
+const isAnySchemaByXOf = <Spec extends JsonSchemaSpecification>(
+  pair: UnstrictPair<Spec>,
   key: "anyOf" | "oneOf",
 ): boolean => {
   if (typeof pair.schema === "boolean") {

@@ -32,7 +32,9 @@ export const openAiStructuredOutputSchemaSpecification = {
     "null",
   ] as const,
   strictTypes: true,
-  forceAnySchema: true,
+  forceAnySchema: {
+    type: ["string", "number", "boolean", "integer", "null"],
+  },
 
   // Arrays
   prefixItems: false,

@@ -95,19 +95,9 @@ Deno.test(
           tuple: {
             type: ["array", "null"],
             items: [
-              {},
+              openAiStructuredOutputSchemaSpecification.forceAnySchema,
               {
-                not: {
-                  type: [
-                    "string",
-                    "number",
-                    "integer",
-                    "boolean",
-                    "object",
-                    "array",
-                    "null",
-                  ],
-                },
+                not: openAiStructuredOutputSchemaSpecification.forceAnySchema,
               },
             ],
           },

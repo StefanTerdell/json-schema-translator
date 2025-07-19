@@ -1,11 +1,6 @@
 import { JsonSchema } from "./JsonSchema.ts";
 import { type LooseStringLiteral } from "./utils/UtilityTypes.ts";
 
-type SharedKeywords = {
-  /** Keyword - Disable/enable the "nullable" keyword */
-  nullable: boolean;
-};
-
 type SharedOptions = {
   /** Option - Disable/enable allowing arbitrary JSON values in non-keyword properties of the schema object */
   arbitraryJson?: boolean;
@@ -32,11 +27,13 @@ type AnnotationKeywords = {
 
 type ExtensionOptions = {
   // Extensions
-  /** Keyword - Disable/enable the `discriminator` keyword as defined by Open API 3.0 */
+  /** Option - Disable/enable the "nullable" keyword as defined by Open API 3.0 */
+  nullable?: boolean;
+  /** Option - Disable/enable the `discriminator` keyword as defined by Open API 3.0 */
   discriminator?: boolean;
-  /** Option - Optionally set which format to accept error-messages in */
+  /** Option - Optionally set which format to accept error messages in */
   errorMessage?: "ajv" | false;
-  /** Option - Optionally enable the `propertyOrdering` keyword. Will be copied if enabled in both schema specifiactions and based on the keys of `properties` if enabled only in output */
+  /** Option - Optionally enable the `propertyOrdering` keyword. Will be copied if enabled in both schema specifications and based on the keys of `properties` if enabled only in output */
   propertyOrdering?: boolean;
   /** Option - Always create `propertyOrdering` from the order of the `properties` keyword properties if the input specification doesn't provide it. Does nothing if the `propertyOrdering` keyword isn't enabled.  */
   derivePropertyOrderingFromKeys?: boolean;
@@ -52,11 +49,11 @@ type TypeKeywords = {
 };
 
 type TypeOptions = {
-  /** Enable validation of the `type` keyword value. */
+  /** Option - Enable validation of the `type` keyword value. */
   strictTypes?: boolean;
-  /** Disable the ability to assign multiple types to the `type` keyword by using an array */
+  /** Option - Disable the ability to assign multiple types to the `type` keyword by using an array */
   singleType?: boolean;
-  /** Option - Disable.enable converting "any" schemas into a union of all possible types */
+  /** Option - Provide a default schema in place of an empty schema where any value would be allowed */
   forceAnySchema?: JsonSchema<JsonSchemaSpecification, true>;
 };
 
@@ -219,8 +216,7 @@ type ObjectOptions = {
   excludeNeverProperties?: boolean;
 };
 
-export type JsonSchemaSpecification = SharedKeywords &
-  SharedOptions &
+export type JsonSchemaSpecification = SharedOptions &
   AnnotationKeywords &
   ExtensionOptions &
   TypeKeywords &
