@@ -134,3 +134,81 @@ const isAnySchemaByXOf = <T extends JsonSchemaSpecification>(
 
   return specification.type.every((type) => types.includes(type));
 };
+
+export const isNullableSchema = (schema: unknown, checkUnions?: boolean) => {
+  if (schema === true) {
+    return true;
+  }
+
+  if (!isObject(schema)) {
+    return false;
+  }
+
+  if ("nullable" in schema && schema.nullable === true) {
+    return true;
+  }
+
+  if (checkUnions) {
+    if (
+      "anyOf" in schema &&
+      Array.isArray(schema.anyOf) &&
+      schema.anyOf.some((schema) => isNullableSchema(schema, true))
+    ) {
+      return true;
+    }
+
+    if (
+      "oneOf" in schema &&
+      Array.isArray(schema.oneOf) &&
+      schema.oneOf.some((schema) => isNullableSchema(schema, true))
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+export const hasType = (
+  schema: unknown,
+  type: JsonSchemaSpecification["type"][number],
+  checkUnions?: boolean,
+): boolean => {
+  if (schema === true) {
+    return true;
+  }
+
+  if (!isObject(schema)) {
+    return false;
+  }
+
+  if ("type" in schema) {
+    if (schema.type === type) {
+      return true;
+    }
+
+    if (Array.isArray(schema.type) && schema.type.includes(type)) {
+      return true;
+    }
+  }
+
+  if (checkUnions) {
+    if (
+      "anyOf" in schema &&
+      Array.isArray(schema.anyOf) &&
+      schema.anyOf.some((schema) => hasType(schema, type, true))
+    ) {
+      return true;
+    }
+
+    if (
+      "oneOf" in schema &&
+      Array.isArray(schema.oneOf) &&
+      schema.oneOf.some((schema) => hasType(schema, type, true))
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+};

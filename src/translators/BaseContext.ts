@@ -11,10 +11,10 @@ export type BaseContext<
   unhandledKeys: UnhandledKeysMap;
   path: JsonSchemaPath;
   from: {
-    settings: InputJsonSchemaSpecification;
+    specification: InputJsonSchemaSpecification;
   };
   into: {
-    settings: OutputJsonSchemaSpecification;
+    specification: OutputJsonSchemaSpecification;
   };
   seen: Map<
     JsonSchema<InputJsonSchemaSpecification>,

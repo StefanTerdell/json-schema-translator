@@ -1,4 +1,5 @@
-import { match, hasType } from "../../utils/contextUtils.ts";
+import { match } from "../../utils/contextUtils.ts";
+import { hasType } from "../../utils/schemaUtils.ts";
 import { Mutator } from "../Mutator.ts";
 import { translateSchema } from "../translateSchema.ts";
 
@@ -27,11 +28,11 @@ export const translateAdditionalProperties: Mutator = (ctx) => {
       },
       notInto(ctx) {
         if (
-          ctx.into.settings.forceAdditionalProperties !== undefined &&
+          ctx.into.specification.forceAdditionalProperties !== undefined &&
           hasType(ctx.from.schema, "object")
         ) {
           ctx.into.schema.additionalProperties =
-            ctx.into.settings.forceAdditionalProperties;
+            ctx.into.specification.forceAdditionalProperties;
         }
       },
     },

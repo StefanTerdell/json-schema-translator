@@ -3,7 +3,7 @@ import { type Mutator } from "../Mutator.ts";
 
 const copyEnum: Mutator<{ enum: true }> = (ctx) => {
   if (ctx.from.schema.enum !== undefined) {
-    if (!ctx.into.settings.nonEmptyEnum || ctx.from.schema.enum.length) {
+    if (!ctx.into.specification.nonEmptyEnum || ctx.from.schema.enum.length) {
       ctx.into.schema.enum = ctx.from.schema.enum;
 
       return true;

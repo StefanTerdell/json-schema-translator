@@ -15,20 +15,20 @@ export const translateNot: Mutator = (ctx) => {
     });
 
     if (
-      ctx.into.settings.verboseNot === true &&
-      isAnySchema(notSchema, ctx.into.settings)
+      ctx.into.specification.verboseNot === true &&
+      isAnySchema(notSchema, ctx.into.specification)
     ) {
-      if (ctx.into.settings.singleType) {
-        const eitherType = ctx.into.settings.type.map((type) => ({
+      if (ctx.into.specification.singleType) {
+        const eitherType = ctx.into.specification.type.map((type) => ({
           type,
         }));
 
-        if (ctx.into.settings.anyOf) {
+        if (ctx.into.specification.anyOf) {
           // @ts-expect-error :p
           ctx.into.schema.not = {
             anyOf: eitherType,
           };
-        } else if (ctx.into.settings.oneOf) {
+        } else if (ctx.into.specification.oneOf) {
           // @ts-expect-error :p
           ctx.into.schema.not = {
             oneOf: eitherType,
@@ -37,7 +37,7 @@ export const translateNot: Mutator = (ctx) => {
       } else {
         // @ts-expect-error :p
         ctx.into.schema.not = {
-          type: ctx.into.settings.type,
+          type: ctx.into.specification.type,
         };
       }
     } else {

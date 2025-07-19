@@ -14,11 +14,11 @@ Deno.test("MultipleOf keyword", () => {
       schema: {
         multipleOf: 3,
       },
-      settings: jsonSchemaDraft4Specification,
+      specification: jsonSchemaDraft4Specification,
     },
     into: {
       schema,
-      settings: jsonSchemaDraft6Specification,
+      specification: jsonSchemaDraft6Specification,
     },
     unhandledKeys: new Map(),
     copyJson: "shallow",

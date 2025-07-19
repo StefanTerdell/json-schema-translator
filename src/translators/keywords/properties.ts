@@ -1,5 +1,6 @@
 import { collapseIntoBooleanSchema } from "../../collapseIntoBooleanSchema.ts";
-import { match, addTypeToPair } from "../../utils/contextUtils.ts";
+import { match } from "../../utils/contextUtils.ts";
+import { addTypeToPair } from "../../utils/pairUtils.ts";
 import { isNeverSchema } from "../../utils/schemaUtils.ts";
 import { Mutator } from "../Mutator.ts";
 import { translateSchema } from "../translateSchema.ts";
@@ -10,8 +11,8 @@ export const translateProperties: Mutator = (ctx) => {
   if (ctx.from.schema.properties !== undefined) {
     for (const key in ctx.from.schema.properties) {
       if (
-        ctx.into.settings.excludeNeverProperties &&
-        isNeverSchema(ctx.from.schema.properties[key], ctx.from.settings)
+        ctx.into.specification.excludeNeverProperties &&
+        isNeverSchema(ctx.from.schema.properties[key], ctx.from.specification)
       ) {
         continue;
       }
@@ -50,10 +51,10 @@ export const translateProperties: Mutator = (ctx) => {
           },
         );
 
-        if (ctx.into.settings.addNullTypeToOptionalProperties) {
+        if (ctx.into.specification.addNullTypeToOptionalProperties) {
           const added = addTypeToPair(
             {
-              specification: ctx.into.settings,
+              specification: ctx.into.specification,
               schema,
             },
             "null",
@@ -61,8 +62,8 @@ export const translateProperties: Mutator = (ctx) => {
 
           if (
             added &&
-            !ctx.into.settings.stringConstants &&
-            ctx.into.settings.enum
+            !ctx.into.specification.stringConstants &&
+            ctx.into.specification.enum
           ) {
             if (schema.enum && !schema.enum.includes(null)) {
               schema.enum.push(null);
@@ -76,7 +77,7 @@ export const translateProperties: Mutator = (ctx) => {
       ctx.into.schema.properties[key] = collapseIntoBooleanSchema(
         {
           schema,
-          settings: ctx.into.settings,
+          specification: ctx.into.specification,
         },
         false,
       );

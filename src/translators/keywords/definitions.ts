@@ -4,18 +4,18 @@ import { Mutator } from "../Mutator.ts";
 import { translateSchema } from "../translateSchema.ts";
 
 export const translateDefinitions: Mutator = (ctx) => {
-  type OutputSpecification = typeof ctx.into.settings;
-  type InputSpecification = typeof ctx.from.settings;
+  type OutputSpecification = typeof ctx.into.specification;
+  type InputSpecification = typeof ctx.from.specification;
 
-  if (typeof ctx.from.settings.$defs === "string") {
+  if (typeof ctx.from.specification.$defs === "string") {
     const inputDefs = (ctx.from.schema as JsonObject)[
-      ctx.from.settings.$defs
+      ctx.from.specification.$defs
     ] as Record<string, JsonSchema<InputSpecification>> | undefined;
 
     if (
       inputDefs !== undefined &&
       Object.keys(inputDefs).length &&
-      typeof ctx.into.settings.$defs === "string"
+      typeof ctx.into.specification.$defs === "string"
     ) {
       const outputDefs = Object.keys(inputDefs).reduce(
         (outputDefs: Record<string, JsonSchema<OutputSpecification>>, key) => {
@@ -34,9 +34,9 @@ export const translateDefinitions: Mutator = (ctx) => {
       );
 
       // @ts-expect-error ISSUE: Narrowing breaks down across generics
-      ctx.into.schema[ctx.into.settings.$defs] = outputDefs;
+      ctx.into.schema[ctx.into.specification.$defs] = outputDefs;
     }
 
-    ctx.handledKeys.add(ctx.from.settings.$defs);
+    ctx.handledKeys.add(ctx.from.specification.$defs);
   }
 };

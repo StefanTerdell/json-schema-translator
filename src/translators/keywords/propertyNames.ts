@@ -11,9 +11,9 @@ export const translatePropertyNames: Mutator = (ctx) => {
         ctx.handledKeys.add("propertyNames");
       },
       both(ctx) {
-        if (ctx.from.settings.propertyNames) {
+        if (ctx.from.specification.propertyNames) {
           if (
-            ctx.into.settings.propertyNames &&
+            ctx.into.specification.propertyNames &&
             ctx.from.schema.propertyNames != undefined
           ) {
             const propertyNames = translateSchema({

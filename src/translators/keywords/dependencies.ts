@@ -16,7 +16,7 @@ export const translateDependencies: Mutator = (ctx) => {
         if (
           ctx.from.schema.dependencies !== undefined &&
           (Object.keys(ctx.from.schema.dependencies).length ||
-            !ctx.into.settings.nonEmptyDependencies)
+            !ctx.into.specification.nonEmptyDependencies)
         ) {
           if (ctx.into.schema.dependencies === undefined) {
             ctx.into.schema.dependencies = {};

@@ -23,13 +23,13 @@ Deno.test("id should be copied from and to the specified path", () => {
   translateId({
     from: {
       schema: inputSchema,
-      settings: inputSettings,
+      specification: inputSettings,
     },
     path: [],
     handledKeys: new Set(),
     into: {
       schema: outputSchema,
-      settings: outputSettings,
+      specification: outputSettings,
     },
     unhandledKeys: new Map(),
     copyJson: "stringifyAndParse",

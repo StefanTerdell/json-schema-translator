@@ -160,10 +160,10 @@ export function translateJsonSchema<
   const outputSchema = translateSchema({
     from: {
       schema: inputSchema,
-      settings: inputSpecification,
+      specification: inputSpecification,
     },
     into: {
-      settings: outputSpecification,
+      specification: outputSpecification,
     },
     path: [],
     forceAllowBooleanSchema: false,

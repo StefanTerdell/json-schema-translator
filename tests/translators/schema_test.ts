@@ -60,11 +60,11 @@ Deno.test("Hello", () => {
 
   const result = translateSchema({
     from: {
-      settings: jsonSchemaDraft2020_12Specification,
+      specification: jsonSchemaDraft2020_12Specification,
       schema: input,
     },
     into: {
-      settings: jsonSchemaDraft4Specification,
+      specification: jsonSchemaDraft4Specification,
     },
     copyJson: "stringifyAndParse",
     path: [],

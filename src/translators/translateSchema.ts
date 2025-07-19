@@ -18,8 +18,8 @@ export const translateSchema: Translator<null, [deferCollapse?: boolean]> = (
   }
 
   const mutatorCtx: MutatorContext<
-    typeof ctx.from.settings,
-    typeof ctx.into.settings
+    typeof ctx.from.specification,
+    typeof ctx.into.specification
   > = {
     ...ctx,
     from: {
@@ -43,7 +43,7 @@ export const translateSchema: Translator<null, [deferCollapse?: boolean]> = (
   copyUnhandledKeys(mutatorCtx);
 
   const outputSchema = deferCollapse
-    ? (mutatorCtx.into.schema as JsonSchema<typeof ctx.into.settings>)
+    ? (mutatorCtx.into.schema as JsonSchema<typeof ctx.into.specification>)
     : collapseIntoBooleanSchema(mutatorCtx.into, ctx.forceAllowBooleanSchema);
 
   ctx.seen.set(ctx.from.schema, outputSchema);
@@ -52,11 +52,11 @@ export const translateSchema: Translator<null, [deferCollapse?: boolean]> = (
 };
 
 const copyUnhandledKeys: Mutator = (ctx) => {
-  if (ctx.from.settings.arbitraryJson) {
+  if (ctx.from.specification.arbitraryJson) {
     for (const key of Object.keys(ctx.from.schema).filter(
       (key) => !ctx.handledKeys.has(key),
     )) {
-      if (ctx.into.settings.arbitraryJson) {
+      if (ctx.into.specification.arbitraryJson) {
         if (!(key in ctx.into.schema)) {
           // @ts-expect-error CBA
           ctx.into.schema[key] = copy(ctx.copyJson, ctx.from.schema[key]);
@@ -73,8 +73,8 @@ const copyUnhandledKeys: Mutator = (ctx) => {
 };
 
 const copyErrorMessage: Mutator = (ctx) => {
-  if (ctx.from.settings.errorMessage === "ajv") {
-    if (ctx.into.settings.errorMessage === "ajv") {
+  if (ctx.from.specification.errorMessage === "ajv") {
+    if (ctx.into.specification.errorMessage === "ajv") {
       const isAjvErrorMessage = (obj: object): obj is AjvErrorMessages =>
         Object.values(obj).every(
           (value) =>

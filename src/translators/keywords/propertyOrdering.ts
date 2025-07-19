@@ -13,7 +13,7 @@ export const translatePropertyOrdering: Mutator = (ctx) => {
         if (ctx.from.schema.propertyOrdering !== undefined) {
           ctx.into.schema.propertyOrdering = ctx.from.schema.propertyOrdering;
         } else if (
-          ctx.into.settings.derivePropertyOrderingFromKeys &&
+          ctx.into.specification.derivePropertyOrderingFromKeys &&
           ctx.from.schema.properties !== undefined
         ) {
           ctx.into.schema.propertyOrdering = Object.keys(
@@ -23,7 +23,7 @@ export const translatePropertyOrdering: Mutator = (ctx) => {
       },
       onlyInto(ctx) {
         if (
-          ctx.into.settings.derivePropertyOrderingFromKeys &&
+          ctx.into.specification.derivePropertyOrderingFromKeys &&
           ctx.from.schema.properties !== undefined
         ) {
           ctx.into.schema.propertyOrdering = Object.keys(

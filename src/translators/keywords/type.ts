@@ -69,10 +69,10 @@ const translateTypeValue = <
 >(
   ctx: {
     from: {
-      settings: FromSpecification;
+      specification: FromSpecification;
     };
     into: {
-      settings: IntoSpecification;
+      specification: IntoSpecification;
     };
   },
   type: JsonSchemaType<FromSpecification>,
@@ -82,13 +82,13 @@ const translateTypeValue = <
   multipleOf?: number;
 } => {
   const nullable =
-    type === "null" && ctx.into.settings.nullable ? true : undefined;
+    type === "null" && ctx.into.specification.nullable ? true : undefined;
 
   if (type === "integer") {
-    if (ctx.into.settings.type.includes("integer")) {
+    if (ctx.into.specification.type.includes("integer")) {
       return { type: "integer", nullable };
-    } else if (ctx.into.settings.type.includes("number")) {
-      if (ctx.into.settings.multipleOf) {
+    } else if (ctx.into.specification.type.includes("number")) {
+      if (ctx.into.specification.multipleOf) {
         return {
           type: "number",
           multipleOf: 1,
@@ -105,7 +105,10 @@ const translateTypeValue = <
     }
   }
 
-  if (!ctx.into.settings.strictTypes || ctx.into.settings.type.includes(type)) {
+  if (
+    !ctx.into.specification.strictTypes ||
+    ctx.into.specification.type.includes(type)
+  ) {
     return { type, nullable };
   }
 

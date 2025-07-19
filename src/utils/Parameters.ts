@@ -10,8 +10,8 @@ export type IntoSpecParam = typeof intoSpecParam;
 
 type ResolveParameter<
   Ctx extends {
-    from: { settings: unknown; schema: unknown };
-    into: { settings: unknown; schema: unknown };
+    from: { specification: unknown; schema: unknown };
+    into: { specification: unknown; schema: unknown };
   },
   Parameter,
 > = Parameter extends [unknown, ...unknown[]]
@@ -19,9 +19,9 @@ type ResolveParameter<
   : Parameter extends (infer Item)[]
     ? ResolveParameter<Ctx, Item>[]
     : Parameter extends FromSpecParam
-      ? Ctx["from"]["settings"]
+      ? Ctx["from"]["specification"]
       : Parameter extends IntoSpecParam
-        ? Ctx["into"]["settings"]
+        ? Ctx["into"]["specification"]
         : Parameter extends FromSchemaParam
           ? Ctx["from"]["schema"]
           : Parameter extends IntoSchemaParam
@@ -30,8 +30,8 @@ type ResolveParameter<
 
 export type ResolveParameters<
   Ctx extends {
-    from: { settings: unknown; schema: unknown };
-    into: { settings: unknown; schema: unknown };
+    from: { specification: unknown; schema: unknown };
+    into: { specification: unknown; schema: unknown };
   },
   Parameters extends unknown[],
   Acc extends unknown[] = [],

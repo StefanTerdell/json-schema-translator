@@ -1,12 +1,16 @@
-import { hasNullable, hasType, match } from "../../utils/contextUtils.ts";
-import { isNeverSchema } from "../../utils/schemaUtils.ts";
+import { match } from "../../utils/contextUtils.ts";
+import {
+  hasType,
+  isNeverSchema,
+  isNullableSchema,
+} from "../../utils/schemaUtils.ts";
 import { NonEmptyArray } from "../../utils/UtilityTypes.ts";
 import { Mutator } from "../Mutator.ts";
 
 export const translateRequired: Mutator = (ctx) => {
   const required = new Set(ctx.from.schema.required);
 
-  if (ctx.into.settings.allPropertiesRequired) {
+  if (ctx.into.specification.allPropertiesRequired) {
     for (const key in ctx.from.schema.properties) {
       required.add(key);
     }
@@ -15,24 +19,24 @@ export const translateRequired: Mutator = (ctx) => {
   if (ctx.from.schema.properties) {
     for (const key in ctx.from.schema.properties) {
       if (
-        !ctx.into.settings.allPropertiesRequired &&
-        ctx.into.settings.treatNullablePropertiesAsOptional &&
-        hasNullable(ctx.from.schema.properties[key], true)
+        !ctx.into.specification.allPropertiesRequired &&
+        ctx.into.specification.treatNullablePropertiesAsOptional &&
+        isNullableSchema(ctx.from.schema.properties[key], true)
       ) {
         required.delete(key);
       }
 
       if (
-        !ctx.into.settings.allPropertiesRequired &&
-        ctx.into.settings.treatPropertiesWithNullTypeAsOptional &&
+        !ctx.into.specification.allPropertiesRequired &&
+        ctx.into.specification.treatPropertiesWithNullTypeAsOptional &&
         hasType(ctx.from.schema.properties[key], "null", true)
       ) {
         required.delete(key);
       }
 
       if (
-        ctx.into.settings.excludeNeverProperties &&
-        isNeverSchema(ctx.from.schema.properties[key], ctx.from.settings)
+        ctx.into.specification.excludeNeverProperties &&
+        isNeverSchema(ctx.from.schema.properties[key], ctx.from.specification)
       ) {
         required.delete(key);
       }

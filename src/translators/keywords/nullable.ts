@@ -1,4 +1,4 @@
-import { addType, addUnionMembers, match } from "../../utils/contextUtils.ts";
+import { addType, match } from "../../utils/contextUtils.ts";
 import { Mutator } from "../Mutator.ts";
 
 export const translateNullable: Mutator = (ctx) => {
@@ -16,7 +16,7 @@ export const translateNullable: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.nullable === true) {
-          addType(ctx, "null", false);
+          addType(ctx, "null");
         }
       },
     },

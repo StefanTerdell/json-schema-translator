@@ -11,12 +11,12 @@ export const collapseIntoBooleanSchema = <
 >(
   output: {
     schema: JsonSchemaKeywordsObject<Specification>;
-    settings: Specification;
+    specification: Specification;
   },
   forceAllowBooleanSchemas: ForceAllowBooleanSchemas,
 ): JsonSchema<Specification> => {
-  if (output.settings.booleanSchemas) {
-    if (isAnySchema(output.schema, output.settings)) {
+  if (output.specification.booleanSchemas) {
+    if (isAnySchema(output.schema, output.specification)) {
       const schema: JsonSchema<
         Specification & { booleanSchemas: true },
         ForceAllowBooleanSchemas
@@ -25,7 +25,7 @@ export const collapseIntoBooleanSchema = <
       return schema;
     }
 
-    if (isNeverSchema(output.schema, output.settings)) {
+    if (isNeverSchema(output.schema, output.specification)) {
       const schema: JsonSchema<
         Specification & { booleanSchemas: true },
         ForceAllowBooleanSchemas
@@ -36,14 +36,14 @@ export const collapseIntoBooleanSchema = <
   }
 
   if (forceAllowBooleanSchemas) {
-    if (isAnySchema(output.schema, output.settings)) {
+    if (isAnySchema(output.schema, output.specification)) {
       const schema: JsonSchema<Specification, ForceAllowBooleanSchemas & true> =
         true;
 
       return schema;
     }
 
-    if (isNeverSchema(output.schema, output.settings)) {
+    if (isNeverSchema(output.schema, output.specification)) {
       const schema: JsonSchema<Specification, ForceAllowBooleanSchemas & true> =
         false;
 

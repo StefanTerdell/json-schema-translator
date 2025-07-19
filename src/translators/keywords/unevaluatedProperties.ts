@@ -35,7 +35,7 @@ export const translateUnevaluatedProperties: Mutator = (ctx) => {
                 (ctx.into.schema.additionalProperties === undefined ||
                   isAnySchema(
                     ctx.into.schema.additionalProperties,
-                    ctx.into.settings,
+                    ctx.into.specification,
                   ))
               ) {
                 ctx.into.schema.additionalProperties = translateSchema({
