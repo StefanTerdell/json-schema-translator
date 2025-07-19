@@ -60,7 +60,7 @@ export const translateType: Mutator = (ctx) => {
     )
     .map(({ type }) => type)
     .filter((type) => type !== undefined)
-    .forEach((type) => addType(ctx, type, false));
+    .forEach((type) => addType(ctx, type));
 };
 
 const translateTypeValue = <

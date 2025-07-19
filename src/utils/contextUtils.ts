@@ -85,23 +85,6 @@ export const hasType = (
   return false;
 };
 
-export const pick = <T extends object, K extends keyof T>(
-  object: T,
-  ...keys: K[]
-): Pick<T, K> => {
-  return Object.keys(object).reduce(
-    (acc: Record<PropertyKey, unknown>, key) => {
-      if (keys.includes(key as K)) {
-        acc[key] = object[key as K];
-      }
-
-      return acc;
-    },
-    {},
-    // deno-lint-ignore no-explicit-any
-  ) as any;
-};
-
 export const addTypeToPair = <
   Spec extends JsonSchemaSpecification,
   Type extends Spec["type"][number],
@@ -153,10 +136,9 @@ export const addTypeToPair = <
   }
 };
 
-export const addType: Mutator<null, [type: string, isBar: boolean], boolean> = (
+export const addType: Mutator<null, [type: string], boolean> = (
   ctx,
   newType,
-  isBar?: boolean,
 ) => {
   if (
     !ctx.into.settings.strictTypes ||
@@ -172,10 +154,6 @@ export const addType: Mutator<null, [type: string, isBar: boolean], boolean> = (
       }
     } else {
       const currentType = ctx.into.schema.type satisfies string;
-
-      if (isBar) {
-        console.log("bar has current type", currentType);
-      }
 
       match(
         ctx,
