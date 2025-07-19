@@ -6,7 +6,6 @@ import { translateDefinitions } from "./keywords/definitions.ts";
 import { translateDiscriminator } from "./keywords/discriminator.ts";
 import { translateId } from "./keywords/id.ts";
 import { translateNullable } from "./keywords/nullable.ts";
-import { translateObjectKeywords } from "./keywords/objects.ts";
 import { translateType } from "./keywords/type.ts";
 import { translateTitle } from "./keywords/title.ts";
 import { translateDescriptionAndMarkdownDescription } from "./keywords/descriptionAndMarkdownDescription.ts";
@@ -50,6 +49,11 @@ import { translatePropertyNames } from "./keywords/propertyNames.ts";
 import { translateDependencies } from "./keywords/dependencies.ts";
 import { translateDependentRequired } from "./keywords/dependentRequired.ts";
 import { translateDependentSchemas } from "./keywords/dependentSchemas.ts";
+import { translateProperties } from "./keywords/properties.ts";
+import { translateRequired } from "./keywords/required.ts";
+import { translatePatternProperties } from "./keywords/patternProperties.ts";
+import { translateAdditionalProperties } from "./keywords/additionalProperties.ts";
+import { translateUnevaluatedProperties } from "./keywords/unevaluatedProperties.ts";
 
 export const translateKeywords: Mutator = (ctx) => {
   translateId(ctx);
@@ -102,7 +106,9 @@ export const translateKeywords: Mutator = (ctx) => {
   translateDependencies(ctx);
   translateDependentRequired(ctx);
   translateDependentSchemas(ctx);
-
-  // TODO: Break out keywords
-  translateObjectKeywords(ctx);
+  translateRequired(ctx);
+  translateProperties(ctx);
+  translatePatternProperties(ctx);
+  translateAdditionalProperties(ctx);
+  translateUnevaluatedProperties(ctx);
 };

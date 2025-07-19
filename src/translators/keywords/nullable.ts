@@ -16,7 +16,7 @@ export const translateNullable: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.nullable === true) {
-          addType(ctx, "null");
+          addType(ctx, "null", false);
         }
       },
     },

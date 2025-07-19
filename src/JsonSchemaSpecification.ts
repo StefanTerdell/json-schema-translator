@@ -196,7 +196,7 @@ type ObjectKeywords = {
 };
 
 type ObjectOptions = {
-  /** Option - Optionally force setting `additionalProperties` schema value to a boolean value in any schema that includes an `object` type */
+  /** Option - Optionally force setting `additionalProperties` schema value to a boolean value in any schema that includes an `object` type. `additionalProperties` must be set to `false` for this option to be active. */
   forceAdditionalProperties?: boolean;
   /** Option - Disable/enable enforcing non-empty arrays in the `required` keyword schema value. */
   nonEmptyRequired?: boolean;

@@ -67,7 +67,7 @@ Deno.test(
       ),
       {
         type: "object",
-        required: ["foo", "bar", "array", "record", "tuple"],
+        required: ["array", "bar", "foo", "record", "tuple"],
         properties: {
           foo: {
             type: "integer",

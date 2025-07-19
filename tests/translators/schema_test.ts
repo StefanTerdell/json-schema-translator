@@ -34,7 +34,7 @@ Deno.test("Hello", () => {
     arbitraryArray: ["arbitraryString", null],
   };
 
-  const output: JsonSchemaDraft4 = {
+  const expected: JsonSchemaDraft4 = {
     $schema: "http://json-schema.org/draft-04/schema#",
     type: "object",
     required: ["nullableString", "requiredString"],
@@ -73,5 +73,5 @@ Deno.test("Hello", () => {
     seen: new Map(),
   });
 
-  assertEquals(output, result);
+  assertEquals(result, expected);
 });

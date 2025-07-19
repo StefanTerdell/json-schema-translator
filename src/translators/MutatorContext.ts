@@ -1,6 +1,6 @@
 import {
   type JsonSchemaKeywordsObject,
-  type JsonSchemaKeywordsOnlyObject,
+  type JsonSchemaStaticKeywordsObject,
 } from "../JsonSchema.ts";
 import { type JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
 import { type BaseContext } from "./BaseContext.ts";
@@ -13,7 +13,7 @@ export type MutatorContext<
 > = BaseContext<InputJsonSchemaSpecification, OutputJsonSchemaSpecification> & {
   handledKeys: HandledKeysSet;
   from: {
-    schema: JsonSchemaKeywordsOnlyObject<InputJsonSchemaSpecification>;
+    schema: JsonSchemaStaticKeywordsObject<InputJsonSchemaSpecification>;
   };
   into: {
     schema: JsonSchemaKeywordsObject<OutputJsonSchemaSpecification>;

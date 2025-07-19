@@ -1,4 +1,4 @@
-import { AjvErrorMessages } from "../JsonSchema.ts";
+import { AjvErrorMessages, JsonSchema } from "../JsonSchema.ts";
 import { type MutatorContext } from "../translators/MutatorContext.ts";
 import { collapseIntoBooleanSchema } from "../collapseIntoBooleanSchema.ts";
 import { type Mutator } from "./Mutator.ts";
@@ -7,7 +7,10 @@ import { translateKeywords } from "./keywwords.ts";
 import { Translator } from "./Translator.ts";
 
 /** @internal */
-export const translateSchema: Translator = (ctx) => {
+export const translateSchema: Translator<null, [deferCollapse?: boolean]> = (
+  ctx,
+  deferCollapse,
+) => {
   const alreadyTranslated = ctx.seen.get(ctx.from.schema);
 
   if (alreadyTranslated) {
@@ -39,10 +42,9 @@ export const translateSchema: Translator = (ctx) => {
   copyErrorMessage(mutatorCtx);
   copyUnhandledKeys(mutatorCtx);
 
-  const outputSchema = collapseIntoBooleanSchema(
-    mutatorCtx.into,
-    ctx.forceAllowBooleanSchema,
-  );
+  const outputSchema = deferCollapse
+    ? (mutatorCtx.into.schema as JsonSchema<typeof ctx.into.settings>)
+    : collapseIntoBooleanSchema(mutatorCtx.into, ctx.forceAllowBooleanSchema);
 
   ctx.seen.set(ctx.from.schema, outputSchema);
 

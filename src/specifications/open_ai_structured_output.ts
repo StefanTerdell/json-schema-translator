@@ -98,7 +98,7 @@ export const openAiStructuredOutputSchemaSpecification = {
   maxProperties: false,
   nonEmptyRequired: false,
   allPropertiesRequired: true,
-  additionalProperties: true,
+  additionalProperties: false,
   forceAdditionalProperties: false,
   dependencies: false,
   dependentRequired: false,
