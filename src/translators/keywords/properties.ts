@@ -1,5 +1,5 @@
 import { collapseIntoBooleanSchema } from "../../collapseIntoBooleanSchema.ts";
-import { match } from "../../utils/contextUtils.ts";
+import { matchContext } from "../../utils/contextUtils.ts";
 import { addTypeToPair } from "../../utils/pairUtils.ts";
 import { isNeverSchema } from "../../utils/schemaUtils.ts";
 import { Mutator } from "../Mutator.ts";
@@ -39,7 +39,7 @@ export const translateProperties: Mutator = (ctx) => {
       }
 
       if (!fromRequired.has(key)) {
-        match(
+        matchContext(
           ctx,
           { nullable: true, setOptionalPropertiesToNullable: true },
           {

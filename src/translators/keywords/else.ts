@@ -1,9 +1,9 @@
-import { match } from "../../utils/contextUtils.ts";
+import { matchContext } from "../../utils/contextUtils.ts";
 import { Mutator } from "../Mutator.ts";
 import { translateSchema } from "../translateSchema.ts";
 
 export const translateElse: Mutator = (ctx) => {
-  match(
+  matchContext(
     ctx,
     { else: true },
     {

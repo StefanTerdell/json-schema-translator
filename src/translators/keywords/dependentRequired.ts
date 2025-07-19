@@ -1,9 +1,9 @@
 import { copy } from "../../copy.ts";
-import { match } from "../../utils/contextUtils.ts";
+import { matchContext } from "../../utils/contextUtils.ts";
 import { Mutator } from "../Mutator.ts";
 
 export const translateDependentRequired: Mutator = (ctx) => {
-  match(
+  matchContext(
     ctx,
     {
       dependentRequired: true,
@@ -21,7 +21,7 @@ export const translateDependentRequired: Mutator = (ctx) => {
         }
       },
       onlyFrom(ctx) {
-        match(
+        matchContext(
           ctx,
           { dependencies: true },
           {

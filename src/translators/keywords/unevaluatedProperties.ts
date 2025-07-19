@@ -1,10 +1,10 @@
-import { match } from "../../utils/contextUtils.ts";
+import { matchContext } from "../../utils/contextUtils.ts";
 import { isAnySchema } from "../../utils/schemaUtils.ts";
 import { Mutator } from "../Mutator.ts";
 import { translateSchema } from "../translateSchema.ts";
 
 export const translateUnevaluatedProperties: Mutator = (ctx) => {
-  match(
+  matchContext(
     ctx,
     { unevaluatedProperties: true },
     {
@@ -25,7 +25,7 @@ export const translateUnevaluatedProperties: Mutator = (ctx) => {
         }
       },
       onlyFrom(ctx) {
-        match(
+        matchContext(
           ctx,
           { additionalProperties: true },
           {

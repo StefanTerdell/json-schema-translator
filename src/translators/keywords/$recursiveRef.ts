@@ -1,8 +1,8 @@
-import { match } from "../../utils/contextUtils.ts";
+import { matchContext } from "../../utils/contextUtils.ts";
 import { Mutator } from "../Mutator.ts";
 
 export const translate$recursiveRef: Mutator = (ctx) => {
-  match(
+  matchContext(
     ctx,
     { $recursiveRef: true },
     {

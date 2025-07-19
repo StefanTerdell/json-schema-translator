@@ -1,9 +1,9 @@
 import { copy } from "../../copy.ts";
-import { match } from "../../utils/contextUtils.ts";
+import { matchContext } from "../../utils/contextUtils.ts";
 import { Mutator } from "../Mutator.ts";
 
 export const translateDiscriminator: Mutator = (ctx) => {
-  match(
+  matchContext(
     ctx,
     { discriminator: true },
     {

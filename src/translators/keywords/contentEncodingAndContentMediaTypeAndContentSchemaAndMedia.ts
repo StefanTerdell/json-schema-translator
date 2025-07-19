@@ -1,11 +1,11 @@
 import { copy } from "../../copy.ts";
-import { match } from "../../utils/contextUtils.ts";
+import { matchContext } from "../../utils/contextUtils.ts";
 import { Mutator } from "../Mutator.ts";
 import { translateSchema } from "../translateSchema.ts";
 
 export const translateContentEncodingAndContentMediaTypeAndContentSchemaAndMedia: Mutator =
   (ctx) => {
-    match(
+    matchContext(
       ctx,
       { media: true },
       {
@@ -18,7 +18,7 @@ export const translateContentEncodingAndContentMediaTypeAndContentSchemaAndMedia
           }
         },
         onlyFrom(ctx) {
-          match(
+          matchContext(
             ctx,
             { contentEncoding: true },
             {
@@ -31,7 +31,7 @@ export const translateContentEncodingAndContentMediaTypeAndContentSchemaAndMedia
             },
           );
 
-          match(
+          matchContext(
             ctx,
             { contentMediaType: true },
             {
@@ -44,7 +44,7 @@ export const translateContentEncodingAndContentMediaTypeAndContentSchemaAndMedia
           );
         },
         onlyInto(ctx) {
-          match(
+          matchContext(
             ctx,
             { contentEncoding: true },
             {
@@ -63,7 +63,7 @@ export const translateContentEncodingAndContentMediaTypeAndContentSchemaAndMedia
             },
           );
 
-          match(
+          matchContext(
             ctx,
             { contentMediaType: true },
             {
@@ -82,7 +82,7 @@ export const translateContentEncodingAndContentMediaTypeAndContentSchemaAndMedia
           );
         },
         none(ctx) {
-          match(
+          matchContext(
             ctx,
             { contentEncoding: true },
             {
@@ -98,7 +98,7 @@ export const translateContentEncodingAndContentMediaTypeAndContentSchemaAndMedia
             },
           );
 
-          match(
+          matchContext(
             ctx,
             { contentMediaType: true },
             {
@@ -114,7 +114,7 @@ export const translateContentEncodingAndContentMediaTypeAndContentSchemaAndMedia
             },
           );
 
-          match(
+          matchContext(
             ctx,
             { contentSchema: true },
             {

@@ -1,8 +1,8 @@
-import { match } from "../../utils/contextUtils.ts";
+import { matchContext } from "../../utils/contextUtils.ts";
 import { Mutator } from "../Mutator.ts";
 
 export const translate$dynamicRef: Mutator = (ctx) => {
-  match(
+  matchContext(
     ctx,
     { $dynamicRef: true },
     {

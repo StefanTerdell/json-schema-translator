@@ -1,11 +1,11 @@
-import { match } from "../../utils/contextUtils.ts";
+import { matchContext } from "../../utils/contextUtils.ts";
 import { Mutator } from "../Mutator.ts";
 import { translateSchema } from "../translateSchema.ts";
 
 export const translatePrefixItemsAndItemsAndAdditionalItems: Mutator = (
   ctx,
 ) => {
-  match(
+  matchContext(
     ctx,
     {
       prefixItems: true,
@@ -60,7 +60,7 @@ export const translatePrefixItemsAndItemsAndAdditionalItems: Mutator = (
               }),
             );
 
-            match(
+            matchContext(
               ctx,
               { additionalItems: true },
               {
@@ -111,7 +111,7 @@ export const translatePrefixItemsAndItemsAndAdditionalItems: Mutator = (
           );
         }
 
-        match(
+        matchContext(
           ctx,
           { additionalItems: true },
           {
@@ -150,7 +150,7 @@ export const translatePrefixItemsAndItemsAndAdditionalItems: Mutator = (
                 }),
             );
 
-            match(
+            matchContext(
               ctx,
               { additionalItems: true },
               {

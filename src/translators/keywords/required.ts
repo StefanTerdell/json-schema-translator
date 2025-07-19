@@ -1,4 +1,4 @@
-import { match } from "../../utils/contextUtils.ts";
+import { matchContext } from "../../utils/contextUtils.ts";
 import {
   hasType,
   isNeverSchema,
@@ -48,7 +48,7 @@ export const translateRequired: Mutator = (ctx) => {
       required,
     ).toSorted() as NonEmptyArray<string>;
   } else if (ctx.from.schema.required) {
-    match(
+    matchContext(
       ctx,
       { nonEmptyRequired: false },
       {

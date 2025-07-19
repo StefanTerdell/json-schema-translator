@@ -1,10 +1,10 @@
 import { JsonSchemaKeyword } from "../../JsonSchema.ts";
 import { JsonSchemaSpecification } from "../../JsonSchemaSpecification.ts";
-import { match } from "../../utils/contextUtils.ts";
+import { matchContext } from "../../utils/contextUtils.ts";
 import { Mutator } from "../Mutator.ts";
 
 export const translateMaxProperties: Mutator = (ctx) => {
-  match(
+  matchContext(
     ctx,
     { maxProperties: true },
     {

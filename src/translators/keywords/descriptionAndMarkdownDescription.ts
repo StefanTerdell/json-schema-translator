@@ -1,4 +1,4 @@
-import { match } from "../../utils/contextUtils.ts";
+import { matchContext } from "../../utils/contextUtils.ts";
 import { Mutator } from "../Mutator.ts";
 
 const translateDescription: Mutator<null, [], boolean> = (ctx) => {
@@ -14,7 +14,7 @@ const translateDescription: Mutator<null, [], boolean> = (ctx) => {
 };
 
 export const translateDescriptionAndMarkdownDescription: Mutator = (ctx) => {
-  match(
+  matchContext(
     ctx,
     { markdownDescription: true },
     {

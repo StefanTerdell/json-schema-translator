@@ -1,9 +1,10 @@
-import { addAllOfMembers, match } from "../../utils/contextUtils.ts";
+import { matchContext } from "../../utils/contextUtils.ts";
+import { addAllOfMembersToPair } from "../../utils/pairUtils.ts";
 import { Mutator } from "../Mutator.ts";
 import { translateSchema } from "../translateSchema.ts";
 
 export const translateAllOf: Mutator = (ctx) => {
-  match(
+  matchContext(
     ctx,
     { allOf: true },
     {
@@ -12,20 +13,19 @@ export const translateAllOf: Mutator = (ctx) => {
       },
       both(ctx) {
         if (ctx.from.schema.allOf?.length) {
-          const members: Exclude<typeof ctx.into.schema.allOf, undefined> =
-            ctx.from.schema.allOf.map((schema, index) =>
-              translateSchema({
-                ...ctx,
-                from: {
-                  ...ctx.from,
-                  schema,
-                },
-                path: [...ctx.path, "allOf", index],
-                forceAllowBooleanSchema: false,
-              }),
-            );
+          const members = ctx.from.schema.allOf.map((schema, index) =>
+            translateSchema({
+              ...ctx,
+              from: {
+                ...ctx.from,
+                schema,
+              },
+              path: [...ctx.path, "allOf", index],
+              forceAllowBooleanSchema: false,
+            }),
+          );
 
-          addAllOfMembers(ctx, members);
+          addAllOfMembersToPair(ctx.into, members);
         }
       },
     },

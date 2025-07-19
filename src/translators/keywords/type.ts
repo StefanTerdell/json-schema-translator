@@ -1,6 +1,7 @@
 import { JsonSchemaType } from "../../JsonSchema.ts";
 import { JsonSchemaSpecification } from "../../JsonSchemaSpecification.ts";
-import { addType, match } from "../../utils/contextUtils.ts";
+import { matchContext } from "../../utils/contextUtils.ts";
+import { addTypeToPair } from "../../utils/pairUtils.ts";
 import { Mutator } from "../Mutator.ts";
 
 export const translateType: Mutator = (ctx) => {
@@ -17,7 +18,7 @@ export const translateType: Mutator = (ctx) => {
   // Add nullable
 
   if (results.some((type) => type.nullable)) {
-    match(
+    matchContext(
       ctx,
       { nullable: true },
       {
@@ -40,7 +41,7 @@ export const translateType: Mutator = (ctx) => {
       : undefined;
 
   if (multipleOf !== undefined) {
-    match(
+    matchContext(
       ctx,
       { multipleOf: true },
       {
@@ -60,7 +61,7 @@ export const translateType: Mutator = (ctx) => {
     )
     .map(({ type }) => type)
     .filter((type) => type !== undefined)
-    .forEach((type) => addType(ctx, type));
+    .forEach((type) => addTypeToPair(ctx.into, type));
 };
 
 const translateTypeValue = <

@@ -1,9 +1,9 @@
-import { match } from "../../utils/contextUtils.ts";
+import { matchContext } from "../../utils/contextUtils.ts";
 import { Mutator } from "../Mutator.ts";
 import { translateSchema } from "../translateSchema.ts";
 
 export const translateDependentSchemas: Mutator = (ctx) => {
-  match(
+  matchContext(
     ctx,
     {
       dependentSchemas: true,
@@ -32,7 +32,7 @@ export const translateDependentSchemas: Mutator = (ctx) => {
         }
       },
       onlyFrom(ctx) {
-        match(
+        matchContext(
           ctx,
           { dependencies: true },
           {

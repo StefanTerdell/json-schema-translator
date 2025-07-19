@@ -1,8 +1,8 @@
-import { match } from "../../utils/contextUtils.ts";
+import { matchContext } from "../../utils/contextUtils.ts";
 import { Mutator } from "../Mutator.ts";
 
 export const translate$anchor: Mutator = (ctx) => {
-  match(
+  matchContext(
     ctx,
     { $anchor: true },
     {

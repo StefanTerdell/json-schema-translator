@@ -1,4 +1,5 @@
-import { addUnionMembers, match } from "../../utils/contextUtils.ts";
+import { matchContext } from "../../utils/contextUtils.ts";
+import { addUnionMembersToPair } from "../../utils/pairUtils.ts";
 import { type Mutator } from "../Mutator.ts";
 
 const copyEnum: Mutator<{ enum: true }> = (ctx) => {
@@ -27,18 +28,19 @@ const copyEnumToConst: Mutator<{
       ctx.into.schema.const = ctx.from.schema.enum[0];
       return true;
     } else if (ctx.from.schema.enum.length > 1) {
-      return addUnionMembers(
-        ctx,
+      return addUnionMembersToPair(
+        ctx.into,
         ctx.from.schema.enum.map((value) => ({
           const: value,
-        })),
+          // deno-lint-ignore no-explicit-any
+        })) as any,
       );
     }
   }
 };
 
 export const translateEnumAndConst: Mutator = (ctx) => {
-  match(
+  matchContext(
     ctx,
     {
       enum: true,
@@ -50,7 +52,7 @@ export const translateEnumAndConst: Mutator = (ctx) => {
       },
       both(ctx) {
         // both support enum
-        match(
+        matchContext(
           ctx,
           { const: true },
           {
@@ -87,7 +89,7 @@ export const translateEnumAndConst: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         // Only from supports enum
-        match(
+        matchContext(
           ctx,
           { const: true },
           {

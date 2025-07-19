@@ -1,8 +1,8 @@
-import { match } from "../../utils/contextUtils.ts";
+import { matchContext } from "../../utils/contextUtils.ts";
 import { Mutator } from "../Mutator.ts";
 
 export const translateMaxContains: Mutator = (ctx) => {
-  match(
+  matchContext(
     ctx,
     { maxContains: true },
     {

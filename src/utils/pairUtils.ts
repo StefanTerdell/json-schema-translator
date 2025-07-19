@@ -1,5 +1,5 @@
 import { Pair } from "../translators/Pair.ts";
-import { JsonSchema, JsonSchemaKeywordsObject } from "../JsonSchema.ts";
+import { JsonSchema } from "../JsonSchema.ts";
 import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
 import { matchDeep } from "./matchDeep.ts";
 import { Respecify } from "./schemaUtils.ts";
@@ -8,7 +8,7 @@ import { ToggledBooleanLiterals } from "./UtilityTypes.ts";
 type PairUnionMutator = <
   Spec extends JsonSchemaSpecification,
   // Had to loosen this a bit but it irks me lol
-  Member extends JsonSchemaKeywordsObject<JsonSchemaSpecification>,
+  Member extends JsonSchema<Spec>,
 >(
   pair: Pair<Spec>,
   members: Member[],
@@ -53,7 +53,8 @@ export const addTypeToPair = <
               addUnionMembersToPair(pair, [
                 { type: pair.schema.type },
                 { type: type },
-              ])
+                // deno-lint-ignore no-explicit-any
+              ] as any)
             ) {
               delete pair.schema.type;
             } else {
