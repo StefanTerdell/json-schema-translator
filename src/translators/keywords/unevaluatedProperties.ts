@@ -33,10 +33,10 @@ export const translateUnevaluatedProperties: Mutator = (ctx) => {
               if (
                 ctx.from.schema.unevaluatedProperties !== undefined &&
                 (ctx.into.schema.additionalProperties === undefined ||
-                  isAnySchema(
-                    ctx.into.schema.additionalProperties,
-                    ctx.into.specification,
-                  ))
+                  isAnySchema({
+                    ...ctx.into,
+                    schema: ctx.into.schema.additionalProperties,
+                  }))
               ) {
                 ctx.into.schema.additionalProperties = translateSchema({
                   ...ctx,

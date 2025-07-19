@@ -32,7 +32,7 @@ export const openAiStructuredOutputSchemaSpecification = {
     "null",
   ] as const,
   strictTypes: true,
-  verboseNot: true,
+  forceAnySchema: true,
 
   // Arrays
   prefixItems: false,
@@ -88,7 +88,7 @@ export const openAiStructuredOutputSchemaSpecification = {
   anyOf: true,
   oneOf: false,
   allOf: false,
-  discriminator: false,
+  not: true,
 
   // Objects and properties
   unevaluatedProperties: false,

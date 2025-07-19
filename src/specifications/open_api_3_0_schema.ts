@@ -92,7 +92,7 @@ export const openApi3_0SchemaSpecification = {
   anyOf: true,
   oneOf: true,
   allOf: true,
-  discriminator: true,
+  not: true,
 
   // Objects and properties
   unevaluatedProperties: false,

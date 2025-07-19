@@ -12,7 +12,7 @@ export const translateProperties: Mutator = (ctx) => {
     for (const key in ctx.from.schema.properties) {
       if (
         ctx.into.specification.excludeNeverProperties &&
-        isNeverSchema(ctx.from.schema.properties[key], ctx.from.specification)
+        isNeverSchema({ ...ctx.from, schema: ctx.from.schema.properties[key] })
       ) {
         continue;
       }

@@ -1,6 +1,6 @@
 import { matchContext } from "../../utils/contextUtils.ts";
 import {
-  hasType,
+  schemaHasType,
   isNeverSchema,
   isNullableSchema,
 } from "../../utils/schemaUtils.ts";
@@ -29,14 +29,14 @@ export const translateRequired: Mutator = (ctx) => {
       if (
         !ctx.into.specification.allPropertiesRequired &&
         ctx.into.specification.treatPropertiesWithNullTypeAsOptional &&
-        hasType(ctx.from.schema.properties[key], "null", true)
+        schemaHasType(ctx.from.schema.properties[key], "null", true)
       ) {
         required.delete(key);
       }
 
       if (
         ctx.into.specification.excludeNeverProperties &&
-        isNeverSchema(ctx.from.schema.properties[key], ctx.from.specification)
+        isNeverSchema({ ...ctx.from, schema: ctx.from.schema.properties[key] })
       ) {
         required.delete(key);
       }

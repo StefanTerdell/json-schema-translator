@@ -97,7 +97,7 @@ export const jsonSchemaDraft6Specification = {
   anyOf: true,
   oneOf: true,
   allOf: true,
-  discriminator: false,
+  not: true,
 
   // Objects and properties
   unevaluatedProperties: false,

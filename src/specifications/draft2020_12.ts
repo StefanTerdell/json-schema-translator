@@ -107,7 +107,7 @@ export const jsonSchemaDraft2020_12Specification = {
   anyOf: true,
   oneOf: true,
   allOf: true,
-  discriminator: false,
+  not: true,
 
   // Objects and properties
   unevaluatedProperties: true,

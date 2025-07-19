@@ -97,7 +97,7 @@ export const googleAiJsonSchemaSpecification = {
   anyOf: true,
   oneOf: false,
   allOf: false,
-  discriminator: false,
+  not: false,
 
   // Objects and properties
   unevaluatedProperties: false,

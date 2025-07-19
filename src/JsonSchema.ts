@@ -230,7 +230,7 @@ export type JsonSchemaStaticKeywordsObject<
   if?: If<Spec["if"], JsonSchema<Spec>>;
   then?: If<Spec["then"], JsonSchema<Spec>>;
   else?: If<Spec["else"], JsonSchema<Spec>>;
-  not?: JsonSchema<Spec>;
+  not?: If<Spec["not"], JsonSchema<Spec>>;
 
   // annotations
   $schema?: Spec["$schema"] extends string

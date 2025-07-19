@@ -1,7 +1,10 @@
 import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
-import { EmptyObject, Replace } from "./UtilityTypes.ts";
+import { Replace } from "./UtilityTypes.ts";
 import { isObject } from "./isObject.ts";
 import { hasKeys } from "./hasKeys.ts";
+import { matchDeep } from "./matchDeep.ts";
+import { Pair } from "../translators/Pair.ts";
+import { matchPair } from "./pairUtils.ts";
 
 export type Respecify<
   Source extends JsonSchemaSpecification,
@@ -11,16 +14,16 @@ export type Respecify<
 export type Specify<Target extends Partial<JsonSchemaSpecification>> =
   Respecify<JsonSchemaSpecification, Target>;
 
-export type AnySchema<T extends JsonSchemaSpecification> =
-  T["verboseNot"] extends true
-    ? T["singleType"] extends true
-      ? T["anyOf"] extends true
-        ? { anyOf: { type: T["type"][number] }[] }
-        : T["oneOf"] extends true
-          ? { oneOf: { type: T["type"][number] }[] }
-          : EmptyObject
-      : { type: T["type"][number][] }
-    : EmptyObject;
+// export type AnySchema<T extends JsonSchemaSpecification> =
+//   T["verboseNot"] extends true
+//     ? T["singleType"] extends true
+//       ? T["anyOf"] extends true
+//         ? { anyOf: { type: T["type"][number] }[] }
+//         : T["oneOf"] extends true
+//           ? { oneOf: { type: T["type"][number] }[] }
+//           : EmptyObject
+//       : { type: T["type"][number][] }
+//     : EmptyObject;
 
 /** Returns true if the passed value represents a JSON Schema that:
  * 1. Permits any value
@@ -35,31 +38,39 @@ export type AnySchema<T extends JsonSchemaSpecification> =
  * - `{ "anyOf": [ { "type": ... }, { "type": ... }, ... ] }`
  * - `{ "oneOf": [ { "type": ... }, { "type": ... }, ... ] }`
  */
-export const isAnySchema = <T extends JsonSchemaSpecification>(
-  schema: unknown,
-  specification: T,
-): schema is true | AnySchema<T> => {
-  if (schema === true) {
+export const isAnySchema = <
+  T extends JsonSchemaSpecification,
+  KeywordObject extends boolean,
+>(
+  pair: Pair<T, KeywordObject>,
+): boolean => {
+  if (pair.specification.forceAnySchema !== undefined) {
+    if (matchDeep(pair.schema, pair.specification.forceAnySchema)) {
+      return true;
+    }
+  }
+
+  if (pair.schema === true) {
     return true;
   }
 
-  if (!isObject(schema)) {
+  if (!isObject(pair.schema)) {
     return false;
   }
 
-  if (Object.keys(schema).length === 0) {
+  if (Object.keys(pair.schema).length === 0) {
     return true;
   }
 
-  if (isAnySchemaByType(schema, specification)) {
+  if (isAnySchemaByType(pair)) {
     return true;
   }
 
-  if (isAnySchemaByXOf(schema, specification, "anyOf")) {
+  if (isAnySchemaByXOf(pair, "anyOf")) {
     return true;
   }
 
-  if (isAnySchemaByXOf(schema, specification, "oneOf")) {
+  if (isAnySchemaByXOf(pair, "oneOf")) {
     return true;
   }
 
@@ -80,46 +91,78 @@ export const isAnySchema = <T extends JsonSchemaSpecification>(
  * - `{ "not": { "anyOf": [ { "type": ... }, { "type": ... }, ... ] } }`
  * - `{ "not": { "oneOf": [ { "type": ... }, { "type": ... }, ... ] } }`
  */
-export const isNeverSchema = <T extends JsonSchemaSpecification>(
-  schema: unknown,
-  specification: T,
-): schema is false | { not: AnySchema<T> } => {
-  if (schema === false) {
+export const isNeverSchema = <Spec extends JsonSchemaSpecification>(
+  pair: Pair<Spec, boolean>,
+): boolean => {
+  if (pair.schema === false) {
     return true;
   }
 
-  if (!isObject(schema, ["not"], true)) {
+  if (typeof pair.schema !== "object" || pair.schema.not === undefined) {
     return false;
   }
 
-  return isAnySchema(schema.not, specification);
+  let result = false;
+
+  matchPair(
+    pair,
+    { not: true },
+    {
+      true(pair) {
+        result =
+          pair.schema.not !== undefined &&
+          isAnySchema({
+            ...pair,
+            schema: pair.schema.not,
+          });
+      },
+    },
+  );
+
+  return result;
 };
-const isAnySchemaByType = <T extends JsonSchemaSpecification>(
-  schema: object,
-  specification: T,
+
+const isAnySchemaByType = <
+  Spec extends JsonSchemaSpecification,
+  KeywordObject extends boolean,
+>(
+  pair: Pair<Spec, KeywordObject>,
 ): boolean => {
-  if (!hasKeys(schema, ["type"], true)) {
+  if (typeof pair.schema === "boolean") {
     return false;
   }
 
-  const types = Array.isArray(schema.type) ? schema.type : [schema.type];
+  if (!hasKeys(pair.schema, ["type"], true)) {
+    return false;
+  }
 
-  return specification.type.every((type) => types.includes(type));
+  const types = Array.isArray(pair.schema.type)
+    ? pair.schema.type
+    : [pair.schema.type];
+
+  return pair.specification.type.every((type) => types.includes(type));
 };
-const isAnySchemaByXOf = <T extends JsonSchemaSpecification>(
-  schema: object,
-  specification: T,
+
+const isAnySchemaByXOf = <
+  T extends JsonSchemaSpecification,
+  KeywordObject extends boolean,
+>(
+  pair: Pair<T, KeywordObject>,
   key: "anyOf" | "oneOf",
 ): boolean => {
-  if (!specification[key]) {
+  if (typeof pair.schema === "boolean") {
     return false;
   }
 
-  if (!hasKeys(schema, [key], true)) {
+  if (!pair.specification[key]) {
     return false;
   }
 
-  const value = (schema as Record<typeof key, unknown>)[key];
+  if (!hasKeys(pair.schema, [key], true)) {
+    return false;
+  }
+
+  const value = (pair.schema as Record<typeof key, unknown>)[key];
 
   if (!Array.isArray(value)) {
     return false;
@@ -132,7 +175,7 @@ const isAnySchemaByXOf = <T extends JsonSchemaSpecification>(
       subSchema.type,
   );
 
-  return specification.type.every((type) => types.includes(type));
+  return pair.specification.type.every((type) => types.includes(type));
 };
 
 export const isNullableSchema = (schema: unknown, checkUnions?: boolean) => {
@@ -169,7 +212,7 @@ export const isNullableSchema = (schema: unknown, checkUnions?: boolean) => {
   return false;
 };
 
-export const hasType = (
+export const schemaHasType = (
   schema: unknown,
   type: JsonSchemaSpecification["type"][number],
   checkUnions?: boolean,
@@ -196,7 +239,7 @@ export const hasType = (
     if (
       "anyOf" in schema &&
       Array.isArray(schema.anyOf) &&
-      schema.anyOf.some((schema) => hasType(schema, type, true))
+      schema.anyOf.some((schema) => schemaHasType(schema, type, true))
     ) {
       return true;
     }
@@ -204,7 +247,7 @@ export const hasType = (
     if (
       "oneOf" in schema &&
       Array.isArray(schema.oneOf) &&
-      schema.oneOf.some((schema) => hasType(schema, type, true))
+      schema.oneOf.some((schema) => schemaHasType(schema, type, true))
     ) {
       return true;
     }

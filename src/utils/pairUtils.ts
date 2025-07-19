@@ -154,9 +154,10 @@ export const addOneOfMembersToPair: PairUnionMutator = (pair, members) => {
 
 export function matchPair<
   Spec extends JsonSchemaSpecification,
+  KeywordsObject extends boolean,
   Assertions extends Partial<JsonSchemaSpecification>,
 >(
-  pair: Pair<Spec>,
+  pair: Pair<Spec, KeywordsObject>,
   assertions: Assertions,
   matches?: {
     true?: (pair: Pair<Respecify<Spec, Assertions>>) => void;

@@ -1,3 +1,4 @@
+import { JsonSchema } from "./JsonSchema.ts";
 import { type LooseStringLiteral } from "./utils/UtilityTypes.ts";
 
 type SharedKeywords = {
@@ -31,6 +32,8 @@ type AnnotationKeywords = {
 
 type ExtensionOptions = {
   // Extensions
+  /** Keyword - Disable/enable the `discriminator` keyword as defined by Open API 3.0 */
+  discriminator?: boolean;
   /** Option - Optionally set which format to accept error-messages in */
   errorMessage?: "ajv" | false;
   /** Option - Optionally enable the `propertyOrdering` keyword. Will be copied if enabled in both schema specifiactions and based on the keys of `properties` if enabled only in output */
@@ -53,8 +56,8 @@ type TypeOptions = {
   strictTypes?: boolean;
   /** Disable the ability to assign multiple types to the `type` keyword by using an array */
   singleType?: boolean;
-  /** Option - Disable/enable converting "never" schemas into a `not` union of all possible types */
-  verboseNot?: boolean;
+  /** Option - Disable.enable converting "any" schemas into a union of all possible types */
+  forceAnySchema?: JsonSchema<JsonSchemaSpecification, true>;
 };
 
 type ArrayKeywords = {
@@ -170,8 +173,8 @@ type FactoringKeywords = {
   oneOf: boolean;
   /** Keyword - Disable/enable the `allOf` keyword */
   allOf: boolean;
-  /** Keyword - Disable/enable the `discriminator` keyword as defined by Open API 3.0 */
-  discriminator: boolean;
+  /** Keyword - Disable/enable the `not` keyword */
+  not: boolean;
 };
 
 type ObjectKeywords = {
