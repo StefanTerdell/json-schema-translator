@@ -1,5 +1,5 @@
-import { JsonObject } from "../../Json.ts";
-import { JsonSchema } from "../../JsonSchema.ts";
+import { JsonObject } from "../../types/Json.ts";
+import { JsonSchema } from "../../types/JsonSchema.ts";
 import { Mutator } from "../Mutator.ts";
 import { translateSchema } from "../translateSchema.ts";
 

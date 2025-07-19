@@ -1,5 +1,5 @@
-import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
-import { Replace } from "./UtilityTypes.ts";
+import { JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
+import { Replace } from "../types/UtilityTypes.ts";
 import { isObject } from "./isObject.ts";
 import { hasKeys } from "./hasKeys.ts";
 import { matchDeep } from "./matchDeep.ts";

@@ -1,10 +1,10 @@
 import {
   type JsonSchemaKeywordsObject,
   type JsonSchemaStaticKeywordsObject,
-} from "../JsonSchema.ts";
-import { type JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
+} from "../types/JsonSchema.ts";
+import { type JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
 import { type BaseContext } from "./BaseContext.ts";
-import { type HandledKeysSet } from "../UnhandledKeys.ts";
+import { type HandledKeysSet } from "../misc/UnhandledKeys.ts";
 
 /** @internal */
 export type MutatorContext<

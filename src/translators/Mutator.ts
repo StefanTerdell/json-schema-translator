@@ -1,4 +1,4 @@
-import { type JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
+import { type JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
 import { ResolveParameters } from "../utils/Parameters.ts";
 import { Specify } from "../utils/schemaUtils.ts";
 import { MutatorContext } from "./MutatorContext.ts";

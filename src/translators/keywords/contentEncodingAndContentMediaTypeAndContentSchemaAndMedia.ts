@@ -1,4 +1,4 @@
-import { copy } from "../../copy.ts";
+import { copy } from "../../misc/copy.ts";
 import { matchContext } from "../../utils/contextUtils.ts";
 import { Mutator } from "../Mutator.ts";
 import { translateSchema } from "../translateSchema.ts";

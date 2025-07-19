@@ -1,6 +1,6 @@
-import { type CopyOption } from "./copy.ts";
-import { JsonSchemaSpecification } from "./JsonSchemaSpecification.ts";
-import { type UnhandledKeysOption } from "./UnhandledKeys.ts";
+import { type CopyOption } from "../misc/copy.ts";
+import { JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
+import { type UnhandledKeysOption } from "../misc/UnhandledKeys.ts";
 
 export type JsonSchemaTranslationOptions<
   AdditionalSpecifications extends

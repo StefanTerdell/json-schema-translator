@@ -1,5 +1,5 @@
-import { JsonSchemaKeywordsObject } from "../JsonSchema.ts";
-import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
+import { JsonSchemaKeywordsObject } from "../types/JsonSchema.ts";
+import { JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
 
 export type Pair<Spec extends JsonSchemaSpecification> = {
   specification: Spec;

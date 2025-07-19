@@ -1,9 +1,9 @@
 import { Pair } from "../translators/Pair.ts";
-import { JsonSchema } from "../JsonSchema.ts";
-import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
+import { JsonSchema } from "../types/JsonSchema.ts";
+import { JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
 import { matchDeep } from "./matchDeep.ts";
 import { Respecify } from "./schemaUtils.ts";
-import { ToggledBooleanLiterals } from "./UtilityTypes.ts";
+import { ToggledBooleanLiterals } from "../types/UtilityTypes.ts";
 
 type PairUnionMutator = <
   Spec extends JsonSchemaSpecification,

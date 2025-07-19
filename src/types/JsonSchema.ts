@@ -8,7 +8,7 @@ import {
   type LiteralStringOrNever,
   type LooseStringLiteral,
   type NonEmptyArray,
-} from "./utils/UtilityTypes.ts";
+} from "./UtilityTypes.ts";
 
 /** Represents a JsonSchema as defined by the provided JsonSchemaSpecification. Depending on the settings and specific keyword this can either be a JsonSchemaObject or a boolean */
 export type JsonSchema<

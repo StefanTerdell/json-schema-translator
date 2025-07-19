@@ -1,6 +1,6 @@
-import { JsonSchema } from "../../src/JsonSchema.ts";
-import { JsonSchemaSpecification } from "../../src/JsonSchemaSpecification.ts";
-import { MutatorContext } from "../../src/translators/Mutator.ts";
+import { JsonSchema } from "../../src/types/JsonSchema.ts";
+import { JsonSchemaSpecification } from "../../src/types/JsonSchemaSpecification.ts";
+import { MutatorContext } from "../../src/translators/MutatorContext.ts";
 
 export function testCtx<
   I extends JsonSchemaSpecification,
@@ -22,7 +22,7 @@ export function testCtx<
   return {
     copyJson: "shallow",
     handledKeys: new Set(),
-    input: (Object.keys(x.input).every(
+    from: (Object.keys(x.input).every(
       (key) => key === "schema" || key === "settings",
     )
       ? x.input
@@ -31,7 +31,7 @@ export function testCtx<
           settings: x.input,
           // deno-lint-ignore no-explicit-any
         }) as any,
-    output: (Object.keys(x.output).every(
+    into: (Object.keys(x.output).every(
       (key) => key === "schema" || key === "settings",
     )
       ? x.output

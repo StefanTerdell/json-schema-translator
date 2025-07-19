@@ -1,5 +1,5 @@
-import type { JsonSchema } from "../JsonSchema.ts";
-import type { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
+import type { JsonSchema } from "../types/JsonSchema.ts";
+import type { JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
 import type { BaseContext } from "./BaseContext.ts";
 
 /** @internal */

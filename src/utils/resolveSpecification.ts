@@ -1,10 +1,10 @@
 import {
   type BundledJsonSchemaSpecifications,
   bundledJsonSchemaSpecifications,
-} from "./BundledJsonSchemaTypes.ts";
-import { type JsonSchemaSpecification } from "./JsonSchemaSpecification.ts";
-import { type AdditionalJsonSchemaSpecifications } from "./JsonSchemaTranslationOptions.ts";
-import { type EmptyObject } from "./utils/UtilityTypes.ts";
+} from "../misc/BundledJsonSchemaTypes.ts";
+import { type JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
+import { type AdditionalJsonSchemaSpecifications } from "../types/JsonSchemaTranslationOptions.ts";
+import { type EmptyObject } from "../types/UtilityTypes.ts";
 
 /** @internal */
 export type ResolveSpecification<

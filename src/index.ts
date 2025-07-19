@@ -1,6 +1,6 @@
-export * from "./Json.ts";
-export * from "./JsonSchema.ts";
-export * from "./JsonSchemaSpecification.ts";
+export * from "./types/Json.ts";
+export * from "./types/JsonSchema.ts";
+export * from "./types/JsonSchemaSpecification.ts";
 
 export * from "./specifications/draft2019_09.ts";
 export * from "./specifications/draft2020_12.ts";
@@ -18,6 +18,6 @@ export {
   type UnhandledKeyReason,
   type UnhandledKeysMap,
   type UnhandledKeysOption,
-} from "./UnhandledKeys.ts";
-export { type CopyOption, type CopyFn } from "./copy.ts";
-export { type JsonSchemaTranslationOptions } from "./JsonSchemaTranslationOptions.ts";
+} from "./misc/UnhandledKeys.ts";
+export { type CopyOption, type CopyFn } from "./misc/copy.ts";
+export { type JsonSchemaTranslationOptions } from "./types/JsonSchemaTranslationOptions.ts";

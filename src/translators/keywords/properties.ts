@@ -1,4 +1,4 @@
-import { collapseIntoBooleanSchema } from "../../collapseIntoBooleanSchema.ts";
+import { collapseIntoBooleanSchema } from "../../utils/collapseIntoBooleanSchema.ts";
 import { matchContext } from "../../utils/contextUtils.ts";
 import { addTypeToPair } from "../../utils/pairUtils.ts";
 import { isNeverSchema } from "../../utils/schemaUtils.ts";

@@ -1,5 +1,3 @@
-import { JsonSchemaKeyword } from "../../JsonSchema.ts";
-import { JsonSchemaSpecification } from "../../JsonSchemaSpecification.ts";
 import { matchContext } from "../../utils/contextUtils.ts";
 import { Mutator } from "../Mutator.ts";
 

@@ -1,4 +1,4 @@
-import { JsonObject } from "../../Json.ts";
+import { JsonObject } from "../../types/Json.ts";
 import { Mutator } from "../Mutator.ts";
 
 export const translateId: Mutator = (ctx) => {

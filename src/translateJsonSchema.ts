@@ -1,20 +1,20 @@
-import { type BundledJsonSchemaTypes } from "./BundledJsonSchemaTypes.ts";
-import { type JsonSchema } from "./JsonSchema.ts";
-import { type JsonSchemaSpecification } from "./JsonSchemaSpecification.ts";
+import { type BundledJsonSchemaTypes } from "./misc/BundledJsonSchemaTypes.ts";
+import { type JsonSchema } from "./types/JsonSchema.ts";
+import { type JsonSchemaSpecification } from "./types/JsonSchemaSpecification.ts";
 import {
   type AdditionalJsonSchemaSpecifications,
   defaultJsonSchemaTranslationOptionsBase,
   type JsonSchemaTranslationOptions,
-} from "./JsonSchemaTranslationOptions.ts";
+} from "./types/JsonSchemaTranslationOptions.ts";
 import {
   resolveSpecification,
   type ResolveSpecification,
-} from "./resolveSpecification.ts";
+} from "./utils/resolveSpecification.ts";
 import { translateSchema } from "./translators/translateSchema.ts";
 import {
   getUnhandledKeysMap,
   handleUnhandledKeysMap,
-} from "./UnhandledKeys.ts";
+} from "./misc/UnhandledKeys.ts";
 
 // S, S
 export function translateJsonSchema<

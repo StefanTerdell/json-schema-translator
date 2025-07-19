@@ -1,5 +1,8 @@
-import { type JsonSchemaKeyword, type JsonSchemaPath } from "./JsonSchema.ts";
-import { type LooseStringLiteral } from "./utils/UtilityTypes.ts";
+import {
+  type JsonSchemaKeyword,
+  type JsonSchemaPath,
+} from "../types/JsonSchema.ts";
+import { type LooseStringLiteral } from "../types/UtilityTypes.ts";
 
 export type UnhandledKeyReason = "conflict" | "disallowed";
 export type UnhandledKeysMap = Map<JsonSchemaPath, UnhandledKeyReason>;

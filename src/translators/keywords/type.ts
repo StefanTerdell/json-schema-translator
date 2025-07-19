@@ -1,5 +1,5 @@
-import { JsonSchemaType } from "../../JsonSchema.ts";
-import { JsonSchemaSpecification } from "../../JsonSchemaSpecification.ts";
+import { JsonSchemaType } from "../../types/JsonSchema.ts";
+import { JsonSchemaSpecification } from "../../types/JsonSchemaSpecification.ts";
 import { matchContext } from "../../utils/contextUtils.ts";
 import { addTypeToPair } from "../../utils/pairUtils.ts";
 import { Mutator } from "../Mutator.ts";

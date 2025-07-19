@@ -1,4 +1,4 @@
-import { Json } from "./Json.ts";
+import { Json } from "../types/Json.ts";
 
 export type CopyFn = <T = Json>(value: T) => T;
 export type CopyOption = "shallow" | "stringifyAndParse" | CopyFn;

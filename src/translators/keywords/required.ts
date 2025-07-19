@@ -4,7 +4,7 @@ import {
   isNeverSchema,
   isNullableSchema,
 } from "../../utils/schemaUtils.ts";
-import { NonEmptyArray } from "../../utils/UtilityTypes.ts";
+import { NonEmptyArray } from "../../types/UtilityTypes.ts";
 import { Mutator } from "../Mutator.ts";
 
 export const translateRequired: Mutator = (ctx) => {

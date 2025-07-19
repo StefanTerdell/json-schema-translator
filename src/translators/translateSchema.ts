@@ -1,8 +1,8 @@
-import { AjvErrorMessages, JsonSchema } from "../JsonSchema.ts";
+import { AjvErrorMessages, JsonSchema } from "../types/JsonSchema.ts";
 import { type MutatorContext } from "../translators/MutatorContext.ts";
-import { collapseIntoBooleanSchema } from "../collapseIntoBooleanSchema.ts";
+import { collapseIntoBooleanSchema } from "../utils/collapseIntoBooleanSchema.ts";
 import { type Mutator } from "./Mutator.ts";
-import { copy } from "../copy.ts";
+import { copy } from "../misc/copy.ts";
 import { translateKeywords } from "./keywwords.ts";
 import { Translator } from "./Translator.ts";
 

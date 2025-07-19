@@ -1,7 +1,7 @@
-import { type JsonSchema, type JsonSchemaPath } from "../JsonSchema.ts";
-import { type JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
-import { type UnhandledKeysMap } from "../UnhandledKeys.ts";
-import { type JsonSchemaTranslationOptionsBase } from "../JsonSchemaTranslationOptions.ts";
+import { type JsonSchema, type JsonSchemaPath } from "../types/JsonSchema.ts";
+import { type JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
+import { type UnhandledKeysMap } from "../misc/UnhandledKeys.ts";
+import { type JsonSchemaTranslationOptionsBase } from "../types/JsonSchemaTranslationOptions.ts";
 
 /** @internal */
 export type BaseContext<

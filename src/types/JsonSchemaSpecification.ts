@@ -1,5 +1,5 @@
 import { JsonSchema } from "./JsonSchema.ts";
-import { type LooseStringLiteral } from "./utils/UtilityTypes.ts";
+import { type LooseStringLiteral } from "./UtilityTypes.ts";
 
 type SharedOptions = {
   /** Option - Disable/enable allowing arbitrary JSON values in non-keyword properties of the schema object */

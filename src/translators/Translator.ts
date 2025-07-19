@@ -1,5 +1,5 @@
-import { JsonSchema } from "../JsonSchema.ts";
-import { JsonSchemaSpecification } from "../JsonSchemaSpecification.ts";
+import { JsonSchema } from "../types/JsonSchema.ts";
+import { JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
 import { Specify } from "../utils/schemaUtils.ts";
 import { TranslatorContext } from "./TranslatorContext.ts";
 
