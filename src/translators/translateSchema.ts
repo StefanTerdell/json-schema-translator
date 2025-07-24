@@ -36,6 +36,7 @@ export const translateSchema: Translator<null, [deferCollapse?: boolean]> = (
       schema: {},
     },
     handledKeys: new Set(),
+    unionLocations: new Map(),
   };
 
   translateKeywords(mutatorCtx);

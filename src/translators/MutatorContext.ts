@@ -12,6 +12,7 @@ import {
 } from "../misc/UnhandledKeys.ts";
 import { CopyFn } from "../misc/copy.ts";
 import { TranslatorContext2 } from "./TranslatorContext.ts";
+import { UnionLocationsMap } from "../misc/UnionLocations.ts";
 
 export class MutatorContext2<
   InputJsonSchemaSpecification extends JsonSchemaSpecification,
@@ -85,4 +86,5 @@ export type MutatorContext<
   into: {
     schema: JsonSchemaKeywordsObject<OutputJsonSchemaSpecification>;
   };
+  unionLocations: UnionLocationsMap<OutputJsonSchemaSpecification>;
 };

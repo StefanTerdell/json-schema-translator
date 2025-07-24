@@ -1,4 +1,8 @@
-import { type JsonSchema, type JsonSchemaPath } from "../types/JsonSchema.ts";
+import {
+  JsonSchemaKeywordsObject,
+  type JsonSchema,
+  type JsonSchemaPath,
+} from "../types/JsonSchema.ts";
 import { type JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
 import {
   getUnhandledKeysMap,

@@ -1,113 +1,90 @@
+// deno-lint-ignore-file no-explicit-any
+
+import { UnionLocations } from "../misc/UnionLocations.ts";
+import { MutatorContext } from "../translators/MutatorContext.ts";
 import { Json } from "../types/Json.ts";
+import { JsonSchemaKeywordsObject } from "../types/JsonSchema.ts";
+import { JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
+import { matchContext } from "./contextUtils.ts";
 
-type Schema = {
-  type?: string | string[];
-  properties?: Record<string, Schema>;
-  items?: Schema | Schema[];
-  anyOf?: Schema[];
-  oneOf?: Schema[];
-  allOf?: Schema[];
-  const?: Json;
-  enum?: Json[];
-};
-
-type Specification = {
-  singleType: boolean;
-  stringConstantsOnly: boolean;
-  anyOf: boolean;
-  oneOf: boolean;
-  allOf: boolean;
-  enum: boolean;
-  const: boolean;
-};
-
-type SchemaKeywords = keyof Schema;
-type SchemaPathItem = SchemaKeywords | number;
-type SchemaPath = SchemaPathItem[];
-
-type UnionLocations = {
-  type?: Schema[];
-  anyOf?: Schema[];
-  oneOf?: Schema[];
-  allOf?: Schema[];
-  const?: Schema[];
-};
-
-export function createUnionContext(
-  schema: Schema,
-  specification: Specification,
-): UnionContext {
-  return {
-    schema,
-    specification,
-    path: [],
-    unions: new Map(),
-  };
+export function getUnionLocations<
+  FromSpecification extends JsonSchemaSpecification,
+  IntoSpecification extends JsonSchemaSpecification,
+>(
+  ctx: MutatorContext<FromSpecification, IntoSpecification>,
+): Readonly<UnionLocations<IntoSpecification>> {
+  return ctx.unionLocations.get(ctx.into.schema) ?? {};
 }
 
-type UnionContext = {
-  schema: Schema;
-  specification: Specification;
-  path: SchemaPath;
-  unions: Map<string, UnionLocations>;
-};
+export function setUnionLocation<
+  FromSpecification extends JsonSchemaSpecification,
+  IntoSpecification extends JsonSchemaSpecification,
+>(
+  ctx: MutatorContext<FromSpecification, IntoSpecification>,
+  union: keyof UnionLocations<IntoSpecification>,
+  members: JsonSchemaKeywordsObject<IntoSpecification>[],
+) {
+  const locations = ctx.unionLocations.get(ctx.into.schema);
 
-function getUnionLocations(ctx: UnionContext): UnionLocations {
-  const pathString = ctx.path.join("/");
-  let flags = ctx.unions.get(pathString);
-
-  if (!flags) {
-    flags = {};
-
-    ctx.unions.set(pathString, flags);
+  if (locations) {
+    locations[union] = members;
+  } else {
+    ctx.unionLocations.set(ctx.into.schema, {
+      [union]: members,
+    });
   }
-
-  return flags;
 }
 
-export function hasConstants(ctx: UnionContext): boolean {
+export function hasConstants<
+  From extends JsonSchemaSpecification,
+  Into extends JsonSchemaSpecification,
+>(ctx: MutatorContext<From, Into>): boolean {
   return (
-    ctx.schema.const !== undefined ||
-    ctx.schema.enum !== undefined ||
+    ctx.into.schema.const !== undefined ||
+    ctx.into.schema.enum !== undefined ||
     getUnionLocations(ctx).const !== undefined
   );
 }
 
-export function addType(ctx: UnionContext, type: string): boolean {
+export function addType<
+  From extends JsonSchemaSpecification,
+  Into extends JsonSchemaSpecification,
+>(ctx: MutatorContext<From, Into>, type: string): boolean {
   const locations = getUnionLocations(ctx);
 
-  if (!ctx.specification.singleType && Array.isArray(ctx.schema.type)) {
-    if (!ctx.schema.type.includes(type)) {
-      ctx.schema.type.push(type);
+  if (
+    !ctx.into.specification.singleType &&
+    Array.isArray(ctx.into.schema.type)
+  ) {
+    if (!ctx.into.schema.type.includes(type)) {
+      ctx.into.schema.type.push(type);
     }
 
     return true;
-  } else if (typeof ctx.schema.type === "string") {
-    if (ctx.specification.singleType) {
-      const types = addExclusiveMembers(
-        ctx,
-        "anyOfOrOneOf",
-        { type: ctx.schema.type },
-        { type },
-      );
+  } else if (typeof ctx.into.schema.type === "string") {
+    if (ctx.into.specification.singleType) {
+      const types = addExclusiveAnyOfOrOneOf(ctx, [
+        { type: ctx.into.schema.type },
+        { type } as any,
+      ]);
 
       if (types) {
-        delete ctx.schema.type;
-        locations.type = types;
+        delete ctx.into.schema.type;
+        setUnionLocation(ctx, "type", types);
         return true;
       } else {
         return false;
       }
     } else {
-      ctx.schema.type = [ctx.schema.type, type];
+      ctx.into.schema.type = [ctx.into.schema.type, type] as any;
       return true;
     }
   } else if (locations.type) {
-    locations.type.push({ type });
+    locations.type.push({ type } as any);
 
     return true;
-  } else if (ctx.schema.type === undefined) {
-    ctx.schema.type = type;
+  } else if (ctx.into.schema.type === undefined) {
+    ctx.into.schema.type = type;
 
     return true;
   }
@@ -115,162 +92,204 @@ export function addType(ctx: UnionContext, type: string): boolean {
   return false;
 }
 
-export function addConstant(ctx: UnionContext, constant: Json): boolean {
-  if (ctx.specification.stringConstantsOnly && typeof constant !== "string") {
+export function addConstant<
+  From extends JsonSchemaSpecification,
+  Into extends JsonSchemaSpecification,
+>(ctx: MutatorContext<From, Into>, constant: Json): boolean {
+  if (ctx.into.specification.stringConstants && typeof constant !== "string") {
     return false;
   }
 
   const locations = getUnionLocations(ctx);
 
   if (locations.const) {
-    locations.const.push({ const: constant });
+    locations.const.push({ const: constant } as any);
 
     return true;
   }
 
-  if (ctx.specification.enum && ctx.schema.enum !== undefined) {
-    if (!ctx.schema.enum.includes(constant)) {
-      ctx.schema.enum.push(constant);
+  if (ctx.into.specification.enum && ctx.into.schema.enum !== undefined) {
+    if (!ctx.into.schema.enum.includes(constant)) {
+      ctx.into.schema.enum.push(constant);
     }
 
     return true;
   }
 
-  if (ctx.specification.const) {
-    if (ctx.schema.const === undefined) {
-      ctx.schema.const = constant;
+  if (ctx.into.specification.const) {
+    if (ctx.into.schema.const === undefined) {
+      ctx.into.schema.const = constant;
 
       return true;
     }
 
-    if (ctx.specification.enum) {
-      ctx.schema.enum = [ctx.schema.const, constant];
+    if (ctx.into.specification.enum) {
+      ctx.into.schema.enum = [ctx.into.schema.const, constant];
 
-      delete ctx.schema.const;
+      delete ctx.into.schema.const;
 
       return true;
     }
 
-    const consts = addExclusiveMembers(
-      ctx,
-      "anyOfOrOneOf",
+    const consts = addExclusiveAnyOfOrOneOf(ctx, [
       {
-        const: ctx.schema.const,
+        const: ctx.into.schema.const,
       },
       {
         const: constant,
-      },
-    );
+      } as any,
+    ]);
 
     if (consts) {
-      delete ctx.schema.const;
+      delete ctx.into.schema.const;
 
-      locations.const = consts;
+      setUnionLocation(ctx, "const", consts);
 
       return true;
     }
   }
 
-  if (ctx.specification.enum) {
-    ctx.schema.enum = [constant];
+  if (ctx.into.specification.enum) {
+    ctx.into.schema.enum = [constant];
   }
 
   return false;
 }
 
-export function addExclusiveAnyOf(
-  ctx: UnionContext,
-  ...members: [Schema, ...Schema[]]
-) {
-  return addExclusiveMembers(ctx, "anyOf", ...members);
-}
+type AddExclusive = <
+  From extends JsonSchemaSpecification,
+  Into extends JsonSchemaSpecification,
+>(
+  ctx: MutatorContext<From, Into>,
+  members: (typeof ctx)["into"]["schema"][],
+) => JsonSchemaKeywordsObject<Into>[] | undefined;
 
-export function addExclusiveOneOf(
-  ctx: UnionContext,
-  ...members: [Schema, ...Schema[]]
-) {
-  return addExclusiveMembers(ctx, "oneOf", ...members);
-}
+export const addExclusiveAnyOfOrOneOf: AddExclusive = (ctx, members) =>
+  addExclusiveAnyOf(ctx, members) ?? addExclusiveOneOf(ctx, members);
 
-function addExclusiveMembers(
-  ctx: UnionContext,
-  union: "anyOfOrOneOf" | "oneOfOrAnyOf" | "anyOf" | "oneOf",
-  ...members: [Schema, ...Schema[]]
-): Schema[] | undefined {
-  if (union === "anyOfOrOneOf") {
-    return (
-      addExclusiveMembers(ctx, "anyOf", ...members) ??
-      addExclusiveMembers(ctx, "oneOf", ...members)
-    );
-  } else if (union === "oneOfOrAnyOf") {
-    return (
-      addExclusiveMembers(ctx, "oneOf", ...members) ??
-      addExclusiveMembers(ctx, "anyOf", ...members)
-    );
-  }
+export const addExclusiveAnyOf: AddExclusive = (ctx, members) => {
+  let output: typeof members | undefined = undefined;
 
-  if (!ctx.specification[union]) {
-    return undefined;
-  }
+  matchContext(
+    ctx,
+    { anyOf: true },
+    {
+      into(ctx) {
+        if (ctx.into.schema.anyOf) {
+          const allOf = addExlusiveAllOf(ctx, [
+            { anyOf: ctx.into.schema.anyOf },
+            { anyOf: members } as any,
+          ]);
 
-  const locations = getUnionLocations(ctx);
+          if (allOf) {
+            delete ctx.into.schema.anyOf;
+            setUnionLocation(ctx, "anyOf", allOf);
+            output = members;
+          } else {
+            output = undefined;
+          }
 
-  if (ctx.schema[union]) {
-    const allOf = addExlusiveAllOf(
-      ctx,
-      { [union]: ctx.schema[union] },
-      { [union]: members },
-    );
+          return;
+        }
 
-    if (allOf) {
-      delete ctx.schema[union];
-      locations[union] = allOf;
-      return members;
-    } else {
-      return undefined;
-    }
-  } else if (locations[union]) {
-    locations[union].push({
-      [union]: members,
-    });
+        const locations = getUnionLocations(ctx);
 
-    return members;
-  } else {
-    ctx.schema[union] = members;
+        if (locations.anyOf) {
+          locations.anyOf.push({
+            anyOf: members,
+          } as any);
+        } else {
+          ctx.into.schema.anyOf = members as any;
+        }
 
-    return members;
-  }
-}
+        output = members;
+      },
+    },
+  );
 
-export function addExlusiveAllOf(
-  ctx: UnionContext,
-  ...members: [Schema, ...Schema[]]
-): Schema[] | undefined {
-  if (!ctx.specification.allOf) {
-    return undefined;
-  }
+  return output;
+};
 
-  const locations = getUnionLocations(ctx);
+export const addExclusiveOneOf: AddExclusive = (ctx, members) => {
+  let output: typeof members | undefined = undefined;
 
-  if (ctx.schema.allOf) {
-    const union =
-      addExclusiveAnyOf(ctx, { allOf: ctx.schema.allOf }, { allOf: members }) ??
-      addExclusiveOneOf(ctx, { allOf: ctx.schema.allOf }, { allOf: members });
+  matchContext(
+    ctx,
+    { oneOf: true },
+    {
+      into(ctx) {
+        if (ctx.into.schema.oneOf) {
+          const allOf = addExlusiveAllOf(ctx, [
+            { oneOf: ctx.into.schema.oneOf },
+            { oneOf: members } as any,
+          ]);
 
-    if (union) {
-      delete ctx.schema.allOf;
-      locations.allOf = union;
-      return members;
-    }
-  } else if (locations.allOf) {
-    locations.allOf.push({
-      allOf: members,
-    });
+          if (allOf) {
+            delete ctx.into.schema.oneOf;
+            setUnionLocation(ctx, "oneOf", allOf);
+            output = members;
+          } else {
+            output = undefined;
+          }
 
-    return members;
-  } else {
-    ctx.schema.allOf = members;
+          return;
+        }
 
-    return members;
-  }
-}
+        const locations = getUnionLocations(ctx);
+
+        if (locations.oneOf) {
+          locations.oneOf.push({
+            oneOf: members,
+          } as any);
+        } else {
+          ctx.into.schema.oneOf = members as any;
+        }
+
+        output = members;
+      },
+    },
+  );
+
+  return output;
+};
+
+export const addExlusiveAllOf: AddExclusive = (ctx, members) => {
+  let output: typeof members | undefined = undefined;
+
+  matchContext(
+    ctx,
+    { allOf: true },
+    {
+      into(ctx) {
+        if (ctx.into.schema.allOf) {
+          const union = addExclusiveAnyOfOrOneOf(ctx, [
+            { allOf: ctx.into.schema.allOf },
+            { allOf: members } as any,
+          ]);
+
+          if (union) {
+            delete ctx.into.schema.allOf;
+            setUnionLocation(ctx, "allOf", union);
+            output = members;
+          }
+
+          return;
+        }
+
+        const locations = getUnionLocations(ctx);
+
+        if (locations.allOf) {
+          locations.allOf.push({
+            allOf: members,
+          } as any);
+        } else {
+          ctx.into.schema.allOf = members as any;
+        }
+
+        output = members;
+      },
+    },
+  );
+
+  return output;
+};
