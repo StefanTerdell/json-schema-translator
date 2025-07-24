@@ -25,6 +25,7 @@ Deno.test("MultipleOf keyword", () => {
     path: [],
     seen: new Map(),
     handledKeys: new Set(),
+    unionLocations: new Map(),
   });
 
   assertEquals(schema, {

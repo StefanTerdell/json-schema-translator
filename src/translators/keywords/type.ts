@@ -1,7 +1,7 @@
 import { JsonSchemaType } from "../../types/JsonSchema.ts";
 import { JsonSchemaSpecification } from "../../types/JsonSchemaSpecification.ts";
 import { matchContext } from "../../utils/contextUtils.ts";
-import { addTypeToPair } from "../../utils/pairUtils.ts";
+import { addConstant, addType, hasConstants } from "../../utils/unionUtils.ts";
 import { Mutator } from "../Mutator.ts";
 
 export const translateType: Mutator = (ctx) => {
@@ -61,7 +61,13 @@ export const translateType: Mutator = (ctx) => {
     )
     .map(({ type }) => type)
     .filter((type) => type !== undefined)
-    .forEach((type) => addTypeToPair(ctx.into, type));
+    .forEach((type) => {
+      const added = addType(ctx, type);
+
+      if (added && type === "null" && hasConstants(ctx)) {
+        addConstant(ctx, null);
+      }
+    });
 };
 
 const translateTypeValue = <

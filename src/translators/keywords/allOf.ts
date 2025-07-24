@@ -1,5 +1,5 @@
 import { matchContext } from "../../utils/contextUtils.ts";
-import { addAllOfMembersToPair } from "../../utils/pairUtils.ts";
+import { addExclusiveAllOf } from "../../utils/unionUtils.ts";
 import { Mutator } from "../Mutator.ts";
 import { translateSchema } from "../translateSchema.ts";
 
@@ -25,7 +25,7 @@ export const translateAllOf: Mutator = (ctx) => {
             }),
           );
 
-          addAllOfMembersToPair(ctx.into, members);
+          addExclusiveAllOf(ctx, members);
         }
       },
     },

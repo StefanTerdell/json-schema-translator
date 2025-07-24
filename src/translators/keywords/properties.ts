@@ -1,7 +1,7 @@
 import { collapseIntoBooleanSchema } from "../../utils/collapseIntoBooleanSchema.ts";
 import { matchContext } from "../../utils/contextUtils.ts";
-import { addTypeToPair } from "../../utils/pairUtils.ts";
 import { isNeverSchema } from "../../utils/schemaUtils.ts";
+import { addConstant, addType, hasConstants } from "../../utils/unionUtils.ts";
 import { Mutator } from "../Mutator.ts";
 import { translateSchema } from "../translateSchema.ts";
 
@@ -52,24 +52,19 @@ export const translateProperties: Mutator = (ctx) => {
         );
 
         if (ctx.into.specification.addNullTypeToOptionalProperties) {
-          const added = addTypeToPair(
-            {
-              specification: ctx.into.specification,
+          const propertyCtx = {
+            ...ctx,
+            into: {
+              ...ctx.into,
               schema,
             },
-            "null",
-          );
+            path: [...ctx.path, key],
+          };
 
-          if (
-            added &&
-            !ctx.into.specification.stringConstants &&
-            ctx.into.specification.enum
-          ) {
-            if (schema.enum && !schema.enum.includes(null)) {
-              schema.enum.push(null);
-            } else if (schema.const !== undefined) {
-              schema.enum = [schema.const, null];
-            }
+          const added = addType(propertyCtx, "null");
+
+          if (added && hasConstants(propertyCtx)) {
+            addConstant(propertyCtx, null);
           }
         }
       }

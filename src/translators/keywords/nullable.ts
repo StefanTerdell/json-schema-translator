@@ -1,5 +1,5 @@
 import { matchContext } from "../../utils/contextUtils.ts";
-import { addTypeToPair } from "../../utils/pairUtils.ts";
+import { addConstant, addType, hasConstants } from "../../utils/unionUtils.ts";
 import { Mutator } from "../Mutator.ts";
 
 export const translateNullable: Mutator = (ctx) => {
@@ -17,7 +17,9 @@ export const translateNullable: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.nullable === true) {
-          addTypeToPair(ctx.into, "null");
+          if (addType(ctx, "null") && hasConstants(ctx)) {
+            addConstant(ctx, null);
+          }
         }
       },
     },

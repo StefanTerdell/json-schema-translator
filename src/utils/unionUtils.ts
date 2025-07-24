@@ -1,5 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 
+import { JsonSchema } from "../index.ts";
 import { UnionLocations } from "../misc/UnionLocations.ts";
 import { MutatorContext } from "../translators/MutatorContext.ts";
 import { Json } from "../types/Json.ts";
@@ -58,9 +59,10 @@ export function addType<
   ) {
     if (!ctx.into.schema.type.includes(type)) {
       ctx.into.schema.type.push(type);
+      return true;
+    } else {
+      return false;
     }
-
-    return true;
   } else if (typeof ctx.into.schema.type === "string") {
     if (ctx.into.specification.singleType) {
       const types = addExclusiveAnyOfOrOneOf(ctx, [
@@ -161,7 +163,7 @@ type AddExclusive = <
   Into extends JsonSchemaSpecification,
 >(
   ctx: MutatorContext<From, Into>,
-  members: (typeof ctx)["into"]["schema"][],
+  members: JsonSchema<Into>[],
 ) => JsonSchemaKeywordsObject<Into>[] | undefined;
 
 export const addExclusiveAnyOfOrOneOf: AddExclusive = (ctx, members) =>
@@ -176,7 +178,7 @@ export const addExclusiveAnyOf: AddExclusive = (ctx, members) => {
     {
       into(ctx) {
         if (ctx.into.schema.anyOf) {
-          const allOf = addExlusiveAllOf(ctx, [
+          const allOf = addExclusiveAllOf(ctx, [
             { anyOf: ctx.into.schema.anyOf },
             { anyOf: members } as any,
           ]);
@@ -219,7 +221,7 @@ export const addExclusiveOneOf: AddExclusive = (ctx, members) => {
     {
       into(ctx) {
         if (ctx.into.schema.oneOf) {
-          const allOf = addExlusiveAllOf(ctx, [
+          const allOf = addExclusiveAllOf(ctx, [
             { oneOf: ctx.into.schema.oneOf },
             { oneOf: members } as any,
           ]);
@@ -253,7 +255,7 @@ export const addExclusiveOneOf: AddExclusive = (ctx, members) => {
   return output;
 };
 
-export const addExlusiveAllOf: AddExclusive = (ctx, members) => {
+export const addExclusiveAllOf: AddExclusive = (ctx, members) => {
   let output: typeof members | undefined = undefined;
 
   matchContext(
