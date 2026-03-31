@@ -10,7 +10,7 @@ export const translateId: Mutator = (ctx) => {
       typeof id === "string" &&
       typeof ctx.into.specification.$id === "string"
     ) {
-      // @ts-expect-error ISSUE: Narrowing breaks down across generics
+      // @ts-expect-error Dynamic $id key — generic narrowing doesn't reach computed property names
       ctx.into.schema[ctx.into.specification.$id] = id;
     }
 

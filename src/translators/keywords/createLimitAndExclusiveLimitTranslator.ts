@@ -38,7 +38,7 @@ export function createLimitAndExclusiveLimitTranslator(
 
                 if (input.schema[limit] !== undefined) {
                   if (input.schema[exclusiveLimit] === true) {
-                    // @ts-expect-error :p
+                    // @ts-expect-error Boolean/numeric exclusive limit mismatch across specs
                     output.schema[exclusiveLimit] = input.schema[limit];
                   } else {
                     output.schema[limit] = input.schema[limit];
@@ -50,7 +50,7 @@ export function createLimitAndExclusiveLimitTranslator(
                 // only output use booleans for the exclusive limit values
 
                 if (typeof input.schema[exclusiveLimit] === "number") {
-                  // @ts-expect-error :p
+                  // @ts-expect-error Boolean/numeric exclusive limit mismatch across specs
                   output.schema[exclusiveLimit] = true;
 
                   if (typeof input.schema[limit] === "number") {
@@ -205,7 +205,7 @@ export function createLimitAndExclusiveLimitTranslator(
             if (output.specification[booleanExclusiveLimit]) {
               // only output uses booleans for exclusive limit values
               if (typeof input.schema[exclusiveLimit] === "number") {
-                // @ts-expect-error :p
+                // @ts-expect-error Boolean/numeric exclusive limit mismatch across specs
                 output.schema[exclusiveLimit] = true;
                 output.schema[limit] = input.schema[exclusiveLimit];
               }

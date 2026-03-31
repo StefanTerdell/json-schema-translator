@@ -33,7 +33,7 @@ export const translateDefinitions: Mutator = (ctx) => {
         {},
       );
 
-      // @ts-expect-error ISSUE: Narrowing breaks down across generics
+      // @ts-expect-error Dynamic $defs key — generic narrowing doesn't reach computed property names
       ctx.into.schema[ctx.into.specification.$defs] = outputDefs;
     }
 

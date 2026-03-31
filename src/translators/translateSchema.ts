@@ -59,7 +59,7 @@ const copyUnhandledKeys: Mutator = (ctx) => {
     )) {
       if (ctx.into.specification.arbitraryJson) {
         if (!(key in ctx.into.schema)) {
-          // @ts-expect-error CBA
+          // @ts-expect-error Dynamic key assignment for arbitrary JSON
           ctx.into.schema[key] = copy(ctx.copyJson, ctx.from.schema[key]);
         } else {
           ctx.unhandledKeys.set([...ctx.path, key], {
