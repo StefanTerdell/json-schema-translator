@@ -1,9 +1,10 @@
 {
-  "name": "json-schema-translator",
+  "name": "@stefan/json-schema-translator",
   "version": "0.1.0",
   "license": "ISC",
+  "exports": "./src/index.ts",
   "tasks": {
-    "dev": "deno run --watch src/lib.ts",
+    "dev": "deno run --watch src/index.ts",
     "npm": "deno run -A scripts/build-npm.ts",
     "readme": "deno run -A scripts/template-readme.ts",
     "dry": "deno test && deno task npm && deno task readme && deno publish --dry-run && cd npm && npm publish --dry-run",

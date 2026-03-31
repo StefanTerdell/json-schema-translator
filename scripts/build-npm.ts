@@ -5,7 +5,7 @@ const denoPackage = readDenoJson();
 await emptyDir("./npm");
 
 await build({
-  entryPoints: ["./src/lib.ts"],
+  entryPoints: ["./src/index.ts"],
   outDir: "./npm",
   shims: {},
   test: false,
@@ -67,7 +67,7 @@ function readDenoJson() {
     !("repository" in data) ||
     typeof data.repository !== "object" || data.repository === null
   ) {
-    throw new Error(`Expected object 'repositiory' in data, got ${text}`);
+    throw new Error(`Expected object 'repository' in data, got ${text}`);
   }
 
   if (!("type" in data.repository) || data.repository.type !== "git") {
