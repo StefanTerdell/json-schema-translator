@@ -45,19 +45,6 @@ export type JsonSchemaKeywordsObject<Spec extends JsonSchemaSpecification> = If<
   JsonSchemaStaticKeywordsObject<Spec>
 >;
 
-// export type JsonSchemaDynamicKeywordsObject<
-//   Spec extends JsonSchemaSpecification,
-// > = [
-//   LiteralStringOrNever<Spec["$id"]>,
-//   LiteralStringOrNever<Spec["$defs"]>,
-// ] extends [infer Id extends string, infer Defs extends string]
-//   ? {
-//       [Key in Defs]?: { [Key in string]: JsonSchema<Spec> };
-//     } & {
-//       [Key in Id]?: string;
-//     }
-//   : { [Key in string]?: unknown };
-
 export type JsonSchemaDynamicKeywordsObject<
   Spec extends JsonSchemaSpecification,
 > = Spec["$id"] extends string
@@ -77,32 +64,6 @@ export type JsonSchemaDynamicKeywordsObject<
         [Key in Spec["$defs"]]?: { [Key in string]: JsonSchema<Spec> };
       }
     : EmptyObject;
-
-//   LiteralStringOrNever<Spec["$defs"]>,
-// ] extends [infer Id extends string, infer Defs extends string]
-//   ? {
-//       [Key in Defs | Id]?: Key extends Defs
-//         ? { [Key in string]: JsonSchema<Spec> }
-//         : Key extends Id
-//           ? string
-//           : unknown;
-//     }
-//   : { [Key in string]?: unknown };
-
-// export type JsonSchemaDynamicKeywordsObject<
-//   Spec extends JsonSchemaSpecification,
-// > = [
-//   LiteralStringOrNever<Spec["$id"]>,
-//   LiteralStringOrNever<Spec["$defs"]>,
-// ] extends [infer Id extends string, infer Defs extends string]
-//   ? {
-//       [Key in Defs | Id]?: Key extends Defs
-//         ? { [Key in string]: JsonSchema<Spec> }
-//         : Key extends Id
-//           ? string
-//           : unknown;
-//     }
-//   : { [Key in string]?: unknown };
 
 /** Represents a JsonSchema object as defined by the provided JsonSchemaSpecification with no arbitrary keys allowed */
 export type JsonSchemaStaticKeywordsObject<

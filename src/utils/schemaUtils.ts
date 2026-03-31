@@ -14,17 +14,6 @@ export type Respecify<
 export type Specify<Target extends Partial<JsonSchemaSpecification>> =
   Respecify<JsonSchemaSpecification, Target>;
 
-// export type AnySchema<T extends JsonSchemaSpecification> =
-//   T["verboseNot"] extends true
-//     ? T["singleType"] extends true
-//       ? T["anyOf"] extends true
-//         ? { anyOf: { type: T["type"][number] }[] }
-//         : T["oneOf"] extends true
-//           ? { oneOf: { type: T["type"][number] }[] }
-//           : EmptyObject
-//       : { type: T["type"][number][] }
-//     : EmptyObject;
-
 /** Returns true if the passed value represents a JSON Schema that:
  * 1. Permits any value
  * 2. Contains no annotations
