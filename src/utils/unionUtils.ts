@@ -1,11 +1,11 @@
 // deno-lint-ignore-file no-explicit-any
 
-import { JsonSchema } from "../index.ts";
-import { UnionLocations } from "../misc/UnionLocations.ts";
-import { MutatorContext } from "../translators/MutatorContext.ts";
-import { Json } from "../types/Json.ts";
-import { JsonSchemaKeywordsObject } from "../types/JsonSchema.ts";
-import { JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
+import type { JsonSchema } from "../index.ts";
+import type { UnionLocations } from "../misc/UnionLocations.ts";
+import type { MutatorContext } from "../translators/MutatorContext.ts";
+import type { Json } from "../types/Json.ts";
+import type { JsonSchemaKeywordsObject } from "../types/JsonSchema.ts";
+import type { JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
 import { matchContext } from "./contextUtils.ts";
 
 export function getUnionLocations<

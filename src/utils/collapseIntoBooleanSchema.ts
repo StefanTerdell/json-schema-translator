@@ -1,6 +1,6 @@
-import { type JsonSchema } from "../types/JsonSchema.ts";
-import { type JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
-import { Pair } from "../translators/Pair.ts";
+import type { JsonSchema } from "../types/JsonSchema.ts";
+import type { JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
+import type { Pair } from "../translators/Pair.ts";
 import { isAnySchema, isNeverSchema } from "../utils/schemaUtils.ts";
 
 export const collapseIntoBooleanSchema = <

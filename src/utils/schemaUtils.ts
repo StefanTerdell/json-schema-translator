@@ -1,9 +1,9 @@
-import { JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
-import { Replace } from "../types/UtilityTypes.ts";
+import type { JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
+import type { Replace } from "../types/UtilityTypes.ts";
 import { isObject } from "./isObject.ts";
 import { hasKeys } from "./hasKeys.ts";
 import { matchDeep } from "./matchDeep.ts";
-import { isStrictPair, UnstrictPair } from "../translators/Pair.ts";
+import { isStrictPair, type UnstrictPair } from "../translators/Pair.ts";
 import { matchPair } from "./pairUtils.ts";
 
 export type Respecify<
@@ -52,11 +52,11 @@ export const isAnySchema = <Spec extends JsonSchemaSpecification>(
     return true;
   }
 
-  if (isAnySchemaByXOf(pair, "anyOf")) {
+  if (isAnySchemaByUnion(pair, "anyOf")) {
     return true;
   }
 
-  if (isAnySchemaByXOf(pair, "oneOf")) {
+  if (isAnySchemaByUnion(pair, "oneOf")) {
     return true;
   }
 
@@ -95,8 +95,7 @@ export const isNeverSchema = <Spec extends JsonSchemaSpecification>(
     { not: true },
     {
       true(pair) {
-        result =
-          typeof pair.schema === "object" &&
+        result = typeof pair.schema === "object" &&
           pair.schema.not !== undefined &&
           isAnySchema({
             ...pair,
@@ -127,7 +126,7 @@ const isAnySchemaByType = <Spec extends JsonSchemaSpecification>(
   return pair.specification.type.every((type) => types.includes(type));
 };
 
-const isAnySchemaByXOf = <Spec extends JsonSchemaSpecification>(
+const isAnySchemaByUnion = <Spec extends JsonSchemaSpecification>(
   pair: UnstrictPair<Spec>,
   key: "anyOf" | "oneOf",
 ): boolean => {

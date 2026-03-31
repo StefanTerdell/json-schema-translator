@@ -1,8 +1,8 @@
 import type { JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
-import { type MutatorContext } from "../translators/MutatorContext.ts";
+import type { MutatorContext } from "../translators/MutatorContext.ts";
 import { matchDeep } from "./matchDeep.ts";
-import { type Respecify } from "./schemaUtils.ts";
-import { type ToggledBooleanLiterals } from "../types/UtilityTypes.ts";
+import type { Respecify } from "./schemaUtils.ts";
+import type { ToggledBooleanLiterals } from "../types/UtilityTypes.ts";
 
 export function matchContext<
   FromSpecification extends JsonSchemaSpecification,

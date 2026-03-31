@@ -25,5 +25,5 @@ export {
   type UnhandledKeysMap,
   type UnhandledKeysOption,
 } from "./misc/UnhandledKeys.ts";
-export { type CopyOption, type CopyFn } from "./misc/copy.ts";
+export { type CopyFn, type CopyOption } from "./misc/copy.ts";
 export { type JsonSchemaTranslationOptions } from "./types/JsonSchemaTranslationOptions.ts";
