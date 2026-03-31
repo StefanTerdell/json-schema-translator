@@ -14,6 +14,11 @@ export const translateMinItems: Mutator = (ctx) => {
           ctx.into.schema.minItems = ctx.from.schema.minItems;
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.minItems !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "minItems"], "minItems");
+        }
+      },
     },
   );
 };

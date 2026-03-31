@@ -4,6 +4,7 @@ import {
   type JsonSchemaPath,
 } from "../types/JsonSchema.ts";
 import { type JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
+import { type DroppedKeysMap } from "../misc/DroppedKeys.ts";
 import {
   getUnhandledKeysMap,
   type UnhandledKeysMap,
@@ -16,6 +17,7 @@ export class BaseContext2<
   OutputJsonSchemaSpecification extends JsonSchemaSpecification,
 > {
   unhandledKeys: UnhandledKeysMap;
+  droppedKeys: DroppedKeysMap;
   copy: CopyFn;
   path: JsonSchemaPath;
   seen: Map<
@@ -25,6 +27,7 @@ export class BaseContext2<
 
   constructor(
     unhandledKeys: UnhandledKeysMap,
+    droppedKeys: DroppedKeysMap,
     copy: CopyFn,
     seen: Map<
       JsonSchema<InputJsonSchemaSpecification>,
@@ -33,6 +36,7 @@ export class BaseContext2<
     path: JsonSchemaPath,
   ) {
     this.unhandledKeys = unhandledKeys;
+    this.droppedKeys = droppedKeys;
     this.copy = copy;
     this.seen = seen;
     this.path = path;
@@ -41,6 +45,7 @@ export class BaseContext2<
   static fromOptions(options: JsonSchemaTranslationOptionsBase) {
     return new BaseContext2(
       getUnhandledKeysMap(options.unhandledKeys),
+      new Map(),
       getCopyFn(options.copyJson),
       new Map(),
       [],
@@ -54,6 +59,7 @@ export type BaseContext<
   OutputJsonSchemaSpecification extends JsonSchemaSpecification,
 > = JsonSchemaTranslationOptionsBase & {
   unhandledKeys: UnhandledKeysMap;
+  droppedKeys: DroppedKeysMap;
   path: JsonSchemaPath;
   from: {
     specification: InputJsonSchemaSpecification;

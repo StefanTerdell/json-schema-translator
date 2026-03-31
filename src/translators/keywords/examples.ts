@@ -14,6 +14,11 @@ export const translateExamples: Mutator = (ctx) => {
           ctx.into.schema.examples = ctx.from.schema.examples;
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.examples !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "examples"], "examples");
+        }
+      },
     },
   );
 };

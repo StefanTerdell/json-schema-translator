@@ -23,6 +23,11 @@ export const translateElse: Mutator = (ctx) => {
           });
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.else !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "else"], "else");
+        }
+      },
     },
   );
 };

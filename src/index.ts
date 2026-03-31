@@ -15,6 +15,10 @@ export { translateJsonSchema } from "./translateJsonSchema.ts";
 export { jsonSchemaTranslator } from "./jsonSchemaTranslator.ts";
 
 export {
+  type DroppedKeysMap,
+  type DroppedKeysOption,
+} from "./misc/DroppedKeys.ts";
+export {
   type UnhandledKeyReason,
   type UnhandledKeysMap,
   type UnhandledKeysOption,

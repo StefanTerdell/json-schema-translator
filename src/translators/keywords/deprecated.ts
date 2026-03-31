@@ -14,6 +14,11 @@ export const translateDeprecated: Mutator = (ctx) => {
           ctx.into.schema.deprecated = ctx.from.schema.deprecated;
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.deprecated !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "deprecated"], "deprecated");
+        }
+      },
     },
   );
 };

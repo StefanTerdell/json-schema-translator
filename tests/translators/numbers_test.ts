@@ -21,6 +21,7 @@ Deno.test("MultipleOf keyword", () => {
       specification: jsonSchemaDraft6Specification,
     },
     unhandledKeys: new Map(),
+    droppedKeys: new Map(),
     copyJson: "shallow",
     path: [],
     seen: new Map(),

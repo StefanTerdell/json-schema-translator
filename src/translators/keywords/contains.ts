@@ -23,6 +23,11 @@ export const translateContains: Mutator = (ctx) => {
           });
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.contains !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "contains"], "contains");
+        }
+      },
     },
   );
 };

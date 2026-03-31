@@ -14,6 +14,11 @@ export const translateMaxProperties: Mutator = (ctx) => {
           ctx.into.schema.maxProperties = ctx.from.schema.maxProperties;
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.maxProperties !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "maxProperties"], "maxProperties");
+        }
+      },
     },
   );
 };

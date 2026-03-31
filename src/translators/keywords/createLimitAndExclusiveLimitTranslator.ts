@@ -13,7 +13,7 @@ export function createLimitAndExclusiveLimitTranslator(
       ? (a: number, b: number) => Math.max(a, b)
       : (a: number, b: number) => Math.min(a, b);
 
-  return ({ from: input, into: output, handledKeys }) => {
+  return ({ from: input, into: output, handledKeys, droppedKeys, path }) => {
     if (input.specification[limit]) {
       // input supports the limit
       if (output.specification[limit]) {
@@ -86,6 +86,15 @@ export function createLimitAndExclusiveLimitTranslator(
                 output.schema[limit] = input.schema[limit];
               }
             }
+
+            // Record drop if exclusive limit value couldn't be transferred
+            if (
+              input.schema[exclusiveLimit] !== undefined &&
+              output.schema[exclusiveLimit] === undefined &&
+              typeof input.schema[limit] !== "number"
+            ) {
+              droppedKeys.set([...path, exclusiveLimit], exclusiveLimit);
+            }
           }
 
           handledKeys.add(exclusiveLimit);
@@ -154,6 +163,22 @@ export function createLimitAndExclusiveLimitTranslator(
             // nethier input nor output support the exclusive limit
             // no-op
           }
+        }
+
+        // Record drops for values that couldn't be transferred
+        if (
+          input.schema[limit] !== undefined &&
+          output.schema[limit] === undefined &&
+          output.schema[exclusiveLimit] === undefined
+        ) {
+          droppedKeys.set([...path, limit], limit);
+        }
+        if (
+          input.schema[exclusiveLimit] !== undefined &&
+          output.schema[exclusiveLimit] === undefined &&
+          output.schema[limit] === undefined
+        ) {
+          droppedKeys.set([...path, exclusiveLimit], exclusiveLimit);
         }
       }
 

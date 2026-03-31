@@ -2,7 +2,7 @@ import { assertEquals } from "@std/assert/equals";
 import { jsonSchemaTranslator } from "../src/jsonSchemaTranslator.ts";
 import { JsonSchemaDraft7 } from "../src/specifications/draft7.ts";
 
-Deno.test("asd", () => {
+Deno.test("Draft 7 → Draft 2020-12: tuple items become prefixItems via jsonSchemaTranslator", () => {
   const draft7ToDraft2020_12 = jsonSchemaTranslator("draft7", "draft2020_12");
 
   const input: JsonSchemaDraft7 = {

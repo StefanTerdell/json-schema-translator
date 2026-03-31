@@ -13,6 +13,10 @@ import {
 } from "./utils/resolveSpecification.ts";
 import { translateSchema } from "./translators/translateSchema.ts";
 import {
+  getDroppedKeysMap,
+  handleDroppedKeysMap,
+} from "./misc/DroppedKeys.ts";
+import {
   getUnhandledKeysMap,
   handleUnhandledKeysMap,
 } from "./misc/UnhandledKeys.ts";
@@ -184,6 +188,9 @@ export function jsonSchemaTranslator<
     const unhandledKeysMap = getUnhandledKeysMap(
       overriddenOptions.unhandledKeys,
     );
+    const droppedKeysMap = getDroppedKeysMap(
+      overriddenOptions.droppedKeys,
+    );
 
     const outputSchema = translateSchema({
       from: {
@@ -196,11 +203,13 @@ export function jsonSchemaTranslator<
       path: [],
       forceAllowBooleanSchema: false,
       unhandledKeys: unhandledKeysMap,
+      droppedKeys: droppedKeysMap,
       copyJson: overriddenOptions.copyJson,
       seen: new Map(),
     });
 
     handleUnhandledKeysMap(overriddenOptions.unhandledKeys, unhandledKeysMap);
+    handleDroppedKeysMap(overriddenOptions.droppedKeys, droppedKeysMap);
 
     return outputSchema;
   };

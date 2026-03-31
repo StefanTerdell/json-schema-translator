@@ -21,6 +21,11 @@ export const translatePropertyOrdering: Mutator = (ctx) => {
           );
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.propertyOrdering !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "propertyOrdering"], "propertyOrdering");
+        }
+      },
       onlyInto(ctx) {
         if (
           ctx.into.specification.derivePropertyOrderingFromKeys &&

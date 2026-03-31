@@ -13,10 +13,17 @@ export const translateFormat: Mutator = (ctx) => {
           )
         ) {
           ctx.into.schema.format = ctx.from.schema.format;
+        } else {
+          ctx.droppedKeys.set([...ctx.path, "format"], "format");
         }
       } else {
         ctx.into.schema.format = ctx.from.schema.format;
       }
+    } else if (
+      !ctx.into.specification.format &&
+      ctx.from.schema.format !== undefined
+    ) {
+      ctx.droppedKeys.set([...ctx.path, "format"], "format");
     }
 
     ctx.handledKeys.add("format");

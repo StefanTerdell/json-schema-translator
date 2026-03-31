@@ -1,4 +1,5 @@
 import { type CopyOption } from "../misc/copy.ts";
+import { type DroppedKeysOption } from "../misc/DroppedKeys.ts";
 import { JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
 import { type UnhandledKeysOption } from "../misc/UnhandledKeys.ts";
 
@@ -18,6 +19,7 @@ export type AdditionalJsonSchemaSpecifications = {
 /** @internal */
 export type JsonSchemaTranslationOptionsBase = {
   unhandledKeys: UnhandledKeysOption;
+  droppedKeys: DroppedKeysOption;
   copyJson: CopyOption;
 };
 
@@ -25,5 +27,6 @@ export type JsonSchemaTranslationOptionsBase = {
 export const defaultJsonSchemaTranslationOptionsBase: JsonSchemaTranslationOptionsBase =
   {
     unhandledKeys: "ignore",
+    droppedKeys: "ignore",
     copyJson: "stringifyAndParse",
   };

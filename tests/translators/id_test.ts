@@ -32,6 +32,7 @@ Deno.test("id should be copied from and to the specified path", () => {
       specification: outputSettings,
     },
     unhandledKeys: new Map(),
+    droppedKeys: new Map(),
     copyJson: "stringifyAndParse",
     seen: new Map(),
     unionLocations: new Map(),

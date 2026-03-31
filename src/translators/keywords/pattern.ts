@@ -14,6 +14,11 @@ export const translatePattern: Mutator = (ctx) => {
           ctx.into.schema.pattern = ctx.from.schema.pattern;
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.pattern !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "pattern"], "pattern");
+        }
+      },
     },
   );
 };

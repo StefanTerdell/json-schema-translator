@@ -30,6 +30,11 @@ export const translatePatternProperties: Mutator = (ctx) => {
           }
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.patternProperties !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "patternProperties"], "patternProperties");
+        }
+      },
     },
   );
 };

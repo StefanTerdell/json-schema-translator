@@ -9,7 +9,7 @@ import {
 } from "../../src/specifications/draft4.ts";
 import { translateSchema } from "../../src/translators/translateSchema.ts";
 
-Deno.test("Hello", () => {
+Deno.test("Draft 2020-12 → Draft 4: object with nullable and arbitrary JSON properties", () => {
   const input: JsonSchemaDraft2020_12 = {
     $schema: "https://json-schema.org/draft/2020-12/schema",
     type: "object",
@@ -70,6 +70,7 @@ Deno.test("Hello", () => {
     path: [],
     forceAllowBooleanSchema: false,
     unhandledKeys: new Map(),
+    droppedKeys: new Map(),
     seen: new Map(),
   });
 

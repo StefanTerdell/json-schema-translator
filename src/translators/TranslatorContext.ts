@@ -1,4 +1,5 @@
 import { CopyFn } from "../misc/copy.ts";
+import { type DroppedKeysMap } from "../misc/DroppedKeys.ts";
 import { UnhandledKeysMap } from "../misc/UnhandledKeys.ts";
 import type { JsonSchema, JsonSchemaPath } from "../types/JsonSchema.ts";
 import type { JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
@@ -23,6 +24,7 @@ export class TranslatorContext2<
 
   constructor(
     unhandledKeys: UnhandledKeysMap,
+    droppedKeys: DroppedKeysMap,
     copy: CopyFn,
     seen: Map<
       JsonSchema<InputJsonSchemaSpecification>,
@@ -38,7 +40,7 @@ export class TranslatorContext2<
     },
     forceAllowBooleanSchema: ForceAllowBooleanSchema,
   ) {
-    super(unhandledKeys, copy, seen, path);
+    super(unhandledKeys, droppedKeys, copy, seen, path);
     this.from = from;
     this.into = into;
     this.forceAllowBooleanSchema = forceAllowBooleanSchema;

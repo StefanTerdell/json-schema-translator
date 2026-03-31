@@ -3,7 +3,7 @@ import { type MutatorContext } from "../translators/MutatorContext.ts";
 import { collapseIntoBooleanSchema } from "../utils/collapseIntoBooleanSchema.ts";
 import { type Mutator } from "./Mutator.ts";
 import { copy } from "../misc/copy.ts";
-import { translateKeywords } from "./keywwords.ts";
+import { translateKeywords } from "./keywords.ts";
 import { Translator } from "./Translator.ts";
 
 /** @internal */

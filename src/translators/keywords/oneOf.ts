@@ -28,6 +28,11 @@ export const translateOneOf: Mutator = (ctx) => {
           addExclusiveOneOf(ctx, members);
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.oneOf !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "oneOf"], "oneOf");
+        }
+      },
     },
   );
 };

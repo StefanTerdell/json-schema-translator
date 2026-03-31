@@ -36,6 +36,11 @@ export const translatePropertyNames: Mutator = (ctx) => {
           ctx.handledKeys.add("propertyNames");
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.propertyNames !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "propertyNames"], "propertyNames");
+        }
+      },
     },
   );
 };

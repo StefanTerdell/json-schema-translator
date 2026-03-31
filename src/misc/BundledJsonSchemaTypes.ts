@@ -34,6 +34,11 @@ import {
   OpenAiStructuredOutputSchemaSpecification,
   openAiStructuredOutputSchemaSpecification,
 } from "../specifications/open_ai_structured_output.ts";
+import {
+  OpenApi3_0Schema,
+  OpenApi3_0SchemaSpecification,
+  openApi3_0SchemaSpecification,
+} from "../specifications/open_api_3_0_schema.ts";
 
 export type BundledJsonSchemaTypes = {
   draft4: JsonSchemaDraft4;
@@ -43,6 +48,7 @@ export type BundledJsonSchemaTypes = {
   draft2020_12: JsonSchemaDraft2020_12;
   googleAi: GoogleAiJsonSchema;
   openAiStructuredOutput: OpenAiStructuredOutputSchema;
+  openApi3_0: OpenApi3_0Schema;
 };
 
 export type BundledJsonSchemaSpecifications = {
@@ -53,6 +59,7 @@ export type BundledJsonSchemaSpecifications = {
   draft2020_12: JsonSchemaDraft2020_12Specification;
   googleAi: GoogleAiJsonSchemaSpecification;
   openAiStructuredOutput: OpenAiStructuredOutputSchemaSpecification;
+  openApi3_0: OpenApi3_0SchemaSpecification;
 } & Record<keyof BundledJsonSchemaTypes, JsonSchemaSpecification>;
 
 export const bundledJsonSchemaSpecifications: BundledJsonSchemaSpecifications =
@@ -64,4 +71,5 @@ export const bundledJsonSchemaSpecifications: BundledJsonSchemaSpecifications =
     draft2020_12: jsonSchemaDraft2020_12Specification,
     googleAi: googleAiJsonSchemaSpecification,
     openAiStructuredOutput: openAiStructuredOutputSchemaSpecification,
+    openApi3_0: openApi3_0SchemaSpecification,
   };

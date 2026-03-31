@@ -14,6 +14,11 @@ export const translate$recursiveAnchor: Mutator = (ctx) => {
           ctx.into.schema.$recursiveAnchor = ctx.from.schema.$recursiveAnchor;
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.$recursiveAnchor !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "$recursiveAnchor"], "$recursiveAnchor");
+        }
+      },
     },
   );
 };

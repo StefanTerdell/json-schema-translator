@@ -14,6 +14,11 @@ export const translate$anchor: Mutator = (ctx) => {
           ctx.into.schema.$anchor = ctx.from.schema.$anchor;
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.$anchor !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "$anchor"], "$anchor");
+        }
+      },
     },
   );
 };

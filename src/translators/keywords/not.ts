@@ -23,6 +23,11 @@ export const translateNot: Mutator = (ctx) => {
           });
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.not !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "not"], "not");
+        }
+      },
     },
   );
 };

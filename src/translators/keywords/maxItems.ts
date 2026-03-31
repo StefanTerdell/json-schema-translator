@@ -14,6 +14,11 @@ export const translateMaxItems: Mutator = (ctx) => {
           ctx.into.schema.maxItems = ctx.from.schema.maxItems;
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.maxItems !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "maxItems"], "maxItems");
+        }
+      },
     },
   );
 };

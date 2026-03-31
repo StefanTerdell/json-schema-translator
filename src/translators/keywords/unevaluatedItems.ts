@@ -23,6 +23,11 @@ export const translateUnevaluatedItems: Mutator = (ctx) => {
           });
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.unevaluatedItems !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "unevaluatedItems"], "unevaluatedItems");
+        }
+      },
     },
   );
 };

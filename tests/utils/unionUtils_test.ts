@@ -25,6 +25,7 @@ function createUnionContext<const Into extends JsonSchemaSpecification>(
       specification,
     },
     unhandledKeys: new Map(),
+    droppedKeys: new Map(),
     handledKeys: new Set(),
     path: [],
     seen: new Map(),

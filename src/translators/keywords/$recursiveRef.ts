@@ -14,6 +14,11 @@ export const translate$recursiveRef: Mutator = (ctx) => {
           ctx.into.schema.$recursiveRef = ctx.from.schema.$recursiveRef;
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.$recursiveRef !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "$recursiveRef"], "$recursiveRef");
+        }
+      },
     },
   );
 };

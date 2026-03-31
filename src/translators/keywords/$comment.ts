@@ -14,6 +14,11 @@ export const translate$comment: Mutator = (ctx) => {
           ctx.into.schema.$comment = ctx.from.schema.$comment;
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.$comment !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "$comment"], "$comment");
+        }
+      },
     },
   );
 };

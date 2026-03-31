@@ -14,6 +14,11 @@ export const translate$dynamicAnchor: Mutator = (ctx) => {
           ctx.into.schema.$dynamicAnchor = ctx.from.schema.$dynamicAnchor;
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.$dynamicAnchor !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "$dynamicAnchor"], "$dynamicAnchor");
+        }
+      },
     },
   );
 };

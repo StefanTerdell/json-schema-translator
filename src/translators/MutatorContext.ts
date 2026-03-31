@@ -6,6 +6,7 @@ import {
 } from "../types/JsonSchema.ts";
 import { type JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
 import { BaseContext2, type BaseContext } from "./BaseContext.ts";
+import { type DroppedKeysMap } from "../misc/DroppedKeys.ts";
 import {
   UnhandledKeysMap,
   type HandledKeysSet,
@@ -32,6 +33,7 @@ export class MutatorContext2<
 
   constructor(
     unhandledKeys: UnhandledKeysMap,
+    droppedKeys: DroppedKeysMap,
     copy: CopyFn,
     seen: Map<
       JsonSchema<InputJsonSchemaSpecification>,
@@ -47,7 +49,7 @@ export class MutatorContext2<
       schema: JsonSchemaKeywordsObject<OutputJsonSchemaSpecification>;
     },
   ) {
-    super(unhandledKeys, copy, seen, path);
+    super(unhandledKeys, droppedKeys, copy, seen, path);
     this.from = from;
     this.into = into;
   }
@@ -59,6 +61,7 @@ export class MutatorContext2<
   ) {
     return new TranslatorContext2(
       this.unhandledKeys,
+      this.droppedKeys,
       this.copy,
       this.seen,
       [...this.path, ...path],
@@ -80,6 +83,7 @@ export type MutatorContext<
   OutputJsonSchemaSpecification extends JsonSchemaSpecification,
 > = BaseContext<InputJsonSchemaSpecification, OutputJsonSchemaSpecification> & {
   handledKeys: HandledKeysSet;
+  droppedKeys: DroppedKeysMap;
   from: {
     schema: JsonSchemaStaticKeywordsObject<InputJsonSchemaSpecification>;
   };

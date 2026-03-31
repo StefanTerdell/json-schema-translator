@@ -97,7 +97,6 @@ export const translateKeywords: Mutator = (ctx) => {
   translateMinContains(ctx);
   translateMaxContains(ctx);
   translateUniqueItems(ctx);
-  translateMinContains(ctx);
   translateUnevaluatedItems(ctx);
   translateMinProperties(ctx);
   translateMaxProperties(ctx);

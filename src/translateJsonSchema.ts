@@ -1,4 +1,8 @@
 import { type BundledJsonSchemaTypes } from "./misc/BundledJsonSchemaTypes.ts";
+import {
+  getDroppedKeysMap,
+  handleDroppedKeysMap,
+} from "./misc/DroppedKeys.ts";
 import { type JsonSchema } from "./types/JsonSchema.ts";
 import { type JsonSchemaSpecification } from "./types/JsonSchemaSpecification.ts";
 import {
@@ -138,8 +142,8 @@ export function translateJsonSchema<
   options?: JsonSchemaTranslationOptions<AdditionalSpecifications>,
 ): JsonSchema<OutputSpecification> {
   const mergedOptions = {
-    ...options,
     ...defaultJsonSchemaTranslationOptionsBase,
+    ...options,
     additional: options?.specifications as AdditionalSpecifications | undefined,
   };
 
@@ -156,6 +160,7 @@ export function translateJsonSchema<
   >(outputSpecificationOrName, mergedOptions.additional);
 
   const unhandledKeysMap = getUnhandledKeysMap(mergedOptions.unhandledKeys);
+  const droppedKeysMap = getDroppedKeysMap(mergedOptions.droppedKeys);
 
   const outputSchema = translateSchema({
     from: {
@@ -168,11 +173,13 @@ export function translateJsonSchema<
     path: [],
     forceAllowBooleanSchema: false,
     unhandledKeys: unhandledKeysMap,
+    droppedKeys: droppedKeysMap,
     copyJson: mergedOptions.copyJson,
     seen: new Map(),
   });
 
   handleUnhandledKeysMap(mergedOptions.unhandledKeys, unhandledKeysMap);
+  handleDroppedKeysMap(mergedOptions.droppedKeys, droppedKeysMap);
 
   return outputSchema;
 }

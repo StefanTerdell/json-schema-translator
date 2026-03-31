@@ -14,6 +14,11 @@ export const translateMaxContains: Mutator = (ctx) => {
           ctx.into.schema.maxContains = ctx.from.schema.maxContains;
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.maxContains !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "maxContains"], "maxContains");
+        }
+      },
     },
   );
 };

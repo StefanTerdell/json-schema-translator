@@ -14,6 +14,11 @@ export const translateMaxLength: Mutator = (ctx) => {
           ctx.into.schema.maxLength = ctx.from.schema.maxLength;
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.maxLength !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "maxLength"], "maxLength");
+        }
+      },
     },
   );
 };

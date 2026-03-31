@@ -14,6 +14,11 @@ export const translateUniqueItems: Mutator = (ctx) => {
           ctx.into.schema.uniqueItems = ctx.from.schema.uniqueItems;
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.uniqueItems !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "uniqueItems"], "uniqueItems");
+        }
+      },
     },
   );
 };

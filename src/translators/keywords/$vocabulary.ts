@@ -14,6 +14,11 @@ export const translate$vocabulary: Mutator = (ctx) => {
           ctx.into.schema.$vocabulary = ctx.from.schema.$vocabulary;
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.$vocabulary !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "$vocabulary"], "$vocabulary");
+        }
+      },
     },
   );
 };

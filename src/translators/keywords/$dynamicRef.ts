@@ -14,6 +14,11 @@ export const translate$dynamicRef: Mutator = (ctx) => {
           ctx.into.schema.$dynamicRef = ctx.from.schema.$dynamicRef;
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.$dynamicRef !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "$dynamicRef"], "$dynamicRef");
+        }
+      },
     },
   );
 };

@@ -14,6 +14,11 @@ export const translateMultipleOf: Mutator = (ctx) => {
           ctx.into.schema.multipleOf = ctx.from.schema.multipleOf;
         }
       },
+      onlyFrom(ctx) {
+        if (ctx.from.schema.multipleOf !== undefined) {
+          ctx.droppedKeys.set([...ctx.path, "multipleOf"], "multipleOf");
+        }
+      },
     },
   );
 };
