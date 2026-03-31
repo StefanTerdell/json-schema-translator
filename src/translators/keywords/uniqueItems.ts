@@ -16,7 +16,7 @@ export const translateUniqueItems: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.uniqueItems !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "uniqueItems"], "uniqueItems");
+          ctx.droppedKeys.set([...ctx.path, "uniqueItems"], { keyword: "uniqueItems", value: ctx.from.schema.uniqueItems });
         }
       },
     },

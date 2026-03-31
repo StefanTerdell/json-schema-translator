@@ -5,7 +5,14 @@ import {
 import { type LooseStringLiteral } from "../types/UtilityTypes.ts";
 
 export type UnhandledKeyReason = "conflict" | "disallowed";
-export type UnhandledKeysMap = Map<JsonSchemaPath, UnhandledKeyReason>;
+
+export type UnhandledKeyEntry = {
+  keyword: string;
+  value: unknown;
+  reason: UnhandledKeyReason;
+};
+
+export type UnhandledKeysMap = Map<JsonSchemaPath, UnhandledKeyEntry>;
 export type HandledKeysSet = Set<LooseStringLiteral<JsonSchemaKeyword>>;
 
 export type UnhandledKeysOption =
@@ -33,9 +40,9 @@ export function handleUnhandledKeysMap(
 ) {
   if (map.size) {
     if (option === "throw") {
-      const pathsAndReasons = Array.from(
+      const lines = Array.from(
         map,
-        ([path, reason]) =>
+        ([path, { keyword, reason }]) =>
           `${path.reduce(
             (acc, curr) =>
               typeof curr === "number"
@@ -44,10 +51,10 @@ export function handleUnhandledKeysMap(
                   ? `${acc}.${curr}`
                   : curr,
             "",
-          )}: ${reason}`,
+          )}: ${keyword} (${reason})`,
       ).join("\n");
 
-      throw new Error(`Unhandled keys:\n${pathsAndReasons}`);
+      throw new Error(`Unhandled keys:\n${lines}`);
     } else if (option === "warn") {
       console.warn("Unhandled keys:", map);
     } else if (typeof option === "function") {

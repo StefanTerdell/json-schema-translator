@@ -25,7 +25,7 @@ export const translateElse: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.else !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "else"], "else");
+          ctx.droppedKeys.set([...ctx.path, "else"], { keyword: "else", value: ctx.from.schema.else });
         }
       },
     },

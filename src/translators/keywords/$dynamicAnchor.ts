@@ -16,7 +16,7 @@ export const translate$dynamicAnchor: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.$dynamicAnchor !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "$dynamicAnchor"], "$dynamicAnchor");
+          ctx.droppedKeys.set([...ctx.path, "$dynamicAnchor"], { keyword: "$dynamicAnchor", value: ctx.from.schema.$dynamicAnchor });
         }
       },
     },

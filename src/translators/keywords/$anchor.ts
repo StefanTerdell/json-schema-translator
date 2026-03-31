@@ -16,7 +16,7 @@ export const translate$anchor: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.$anchor !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "$anchor"], "$anchor");
+          ctx.droppedKeys.set([...ctx.path, "$anchor"], { keyword: "$anchor", value: ctx.from.schema.$anchor });
         }
       },
     },

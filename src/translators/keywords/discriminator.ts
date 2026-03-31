@@ -20,7 +20,7 @@ export const translateDiscriminator: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.discriminator !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "discriminator"], "discriminator");
+          ctx.droppedKeys.set([...ctx.path, "discriminator"], { keyword: "discriminator", value: ctx.from.schema.discriminator });
         }
       },
     },

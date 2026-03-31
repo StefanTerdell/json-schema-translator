@@ -32,7 +32,7 @@ export const translatePatternProperties: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.patternProperties !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "patternProperties"], "patternProperties");
+          ctx.droppedKeys.set([...ctx.path, "patternProperties"], { keyword: "patternProperties", value: ctx.from.schema.patternProperties });
         }
       },
     },

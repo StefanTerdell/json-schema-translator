@@ -16,7 +16,7 @@ export const translate$vocabulary: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.$vocabulary !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "$vocabulary"], "$vocabulary");
+          ctx.droppedKeys.set([...ctx.path, "$vocabulary"], { keyword: "$vocabulary", value: ctx.from.schema.$vocabulary });
         }
       },
     },

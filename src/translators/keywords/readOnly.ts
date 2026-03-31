@@ -16,7 +16,7 @@ export const translateReadOnly: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.readOnly !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "readOnly"], "readOnly");
+          ctx.droppedKeys.set([...ctx.path, "readOnly"], { keyword: "readOnly", value: ctx.from.schema.readOnly });
         }
       },
     },

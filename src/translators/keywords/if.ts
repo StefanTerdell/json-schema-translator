@@ -25,7 +25,7 @@ export const translateIf: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.if !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "if"], "if");
+          ctx.droppedKeys.set([...ctx.path, "if"], { keyword: "if", value: ctx.from.schema.if });
         }
       },
     },

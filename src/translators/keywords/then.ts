@@ -25,7 +25,7 @@ export const translateThen: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.then !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "then"], "then");
+          ctx.droppedKeys.set([...ctx.path, "then"], { keyword: "then", value: ctx.from.schema.then });
         }
       },
     },

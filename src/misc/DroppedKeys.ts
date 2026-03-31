@@ -1,6 +1,11 @@
 import { type JsonSchemaPath } from "../types/JsonSchema.ts";
 
-export type DroppedKeysMap = Map<JsonSchemaPath, string>;
+export type DroppedKeyEntry = {
+  keyword: string;
+  value: unknown;
+};
+
+export type DroppedKeysMap = Map<JsonSchemaPath, DroppedKeyEntry>;
 
 export type DroppedKeysOption =
   | "ignore"
@@ -25,9 +30,9 @@ export function handleDroppedKeysMap(
 ) {
   if (map.size) {
     if (option === "throw") {
-      const pathsAndKeys = Array.from(
+      const lines = Array.from(
         map,
-        ([path, keyword]) =>
+        ([path, { keyword }]) =>
           `${path.reduce(
             (acc, curr) =>
               typeof curr === "number"
@@ -39,7 +44,7 @@ export function handleDroppedKeysMap(
           )}: ${keyword}`,
       ).join("\n");
 
-      throw new Error(`Dropped keys:\n${pathsAndKeys}`);
+      throw new Error(`Dropped keys:\n${lines}`);
     } else if (option === "warn") {
       console.warn("Dropped keys:", map);
     } else if (typeof option === "function") {

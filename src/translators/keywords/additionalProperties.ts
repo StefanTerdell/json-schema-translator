@@ -36,7 +36,7 @@ export const translateAdditionalProperties: Mutator = (ctx) => {
         } else if (ctx.from.schema.additionalProperties !== undefined) {
           ctx.droppedKeys.set(
             [...ctx.path, "additionalProperties"],
-            "additionalProperties",
+            { keyword: "additionalProperties", value: ctx.from.schema.additionalProperties },
           );
         }
       },

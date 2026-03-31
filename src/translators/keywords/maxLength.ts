@@ -16,7 +16,7 @@ export const translateMaxLength: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.maxLength !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "maxLength"], "maxLength");
+          ctx.droppedKeys.set([...ctx.path, "maxLength"], { keyword: "maxLength", value: ctx.from.schema.maxLength });
         }
       },
     },

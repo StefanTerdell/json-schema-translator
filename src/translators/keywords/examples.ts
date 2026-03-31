@@ -16,7 +16,7 @@ export const translateExamples: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.examples !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "examples"], "examples");
+          ctx.droppedKeys.set([...ctx.path, "examples"], { keyword: "examples", value: ctx.from.schema.examples });
         }
       },
     },

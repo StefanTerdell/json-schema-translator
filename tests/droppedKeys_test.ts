@@ -8,6 +8,10 @@ import { googleAiJsonSchemaSpecification } from "../src/specifications/google_ai
 import { openAiStructuredOutputSchemaSpecification } from "../src/specifications/open_ai_structured_output.ts";
 import { type DroppedKeysMap } from "../src/misc/DroppedKeys.ts";
 
+function droppedKeywords(map: DroppedKeysMap): string[] {
+  return [...map.values()].map((e) => e.keyword);
+}
+
 // ============================================================
 // Keywords reported as dropped
 // ============================================================
@@ -27,12 +31,10 @@ Deno.test("if/then/else reported as dropped going Draft 7 → Draft 4", () => {
     { droppedKeys: dropped },
   );
 
-  assertEquals(dropped.has(["if"]), false); // Map uses reference equality
-  // Check by iterating
-  const keys = [...dropped.values()];
-  assertEquals(keys.includes("if"), true);
-  assertEquals(keys.includes("then"), true);
-  assertEquals(keys.includes("else"), true);
+  const kw = droppedKeywords(dropped);
+  assertEquals(kw.includes("if"), true);
+  assertEquals(kw.includes("then"), true);
+  assertEquals(kw.includes("else"), true);
 });
 
 Deno.test("if/then/else reported as dropped going Draft 7 → Google AI", () => {
@@ -48,9 +50,9 @@ Deno.test("if/then/else reported as dropped going Draft 7 → Google AI", () => 
     { droppedKeys: dropped },
   );
 
-  const keys = [...dropped.values()];
-  assertEquals(keys.includes("if"), true);
-  assertEquals(keys.includes("then"), true);
+  const kw = droppedKeywords(dropped);
+  assertEquals(kw.includes("if"), true);
+  assertEquals(kw.includes("then"), true);
 });
 
 Deno.test("allOf, oneOf, not reported as dropped for Google AI", () => {
@@ -67,10 +69,10 @@ Deno.test("allOf, oneOf, not reported as dropped for Google AI", () => {
     { droppedKeys: dropped },
   );
 
-  const keys = [...dropped.values()];
-  assertEquals(keys.includes("allOf"), true);
-  assertEquals(keys.includes("oneOf"), true);
-  assertEquals(keys.includes("not"), true);
+  const kw = droppedKeywords(dropped);
+  assertEquals(kw.includes("allOf"), true);
+  assertEquals(kw.includes("oneOf"), true);
+  assertEquals(kw.includes("not"), true);
 });
 
 Deno.test("format reported as dropped when target has format: false", () => {
@@ -83,8 +85,8 @@ Deno.test("format reported as dropped when target has format: false", () => {
     { droppedKeys: dropped },
   );
 
-  const keys = [...dropped.values()];
-  assertEquals(keys.includes("format"), true);
+  const kw = droppedKeywords(dropped);
+  assertEquals(kw.includes("format"), true);
 });
 
 Deno.test("format reported as dropped when strictFormats rejects it", () => {
@@ -98,8 +100,8 @@ Deno.test("format reported as dropped when strictFormats rejects it", () => {
     { droppedKeys: dropped },
   );
 
-  const keys = [...dropped.values()];
-  assertEquals(keys.includes("format"), true);
+  const kw = droppedKeywords(dropped);
+  assertEquals(kw.includes("format"), true);
 });
 
 Deno.test("minimum/exclusiveMinimum reported as dropped when target lacks them", () => {
@@ -112,8 +114,8 @@ Deno.test("minimum/exclusiveMinimum reported as dropped when target lacks them",
     { droppedKeys: dropped },
   );
 
-  const keys = [...dropped.values()];
-  assertEquals(keys.includes("exclusiveMinimum"), true);
+  const kw = droppedKeywords(dropped);
+  assertEquals(kw.includes("exclusiveMinimum"), true);
 });
 
 Deno.test("patternProperties reported as dropped for Google AI", () => {
@@ -129,8 +131,8 @@ Deno.test("patternProperties reported as dropped for Google AI", () => {
     { droppedKeys: dropped },
   );
 
-  const keys = [...dropped.values()];
-  assertEquals(keys.includes("patternProperties"), true);
+  const kw = droppedKeywords(dropped);
+  assertEquals(kw.includes("patternProperties"), true);
 });
 
 Deno.test("$comment reported as dropped for non-supporting specs", () => {
@@ -143,8 +145,45 @@ Deno.test("$comment reported as dropped for non-supporting specs", () => {
     { droppedKeys: dropped },
   );
 
-  const keys = [...dropped.values()];
-  assertEquals(keys.includes("$comment"), true);
+  const kw = droppedKeywords(dropped);
+  assertEquals(kw.includes("$comment"), true);
+});
+
+// ============================================================
+// Dropped entries include the actual value
+// ============================================================
+
+Deno.test("Dropped entry includes the keyword value", () => {
+  const dropped: DroppedKeysMap = new Map();
+
+  translateJsonSchema(
+    { type: "string", format: "email" },
+    jsonSchemaDraft7Specification,
+    openAiStructuredOutputSchemaSpecification,
+    { droppedKeys: dropped },
+  );
+
+  const entry = [...dropped.values()].find((e) => e.keyword === "format");
+  assertEquals(entry?.value, "email");
+});
+
+Deno.test("Dropped entry includes complex value", () => {
+  const dropped: DroppedKeysMap = new Map();
+
+  translateJsonSchema(
+    {
+      type: "object",
+      patternProperties: { "^S_": { type: "string" } },
+    },
+    jsonSchemaDraft7Specification,
+    googleAiJsonSchemaSpecification,
+    { droppedKeys: dropped },
+  );
+
+  const entry = [...dropped.values()].find(
+    (e) => e.keyword === "patternProperties",
+  );
+  assertEquals(entry?.value, { "^S_": { type: "string" } });
 });
 
 // ============================================================
@@ -180,8 +219,8 @@ Deno.test("dependencies NOT reported as dropped (converted to dependentRequired/
     { droppedKeys: dropped },
   );
 
-  const keys = [...dropped.values()];
-  assertEquals(keys.includes("dependencies"), false);
+  const kw = droppedKeywords(dropped);
+  assertEquals(kw.includes("dependencies"), false);
 });
 
 Deno.test("definitions NOT reported as dropped (converted to $defs)", () => {
@@ -249,6 +288,11 @@ Deno.test("Dropped keys include correct paths for nested schemas", () => {
     p[2] === "minLength"
   );
   assertEquals(minLengthPath !== undefined, true);
+
+  // And the value should be included
+  const entry = dropped.get(minLengthPath!);
+  assertEquals(entry?.keyword, "minLength");
+  assertEquals(entry?.value, 3);
 });
 
 // ============================================================
@@ -310,7 +354,7 @@ Deno.test("droppedKeys works with jsonSchemaTranslator", () => {
     { droppedKeys: dropped },
   );
 
-  const keys = [...dropped.values()];
-  assertEquals(keys.includes("if"), true);
-  assertEquals(keys.includes("then"), true);
+  const kw = droppedKeywords(dropped);
+  assertEquals(kw.includes("if"), true);
+  assertEquals(kw.includes("then"), true);
 });

@@ -62,10 +62,18 @@ const copyUnhandledKeys: Mutator = (ctx) => {
           // @ts-expect-error CBA
           ctx.into.schema[key] = copy(ctx.copyJson, ctx.from.schema[key]);
         } else {
-          ctx.unhandledKeys.set([...ctx.path, key], "conflict");
+          ctx.unhandledKeys.set([...ctx.path, key], {
+            keyword: key,
+            value: (ctx.from.schema as Record<string, unknown>)[key],
+            reason: "conflict",
+          });
         }
       } else {
-        ctx.unhandledKeys.set([...ctx.path, key], "disallowed");
+        ctx.unhandledKeys.set([...ctx.path, key], {
+          keyword: key,
+          value: (ctx.from.schema as Record<string, unknown>)[key],
+          reason: "disallowed",
+        });
       }
 
       ctx.handledKeys.add(key);

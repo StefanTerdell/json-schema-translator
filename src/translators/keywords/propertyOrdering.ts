@@ -23,7 +23,7 @@ export const translatePropertyOrdering: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.propertyOrdering !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "propertyOrdering"], "propertyOrdering");
+          ctx.droppedKeys.set([...ctx.path, "propertyOrdering"], { keyword: "propertyOrdering", value: ctx.from.schema.propertyOrdering });
         }
       },
       onlyInto(ctx) {

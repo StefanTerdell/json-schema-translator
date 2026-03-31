@@ -16,7 +16,7 @@ export const translateDeprecated: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.deprecated !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "deprecated"], "deprecated");
+          ctx.droppedKeys.set([...ctx.path, "deprecated"], { keyword: "deprecated", value: ctx.from.schema.deprecated });
         }
       },
     },

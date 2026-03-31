@@ -16,7 +16,7 @@ export const translate$recursiveAnchor: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.$recursiveAnchor !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "$recursiveAnchor"], "$recursiveAnchor");
+          ctx.droppedKeys.set([...ctx.path, "$recursiveAnchor"], { keyword: "$recursiveAnchor", value: ctx.from.schema.$recursiveAnchor });
         }
       },
     },

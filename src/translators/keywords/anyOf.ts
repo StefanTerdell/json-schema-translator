@@ -30,7 +30,7 @@ export const translateAnyOf: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.anyOf !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "anyOf"], "anyOf");
+          ctx.droppedKeys.set([...ctx.path, "anyOf"], { keyword: "anyOf", value: ctx.from.schema.anyOf });
         }
       },
     },

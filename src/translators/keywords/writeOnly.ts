@@ -16,7 +16,7 @@ export const translateWriteOnly: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.writeOnly !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "writeOnly"], "writeOnly");
+          ctx.droppedKeys.set([...ctx.path, "writeOnly"], { keyword: "writeOnly", value: ctx.from.schema.writeOnly });
         }
       },
     },

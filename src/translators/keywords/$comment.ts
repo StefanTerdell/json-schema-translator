@@ -16,7 +16,7 @@ export const translate$comment: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.$comment !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "$comment"], "$comment");
+          ctx.droppedKeys.set([...ctx.path, "$comment"], { keyword: "$comment", value: ctx.from.schema.$comment });
         }
       },
     },

@@ -93,7 +93,7 @@ export function createLimitAndExclusiveLimitTranslator(
               output.schema[exclusiveLimit] === undefined &&
               typeof input.schema[limit] !== "number"
             ) {
-              droppedKeys.set([...path, exclusiveLimit], exclusiveLimit);
+              droppedKeys.set([...path, exclusiveLimit], { keyword: exclusiveLimit, value: input.schema[exclusiveLimit] });
             }
           }
 
@@ -171,14 +171,14 @@ export function createLimitAndExclusiveLimitTranslator(
           output.schema[limit] === undefined &&
           output.schema[exclusiveLimit] === undefined
         ) {
-          droppedKeys.set([...path, limit], limit);
+          droppedKeys.set([...path, limit], { keyword: limit, value: input.schema[limit] });
         }
         if (
           input.schema[exclusiveLimit] !== undefined &&
           output.schema[exclusiveLimit] === undefined &&
           output.schema[limit] === undefined
         ) {
-          droppedKeys.set([...path, exclusiveLimit], exclusiveLimit);
+          droppedKeys.set([...path, exclusiveLimit], { keyword: exclusiveLimit, value: input.schema[exclusiveLimit] });
         }
       }
 

@@ -14,7 +14,7 @@ export const translateFormat: Mutator = (ctx) => {
         ) {
           ctx.into.schema.format = ctx.from.schema.format;
         } else {
-          ctx.droppedKeys.set([...ctx.path, "format"], "format");
+          ctx.droppedKeys.set([...ctx.path, "format"], { keyword: "format", value: ctx.from.schema.format });
         }
       } else {
         ctx.into.schema.format = ctx.from.schema.format;
@@ -23,7 +23,7 @@ export const translateFormat: Mutator = (ctx) => {
       !ctx.into.specification.format &&
       ctx.from.schema.format !== undefined
     ) {
-      ctx.droppedKeys.set([...ctx.path, "format"], "format");
+      ctx.droppedKeys.set([...ctx.path, "format"], { keyword: "format", value: ctx.from.schema.format });
     }
 
     ctx.handledKeys.add("format");

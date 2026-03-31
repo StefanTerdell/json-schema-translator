@@ -16,7 +16,7 @@ export const translateMinLength: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.minLength !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "minLength"], "minLength");
+          ctx.droppedKeys.set([...ctx.path, "minLength"], { keyword: "minLength", value: ctx.from.schema.minLength });
         }
       },
     },

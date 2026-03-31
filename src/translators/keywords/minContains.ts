@@ -16,7 +16,7 @@ export const translateMinContains: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.minContains !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "minContains"], "minContains");
+          ctx.droppedKeys.set([...ctx.path, "minContains"], { keyword: "minContains", value: ctx.from.schema.minContains });
         }
       },
     },

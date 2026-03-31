@@ -16,7 +16,7 @@ export const translateMaxItems: Mutator = (ctx) => {
       },
       onlyFrom(ctx) {
         if (ctx.from.schema.maxItems !== undefined) {
-          ctx.droppedKeys.set([...ctx.path, "maxItems"], "maxItems");
+          ctx.droppedKeys.set([...ctx.path, "maxItems"], { keyword: "maxItems", value: ctx.from.schema.maxItems });
         }
       },
     },
