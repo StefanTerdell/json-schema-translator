@@ -2,27 +2,27 @@ import {
   type BundledJsonSchemaSpecifications,
   bundledJsonSchemaSpecifications,
 } from "../misc/BundledJsonSchemaTypes.ts";
-import { type JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
-import { type AdditionalJsonSchemaSpecifications } from "../types/JsonSchemaTranslationOptions.ts";
-import { type EmptyObject } from "../types/UtilityTypes.ts";
+import type { JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
+import type { AdditionalJsonSchemaSpecifications } from "../types/JsonSchemaTranslationOptions.ts";
+import type { EmptyObject } from "../types/UtilityTypes.ts";
 
 /** @internal */
 export type ResolveSpecification<
-  SpecificationOrName extends
-    JsonSchemaSpecificationOrName<AdditionalSpecifications>,
-  AdditionalSpecifications extends
-    AdditionalJsonSchemaSpecifications = EmptyObject,
-> = SpecificationOrName extends JsonSchemaSpecification
-  ? SpecificationOrName
+  SpecificationOrName extends JsonSchemaSpecificationOrName<
+    AdditionalSpecifications
+  >,
+  AdditionalSpecifications extends AdditionalJsonSchemaSpecifications =
+    EmptyObject,
+> = SpecificationOrName extends JsonSchemaSpecification ? SpecificationOrName
   : SpecificationOrName extends keyof AdditionalSpecifications
     ? AdditionalSpecifications[SpecificationOrName]
-    : SpecificationOrName extends keyof BundledJsonSchemaSpecifications
-      ? BundledJsonSchemaSpecifications[SpecificationOrName]
-      : never;
+  : SpecificationOrName extends keyof BundledJsonSchemaSpecifications
+    ? BundledJsonSchemaSpecifications[SpecificationOrName]
+  : never;
 
 type JsonSchemaSpecificationOrName<
-  AdditionalSpecifications extends
-    AdditionalJsonSchemaSpecifications = EmptyObject,
+  AdditionalSpecifications extends AdditionalJsonSchemaSpecifications =
+    EmptyObject,
 > =
   | keyof BundledJsonSchemaSpecifications
   | keyof AdditionalSpecifications
@@ -30,8 +30,9 @@ type JsonSchemaSpecificationOrName<
 
 /** @internal */
 export function resolveSpecification<
-  SpecificationOrName extends
-    JsonSchemaSpecificationOrName<AdditionalSpecifications>,
+  SpecificationOrName extends JsonSchemaSpecificationOrName<
+    AdditionalSpecifications
+  >,
   AdditionalSpecifications extends AdditionalJsonSchemaSpecifications,
   Specification extends ResolveSpecification<
     SpecificationOrName,
@@ -59,5 +60,14 @@ export function resolveSpecification<
       }
   }
 
-  throw new Error("Specification not found");
+  throw new Error(
+    `Specification "${
+      String(specificationOrName)
+    }" not found. Available specifications: ${
+      [
+        ...Object.keys(bundledJsonSchemaSpecifications),
+        ...Object.keys(additionalSpecifications ?? {}),
+      ].toSorted().map((s) => `"${s}"`).join(", ")
+    }`,
+  );
 }
