@@ -10,7 +10,7 @@ export const translateReadOnly: Mutator = (ctx) => {
         ctx.handledKeys.add("readOnly");
       },
       both(ctx) {
-        if (ctx.into.schema.readOnly !== undefined) {
+        if (ctx.from.schema.readOnly !== undefined) {
           ctx.into.schema.readOnly = ctx.from.schema.readOnly;
         }
       },

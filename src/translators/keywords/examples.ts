@@ -10,7 +10,7 @@ export const translateExamples: Mutator = (ctx) => {
         ctx.handledKeys.add("examples");
       },
       both(ctx) {
-        if (ctx.into.schema.examples !== undefined) {
+        if (ctx.from.schema.examples !== undefined) {
           ctx.into.schema.examples = ctx.from.schema.examples;
         }
       },

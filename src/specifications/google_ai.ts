@@ -46,14 +46,11 @@ export const googleAiJsonSchemaSpecification = {
 
   // Format
   format: [
-    "enum",
     "date-time",
-    "enum",
     "float",
     "double",
     "int32",
     "int64",
-    "enum",
   ] as const,
   strictFormats: true,
 

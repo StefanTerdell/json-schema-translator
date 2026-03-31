@@ -34,6 +34,8 @@ import { translateMaxLength } from "./keywords/maxLength.ts";
 import { translatePattern } from "./keywords/pattern.ts";
 import { translateContentEncodingAndContentMediaTypeAndContentSchemaAndMedia } from "./keywords/contentEncodingAndContentMediaTypeAndContentSchemaAndMedia.ts";
 import { translateFormat } from "./keywords/format.ts";
+import { translateMinimumAndExclusiveMinimum } from "./keywords/minimumAndExclusiveMinimum.ts";
+import { translateMaximumAndExclusiveMaximum } from "./keywords/maximumAndExclusiveMaximum.ts";
 import { translateMultipleOf } from "./keywords/multipleOf.ts";
 import { translateMinItems } from "./keywords/minItems.ts";
 import { translateMaxItems } from "./keywords/maxItems.ts";
@@ -87,6 +89,8 @@ export const translateKeywords: Mutator = (ctx) => {
   translateMaxLength(ctx);
   translatePattern(ctx);
   translateFormat(ctx);
+  translateMinimumAndExclusiveMinimum(ctx);
+  translateMaximumAndExclusiveMaximum(ctx);
   translateMultipleOf(ctx);
   translateMinItems(ctx);
   translateMaxItems(ctx);

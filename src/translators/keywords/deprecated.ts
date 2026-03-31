@@ -10,7 +10,7 @@ export const translateDeprecated: Mutator = (ctx) => {
         ctx.handledKeys.add("deprecated");
       },
       both(ctx) {
-        if (ctx.into.schema.deprecated !== undefined) {
+        if (ctx.from.schema.deprecated !== undefined) {
           ctx.into.schema.deprecated = ctx.from.schema.deprecated;
         }
       },

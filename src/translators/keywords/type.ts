@@ -88,8 +88,11 @@ const translateTypeValue = <
   nullable: boolean | undefined;
   multipleOf?: number;
 } => {
-  const nullable =
-    type === "null" && ctx.into.specification.nullable ? true : undefined;
+  if (type === "null" && ctx.into.specification.nullable) {
+    return { type: undefined, nullable: true };
+  }
+
+  const nullable = undefined;
 
   if (type === "integer") {
     if (ctx.into.specification.type.includes("integer")) {

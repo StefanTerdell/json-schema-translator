@@ -10,7 +10,7 @@ export const translateWriteOnly: Mutator = (ctx) => {
         ctx.handledKeys.add("writeOnly");
       },
       both(ctx) {
-        if (ctx.into.schema.writeOnly !== undefined) {
+        if (ctx.from.schema.writeOnly !== undefined) {
           ctx.into.schema.writeOnly = ctx.from.schema.writeOnly;
         }
       },

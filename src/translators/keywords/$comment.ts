@@ -10,7 +10,7 @@ export const translate$comment: Mutator = (ctx) => {
         ctx.handledKeys.add("$comment");
       },
       both(ctx) {
-        if (ctx.into.schema.$comment !== undefined) {
+        if (ctx.from.schema.$comment !== undefined) {
           ctx.into.schema.$comment = ctx.from.schema.$comment;
         }
       },
