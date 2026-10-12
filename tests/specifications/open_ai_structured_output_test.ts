@@ -83,8 +83,8 @@ Deno.test(
             },
           },
           record: {
-            required: ["x"],
             type: ["object", "null"],
+            required: ["x"],
             properties: {
               x: {
                 type: ["string", "null"],
@@ -94,12 +94,7 @@ Deno.test(
           },
           tuple: {
             type: ["array", "null"],
-            items: [
-              openAiStructuredOutputSchemaSpecification.forceAnySchema,
-              {
-                not: openAiStructuredOutputSchemaSpecification.forceAnySchema,
-              },
-            ],
+            items: openAiStructuredOutputSchemaSpecification.forceAnySchema,
           },
         },
         additionalProperties: false,

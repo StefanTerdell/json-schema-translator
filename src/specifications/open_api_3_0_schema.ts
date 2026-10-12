@@ -28,7 +28,7 @@ export const openApi3_0SchemaSpecification = {
 
   // Arrays
   prefixItems: false,
-  additionalItems: true,
+  additionalItems: false,
   maxItems: true,
   minItems: true,
   unevaluatedItems: false,
@@ -96,7 +96,7 @@ export const openApi3_0SchemaSpecification = {
 
   // Objects and properties
   unevaluatedProperties: false,
-  patternProperties: true,
+  patternProperties: false,
   propertyNames: false,
   minProperties: true,
   maxProperties: true,
@@ -104,7 +104,7 @@ export const openApi3_0SchemaSpecification = {
   allPropertiesRequired: false,
   additionalProperties: true,
   forceAdditionalProperties: undefined,
-  dependencies: true,
+  dependencies: false,
   dependentRequired: false,
   dependentSchemas: false,
   nonEmptyDependencies: true,

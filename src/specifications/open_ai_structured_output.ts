@@ -1,5 +1,5 @@
-import { type JsonSchema } from "../types/JsonSchema.ts";
-import { type JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
+import type { JsonSchema } from "../types/JsonSchema.ts";
+import type { JsonSchemaSpecification } from "../types/JsonSchemaSpecification.ts";
 
 export const openAiStructuredOutputSchemaSpecification = {
   // Shared
@@ -38,7 +38,7 @@ export const openAiStructuredOutputSchemaSpecification = {
 
   // Arrays
   prefixItems: false,
-  additionalItems: true,
+  additionalItems: false,
   maxItems: false,
   minItems: false,
   unevaluatedItems: false,
@@ -46,6 +46,7 @@ export const openAiStructuredOutputSchemaSpecification = {
   contains: false,
   minContains: false,
   maxContains: false,
+  singleItems: true,
 
   // Format
   format: false,
@@ -73,7 +74,7 @@ export const openAiStructuredOutputSchemaSpecification = {
   nonEmptyEnum: false,
 
   // Structuring
-  $id: "$id" as const,
+  $id: false,
   $defs: "$defs" as const,
   $anchor: false,
   $dynamicRef: false,
@@ -90,7 +91,7 @@ export const openAiStructuredOutputSchemaSpecification = {
   anyOf: true,
   oneOf: false,
   allOf: false,
-  not: true,
+  not: false,
 
   // Objects and properties
   unevaluatedProperties: false,
@@ -115,5 +116,6 @@ export const openAiStructuredOutputSchemaSpecification = {
 
 export type OpenAiStructuredOutputSchemaSpecification =
   typeof openAiStructuredOutputSchemaSpecification;
-export type OpenAiStructuredOutputSchema =
-  JsonSchema<OpenAiStructuredOutputSchemaSpecification>;
+export type OpenAiStructuredOutputSchema = JsonSchema<
+  OpenAiStructuredOutputSchemaSpecification
+>;

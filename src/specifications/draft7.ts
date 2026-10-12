@@ -9,7 +9,7 @@ export const jsonSchemaDraft7Specification = {
 
   // Annotations
   $schema: "http://json-schema.org/draft-07/schema#" as const,
-  $comment: false,
+  $comment: true,
   deprecated: false,
   examples: true,
   $vocabulary: false,

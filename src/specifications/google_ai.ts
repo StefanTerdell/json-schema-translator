@@ -46,11 +46,13 @@ export const googleAiJsonSchemaSpecification = {
 
   // Format
   format: [
+    "date",
     "date-time",
-    "float",
     "double",
+    "float",
     "int32",
     "int64",
+    "time",
   ] as const,
   strictFormats: true,
 
@@ -62,8 +64,8 @@ export const googleAiJsonSchemaSpecification = {
   exclusiveMaximum: false,
 
   // Strings
-  minLength: false,
-  maxLength: false,
+  minLength: true,
+  maxLength: true,
   pattern: true,
   media: false,
   contentMediaType: false,
@@ -77,8 +79,8 @@ export const googleAiJsonSchemaSpecification = {
   nonEmptyEnum: false,
 
   // Structuring
-  $id: "$id" as const,
-  $defs: "$defs" as const,
+  $id: false,
+  $defs: false,
   $anchor: false,
   $dynamicRef: false,
   $dynamicAnchor: false,

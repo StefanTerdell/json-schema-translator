@@ -141,7 +141,7 @@ Deno.test("$comment reported as dropped for non-supporting specs", () => {
   translateJsonSchema(
     { type: "string", $comment: "this is a comment" },
     "draft2020_12",
-    "draft7",
+    "draft4",
     { droppedKeys: dropped },
   );
 
@@ -269,8 +269,8 @@ Deno.test("Dropped keys include correct paths for nested schemas", () => {
       type: "object",
       properties: {
         child: {
-          type: "string",
-          minLength: 3,
+          type: "number",
+          multipleOf: 5,
         },
       },
     },
@@ -279,20 +279,20 @@ Deno.test("Dropped keys include correct paths for nested schemas", () => {
     { droppedKeys: dropped },
   );
 
-  // minLength should be reported dropped at the nested path
+  // multipleOf should be reported dropped at the nested path
   const paths = [...dropped.keys()];
-  const minLengthPath = paths.find((p) =>
+  const multipleOfPath = paths.find((p) =>
     p.length === 3 &&
     p[0] === "properties" &&
     p[1] === "child" &&
-    p[2] === "minLength"
+    p[2] === "multipleOf"
   );
-  assertEquals(minLengthPath !== undefined, true);
+  assertEquals(multipleOfPath !== undefined, true);
 
   // And the value should be included
-  const entry = dropped.get(minLengthPath!);
-  assertEquals(entry?.keyword, "minLength");
-  assertEquals(entry?.value, 3);
+  const entry = dropped.get(multipleOfPath!);
+  assertEquals(entry?.keyword, "multipleOf");
+  assertEquals(entry?.value, 5);
 });
 
 // ============================================================

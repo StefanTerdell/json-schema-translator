@@ -1,5 +1,5 @@
-import { JsonSchema } from "./JsonSchema.ts";
-import { type LooseStringLiteral } from "./UtilityTypes.ts";
+import type { JsonSchema } from "./JsonSchema.ts";
+import type { LooseStringLiteral } from "./UtilityTypes.ts";
 
 type SharedOptions = {
   /** Option - Disable/enable allowing arbitrary JSON values in non-keyword properties of the schema object */
@@ -76,6 +76,11 @@ type ArrayKeywords = {
   minContains: boolean;
   /** Disable/enable the `maxContains` keyword. If the `contains` keyword is disabled this option has no effect and the keyword is disabled. */
   maxContains: boolean;
+};
+
+type ArrayOptions = {
+  /** Option - Disable the ability to assign multiple schemas to the `items` keyword by using an array */
+  singleItems?: boolean;
 };
 
 type FormatKeywords = {
@@ -216,24 +221,26 @@ type ObjectOptions = {
   excludeNeverProperties?: boolean;
 };
 
-export type JsonSchemaSpecification = SharedOptions &
-  AnnotationKeywords &
-  ExtensionOptions &
-  TypeKeywords &
-  TypeOptions &
-  ArrayKeywords &
-  FormatKeywords &
-  FormatOptions &
-  NumberKeywords &
-  NumberOptions &
-  StringKeywords &
-  ConstKeywords &
-  ConstOptions &
-  StructuringKeywords &
-  ConditionalKeywords &
-  FactoringKeywords &
-  ObjectKeywords &
-  ObjectOptions;
+export type JsonSchemaSpecification =
+  & SharedOptions
+  & AnnotationKeywords
+  & ExtensionOptions
+  & TypeKeywords
+  & TypeOptions
+  & ArrayKeywords
+  & ArrayOptions
+  & FormatKeywords
+  & FormatOptions
+  & NumberKeywords
+  & NumberOptions
+  & StringKeywords
+  & ConstKeywords
+  & ConstOptions
+  & StructuringKeywords
+  & ConditionalKeywords
+  & FactoringKeywords
+  & ObjectKeywords
+  & ObjectOptions;
 
 export const jsonSchemaSpecification: JsonSchemaSpecification = {
   // Shared
