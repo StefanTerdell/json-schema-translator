@@ -17,7 +17,8 @@ export type JsonSchema<
 > =
   | JsonSchemaObject<Spec>
   | (Spec["booleanSchemas"] extends true ? boolean : never)
-  | (ForceAllowBooleanSchema extends true ? boolean : never);
+  | (ForceAllowBooleanSchema extends true ? boolean : never)
+  | (Spec["typeSchemas"] extends true ? JsonSchemaType<Spec> : never);
 
 export type JsonSchemaPathItem = LooseStringLiteral<JsonSchemaKeyword> | number;
 
@@ -28,8 +29,8 @@ export type JsonSchemaPath = JsonSchemaPathItem[];
  * 2: Allow (or forbid) arbitrary values for unspecified keywords based on the `arbitraryJson` option
  */
 export type JsonSchemaObject<Spec extends JsonSchemaSpecification> =
-  & JsonSchemaKeywordsObject<Spec>
-  & (Spec["arbitraryJson"] extends true ? JsonObject : unknown);
+  JsonSchemaKeywordsObject<Spec> &
+    (Spec["arbitraryJson"] extends true ? JsonObject : unknown);
 
 /* All keywords defined from a in a JsonSchemaKeywordsObject based on a given JsonSchemaSpecification */
 export type JsonSchemaKeyword<
@@ -47,19 +48,23 @@ export type JsonSchemaKeywordsObject<Spec extends JsonSchemaSpecification> = If<
 
 export type JsonSchemaDynamicKeywordsObject<
   Spec extends JsonSchemaSpecification,
-> = Spec["$id"] extends string ? Spec["$defs"] extends string ? {
-      [Key in Spec["$defs"] | Spec["$id"]]?: Key extends Spec["$defs"]
-        ? { [Key in string]: JsonSchema<Spec> }
-        : Key extends Spec["$id"] ? string
-        : unknown;
-    }
-  : {
-    [Key in Spec["$id"]]?: string;
-  }
-  : Spec["$defs"] extends string ? {
-      [Key in Spec["$defs"]]?: { [Key in string]: JsonSchema<Spec> };
-    }
-  : EmptyObject;
+> = Spec["$id"] extends string
+  ? Spec["$defs"] extends string
+    ? {
+        [Key in Spec["$defs"] | Spec["$id"]]?: Key extends Spec["$defs"]
+          ? { [Key in string]: JsonSchema<Spec> }
+          : Key extends Spec["$id"]
+            ? string
+            : unknown;
+      }
+    : {
+        [Key in Spec["$id"]]?: string;
+      }
+  : Spec["$defs"] extends string
+    ? {
+        [Key in Spec["$defs"]]?: { [Key in string]: JsonSchema<Spec> };
+      }
+    : EmptyObject;
 
 /** Represents a JsonSchema object as defined by the provided JsonSchemaSpecification with no arbitrary keys allowed */
 export type JsonSchemaStaticKeywordsObject<
@@ -77,11 +82,13 @@ export type JsonSchemaStaticKeywordsObject<
   minLength?: If<Spec["minLength"], number>;
   maxLength?: If<Spec["maxLength"], number>;
   pattern?: If<Spec["pattern"], string>;
-  format?: Spec["format"] extends true ? string
+  format?: Spec["format"] extends true
+    ? string
     : Spec["format"] extends (infer Format extends string)[]
-      ? Spec["strictFormats"] extends true ? Format
-      : LooseStringLiteral<Format>
-    : unknown;
+      ? Spec["strictFormats"] extends true
+        ? Format
+        : LooseStringLiteral<Format>
+      : unknown;
 
   // string content
   contentEncoding?: If<
@@ -125,7 +132,8 @@ export type JsonSchemaStaticKeywordsObject<
   additionalProperties?: If<
     Spec["additionalProperties"],
     JsonSchema<Spec, true>,
-    Spec["forceAdditionalProperties"] extends undefined ? unknown
+    Spec["forceAdditionalProperties"] extends undefined
+      ? unknown
       : Spec["forceAdditionalProperties"]
   >;
   patternProperties?: Record<string, JsonSchema<Spec>>;
@@ -191,7 +199,8 @@ export type JsonSchemaStaticKeywordsObject<
   not?: If<Spec["not"], JsonSchema<Spec>>;
 
   // annotations
-  $schema?: Spec["$schema"] extends string ? LooseStringLiteral<Spec["$schema"]>
+  $schema?: Spec["$schema"] extends string
+    ? LooseStringLiteral<Spec["$schema"]>
     : unknown;
   $vocabulary?: If<Spec["$vocabulary"], string>;
   title?: string;
@@ -222,7 +231,8 @@ export type JsonSchemaStaticKeywordsObject<
   >;
 
   // de-facto standard extensions
-  errorMessage?: Spec["errorMessage"] extends "ajv" ? AjvErrorMessages
+  errorMessage?: Spec["errorMessage"] extends "ajv"
+    ? AjvErrorMessages
     : unknown;
   propertyOrdering?: If<Spec["propertyOrdering"], string[]>;
   markdownDescription?: string;
@@ -230,8 +240,7 @@ export type JsonSchemaStaticKeywordsObject<
 
 export type AjvErrorMessages = {
   [Key in LooseStringLiteral<JsonSchemaKeyword | "_">]:
-    | AjvErrorMessages
-    | string;
+    AjvErrorMessages | string;
 };
 
 /* Represents a single value of the `type` keyword in a Json Schema, optionally strict based on the `strictTypes` option */

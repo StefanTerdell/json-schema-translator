@@ -6,6 +6,7 @@ export const jsonSchemaDraft6Specification = {
   nullable: false,
   arbitraryJson: true,
   booleanSchemas: false,
+  typeSchemas: false,
 
   // Annotations
   $schema: "http://json-schema.org/draft-06/schema#" as const,

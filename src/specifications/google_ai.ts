@@ -6,6 +6,7 @@ export const googleAiJsonSchemaSpecification = {
   nullable: true,
   arbitraryJson: false,
   booleanSchemas: false,
+  typeSchemas: false,
 
   // Annotations
   $schema: false,

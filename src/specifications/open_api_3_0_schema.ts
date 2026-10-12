@@ -6,6 +6,7 @@ export const openApi3_0SchemaSpecification = {
   nullable: true,
   arbitraryJson: true,
   booleanSchemas: false,
+  typeSchemas: false,
 
   // Annotations
   $schema: false,

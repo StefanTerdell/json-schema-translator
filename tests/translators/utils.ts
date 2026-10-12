@@ -43,5 +43,7 @@ export function testCtx<
     path: [],
     seen: new Map(),
     unhandledKeys: new Map(),
+    droppedKeys: new Map(),
+    unionLocations: new Map(),
   };
 }

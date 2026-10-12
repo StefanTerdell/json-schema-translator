@@ -8,7 +8,7 @@ export type Pair<Spec extends JsonSchemaSpecification> = {
 
 export type UnstrictPair<Spec extends JsonSchemaSpecification> = {
   specification: Spec;
-  schema: JsonSchemaKeywordsObject<Spec> | boolean;
+  schema: JsonSchemaKeywordsObject<Spec> | boolean | string;
 };
 
 export const isStrictPair = <Spec extends JsonSchemaSpecification>(

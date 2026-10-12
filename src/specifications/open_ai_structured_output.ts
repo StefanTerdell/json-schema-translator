@@ -6,6 +6,7 @@ export const openAiStructuredOutputSchemaSpecification = {
   nullable: false,
   arbitraryJson: false,
   booleanSchemas: false,
+  typeSchemas: false,
 
   // Annotations
   $schema: false,
@@ -116,6 +117,5 @@ export const openAiStructuredOutputSchemaSpecification = {
 
 export type OpenAiStructuredOutputSchemaSpecification =
   typeof openAiStructuredOutputSchemaSpecification;
-export type OpenAiStructuredOutputSchema = JsonSchema<
-  OpenAiStructuredOutputSchemaSpecification
->;
+export type OpenAiStructuredOutputSchema =
+  JsonSchema<OpenAiStructuredOutputSchemaSpecification>;

@@ -95,7 +95,8 @@ export const isNeverSchema = <Spec extends JsonSchemaSpecification>(
     { not: true },
     {
       true(pair) {
-        result = typeof pair.schema === "object" &&
+        result =
+          typeof pair.schema === "object" &&
           pair.schema.not !== undefined &&
           isAnySchema({
             ...pair,
@@ -111,7 +112,7 @@ export const isNeverSchema = <Spec extends JsonSchemaSpecification>(
 const isAnySchemaByType = <Spec extends JsonSchemaSpecification>(
   pair: UnstrictPair<Spec>,
 ): boolean => {
-  if (typeof pair.schema === "boolean") {
+  if (typeof pair.schema === "boolean" || typeof pair.schema === "string") {
     return false;
   }
 
@@ -130,7 +131,7 @@ const isAnySchemaByUnion = <Spec extends JsonSchemaSpecification>(
   pair: UnstrictPair<Spec>,
   key: "anyOf" | "oneOf",
 ): boolean => {
-  if (typeof pair.schema === "boolean") {
+  if (typeof pair.schema === "boolean" || typeof pair.schema === "string") {
     return false;
   }
 
@@ -198,6 +199,10 @@ export const schemaHasType = (
   checkUnions?: boolean,
 ): boolean => {
   if (schema === true) {
+    return true;
+  }
+
+  if (schema == type) {
     return true;
   }
 

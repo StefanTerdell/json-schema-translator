@@ -29,7 +29,16 @@ export const translateSchema: Translator<null, [deferCollapse?: boolean]> = (
           ? ctx.from.schema
             ? {}
             : { not: {} }
-          : ctx.from.schema,
+          : typeof ctx.from.schema === "string"
+            ? typeof ctx.from.specification.$schema === "string"
+              ? {
+                  $schema: ctx.from.specification.$schema,
+                  type: ctx.from.schema,
+                }
+              : {
+                  type: ctx.from.schema,
+                }
+            : ctx.from.schema,
     },
     into: {
       ...ctx.into,

@@ -10,6 +10,17 @@ export const collapseIntoBooleanSchema = <
   pair: Pair<Specification>,
   forceAllowBooleanSchemas: ForceAllowBooleanSchemas,
 ): JsonSchema<Specification> => {
+  if (
+    pair.specification.typeSchemas &&
+    typeof pair.schema === "object" &&
+    Object.keys(pair.schema).every(
+      (key) => key === "$schema" || key === "type",
+    ) &&
+    typeof pair.schema.type === "string"
+  ) {
+    return pair.schema.type as JsonSchema<Specification>;
+  }
+
   let isAny: boolean | undefined = undefined;
   let isNever: boolean | undefined = undefined;
 

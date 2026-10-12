@@ -6,6 +6,8 @@ type SharedOptions = {
   arbitraryJson?: boolean;
   /** Option - Disable/enable allowing `true` or `false` to appear anywhere in the schema hierarchy, as opposed to only in `"additionalItems"` or `"additionalProperties"` */
   booleanSchemas?: boolean;
+  /** Option - Disable/enable allowing the use of a valid `type` keyword value as complete schemas themselves */
+  typeSchemas?: boolean;
 };
 
 type AnnotationKeywords = {
@@ -221,32 +223,32 @@ type ObjectOptions = {
   excludeNeverProperties?: boolean;
 };
 
-export type JsonSchemaSpecification =
-  & SharedOptions
-  & AnnotationKeywords
-  & ExtensionOptions
-  & TypeKeywords
-  & TypeOptions
-  & ArrayKeywords
-  & ArrayOptions
-  & FormatKeywords
-  & FormatOptions
-  & NumberKeywords
-  & NumberOptions
-  & StringKeywords
-  & ConstKeywords
-  & ConstOptions
-  & StructuringKeywords
-  & ConditionalKeywords
-  & FactoringKeywords
-  & ObjectKeywords
-  & ObjectOptions;
+export type JsonSchemaSpecification = SharedOptions &
+  AnnotationKeywords &
+  ExtensionOptions &
+  TypeKeywords &
+  TypeOptions &
+  ArrayKeywords &
+  ArrayOptions &
+  FormatKeywords &
+  FormatOptions &
+  NumberKeywords &
+  NumberOptions &
+  StringKeywords &
+  ConstKeywords &
+  ConstOptions &
+  StructuringKeywords &
+  ConditionalKeywords &
+  FactoringKeywords &
+  ObjectKeywords &
+  ObjectOptions;
 
 export const jsonSchemaSpecification: JsonSchemaSpecification = {
   // Shared
   nullable: false,
   arbitraryJson: false,
   booleanSchemas: false,
+  typeSchemas: false,
 
   // Annotations
   $schema: false,
